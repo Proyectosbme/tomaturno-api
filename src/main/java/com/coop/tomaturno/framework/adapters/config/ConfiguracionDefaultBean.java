@@ -4,7 +4,6 @@ import com.coop.tomaturno.framework.adapters.output.persistencia.entity.Configur
 import com.coop.tomaturno.framework.adapters.output.persistencia.entity.ConfiguracionJpaEntityPK;
 import com.coop.tomaturno.framework.adapters.output.persistencia.repository.ConfiguracionJpaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 
 import java.time.LocalDateTime;
 
@@ -13,8 +12,13 @@ public class ConfiguracionDefaultBean {
 
     private static final String USUARIO_SISTEMA = "sistema";
 
-    @Inject
-    ConfiguracionJpaRepository configuracionJpaRepository;
+
+    private final ConfiguracionJpaRepository configuracionJpaRepository;
+
+    
+    public ConfiguracionDefaultBean(ConfiguracionJpaRepository configuracionJpaRepository) {
+        this.configuracionJpaRepository = configuracionJpaRepository;
+    }
 
     public void crearConfiguracionesParaSucursal(Long idSucursal) {
         crearSiNoExiste(idSucursal, "VALIDAR_IP",                 1,    "Valida la IP del usuario al iniciar sesión");

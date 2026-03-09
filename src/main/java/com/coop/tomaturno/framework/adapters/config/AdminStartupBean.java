@@ -20,14 +20,19 @@ public class AdminStartupBean {
 
     private static final String USUARIO_SISTEMA = "sistema";
 
-    @Inject
-    SucursalJpaRepository sucursalJpaRepository;
+    
+    private final SucursalJpaRepository sucursalJpaRepository;
+
+    private final UsuarioJpaRepository usuarioJpaRepository;
+
+    private final ConfiguracionDefaultBean configuracionDefaultBean;
 
     @Inject
-    UsuarioJpaRepository usuarioJpaRepository;
-
-    @Inject
-    ConfiguracionDefaultBean configuracionDefaultBean;
+    public AdminStartupBean(SucursalJpaRepository sucursalJpaRepository, UsuarioJpaRepository usuarioJpaRepository, ConfiguracionDefaultBean configuracionDefaultBean) {
+        this.sucursalJpaRepository = sucursalJpaRepository;
+        this.usuarioJpaRepository = usuarioJpaRepository;
+        this.configuracionDefaultBean = configuracionDefaultBean;
+    }
 
     @Transactional
     void onStart(@Observes StartupEvent event) {
