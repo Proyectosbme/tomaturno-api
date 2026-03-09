@@ -1,12 +1,9 @@
 package com.coop.tomaturno.framework.adapters.config;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.ConfiguracionJpaEntity;
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.ConfiguracionJpaEntityPK;
 import com.coop.tomaturno.framework.adapters.output.persistencia.entity.SucursalJpaEntity;
 import com.coop.tomaturno.framework.adapters.output.persistencia.entity.UsuarioJpaEntity;
 import com.coop.tomaturno.framework.adapters.output.persistencia.entity.UsuarioJpaEntityPK;
-import com.coop.tomaturno.framework.adapters.output.persistencia.repository.ConfiguracionJpaRepository;
 import com.coop.tomaturno.framework.adapters.output.persistencia.repository.SucursalJpaRepository;
 import com.coop.tomaturno.framework.adapters.output.persistencia.repository.UsuarioJpaRepository;
 import io.quarkus.runtime.StartupEvent;
@@ -30,7 +27,7 @@ public class AdminStartupBean {
     UsuarioJpaRepository usuarioJpaRepository;
 
     @Inject
-    ConfiguracionJpaRepository configuracionJpaRepository;
+    ConfiguracionDefaultBean configuracionDefaultBean;
 
     @Transactional
     void onStart(@Observes StartupEvent event) {
@@ -77,27 +74,7 @@ public class AdminStartupBean {
     private void crearConfiguracionesDefault() {
         List<SucursalJpaEntity> sucursales = sucursalJpaRepository.listAll();
         for (SucursalJpaEntity sucursal : sucursales) {
-            crearConfigSiNoExiste(sucursal.getId(), "ESCANEAR_DUI", 0,
-                    "Modo de escaneo de DUI: 0=desactivado, 1=cámara, 2=lector de código de barras 2D");
+            configuracionDefaultBean.crearConfiguracionesParaSucursal(sucursal.getId());
         }
-    }
-
-    private void crearConfigSiNoExiste(Long idSucursal, String nombre, Integer parametro, String descripcion) {
-        ConfiguracionJpaEntity existente = configuracionJpaRepository.buscarPorNombreYSucursal(idSucursal, nombre);
-        if (existente != null) return;
-
-        Long nextId = configuracionJpaRepository.obtenerSiguienteId(idSucursal);
-        ConfiguracionJpaEntityPK pk = new ConfiguracionJpaEntityPK(nextId, idSucursal);
-
-        ConfiguracionJpaEntity config = new ConfiguracionJpaEntity();
-        config.setIdpk(pk);
-        config.setNombre(nombre);
-        config.setParametro(parametro);
-        config.setValorTexto("");
-        config.setDescripcion(descripcion);
-        config.setEstado(1);
-        config.setFechaCreacion(LocalDateTime.now());
-        config.setUserCreacion(USUARIO_SISTEMA);
-        configuracionJpaRepository.persist(config);
     }
 }

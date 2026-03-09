@@ -1,0 +1,10 @@
+JAVA_OPTIONS=-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager
+TZ=America/El_Salvador
+
+#Variables de la aplicación
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=qurakuskafka
+DB_SCHEMA=kafka
+DB_USER=quarkus
+DB_PASS=quarkus

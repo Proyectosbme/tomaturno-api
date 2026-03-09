@@ -6,6 +6,7 @@ import java.util.List;
 import com.coop.tomaturno.cola.application.command.port.output.ColaCommandRepository;
 import com.coop.tomaturno.cola.application.query.port.output.ColaQueryRepository;
 import com.coop.tomaturno.cola.dominio.entity.Cola;
+import com.coop.tomaturno.cola.dominio.entity.Detalle;
 
 public class ReplicarColasUseCase {
 
@@ -31,6 +32,7 @@ public class ReplicarColasUseCase {
                     idSucursalDestino, cola.getNombre());
 
             if (existeNombre) {
+                replicarDetallesFaltantes(cola, idSucursalDestino);
                 saltadas.add(cola.getNombre());
                 continue;
             }
@@ -40,6 +42,19 @@ public class ReplicarColasUseCase {
         }
 
         return new ResultadoReplicacion(copiadas, saltadas);
+    }
+
+    private void replicarDetallesFaltantes(Cola colaOrigen, Long idSucursalDestino) {
+        List<Cola> colasDestino = colaQueryRepository.buscarPorFiltro(null, idSucursalDestino, colaOrigen.getNombre());
+        if (colasDestino.isEmpty() || colaOrigen.getDetalles() == null) return;
+        Cola colaDestino = colasDestino.get(0);
+        for (Detalle detalle : colaOrigen.getDetalles()) {
+            boolean existeDetalle = colaQueryRepository.existeNombreDetalleEnCola(
+                    colaDestino.getIdentificador(), idSucursalDestino, detalle.getNombre());
+            if (!existeDetalle) {
+                colaCommandRepository.guardarDetalle(colaDestino.getIdentificador(), idSucursalDestino, detalle);
+            }
+        }
     }
 
     /** DTO de resultado embebido en el use case */

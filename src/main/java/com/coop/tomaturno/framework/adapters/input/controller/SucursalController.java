@@ -1,9 +1,8 @@
 package com.coop.tomaturno.framework.adapters.input.controller;
 
-
-
 import java.util.List;
 
+import com.coop.tomaturno.framework.adapters.config.ConfiguracionDefaultBean;
 import com.coop.tomaturno.framework.adapters.input.dto.SucursalRequestDTO;
 import com.coop.tomaturno.framework.adapters.input.dto.SucursalResponseDTO;
 import com.coop.tomaturno.framework.adapters.input.mapper.SucursalInputMapper;
@@ -23,15 +22,18 @@ public class SucursalController {
     private final SucursalInputMapper sucursalInputMapper;
     private final TurnoWebSocket turnoWebSocket;
     private final SucursalQueryInputPort sucursalQueryInputPort;
+    private final ConfiguracionDefaultBean configuracionDefaultBean;
 
     public SucursalController(SucursalCommandInputPort sucursalCommandInputPort,
                                      SucursalInputMapper sucursalInputMapper,
                                      TurnoWebSocket turnoWebSocket,
-                                     SucursalQueryInputPort sucursalQueryInputPort) {
+                                     SucursalQueryInputPort sucursalQueryInputPort,
+                                     ConfiguracionDefaultBean configuracionDefaultBean) {
         this.sucursalCommandInputPort = sucursalCommandInputPort;
         this.sucursalInputMapper = sucursalInputMapper;
         this.turnoWebSocket = turnoWebSocket;
         this.sucursalQueryInputPort = sucursalQueryInputPort;
+        this.configuracionDefaultBean = configuracionDefaultBean;
     }
 
     @POST
@@ -42,6 +44,7 @@ public class SucursalController {
     public Response crearSucursal(@Valid SucursalRequestDTO sucursalRequestDTO) {
         Sucursal sucursal = sucursalInputMapper.toSucursal(sucursalRequestDTO);
         Sucursal sucursalCreada = sucursalCommandInputPort.crear(sucursal);
+        configuracionDefaultBean.crearConfiguracionesParaSucursal(sucursalCreada.getIdentificador());
         if (turnoWebSocket != null) {
             turnoWebSocket.enviarTurno("Se ha creado una nueva sucursal");
         }
@@ -62,7 +65,7 @@ public class SucursalController {
         return Response.ok(responseDTO).build();
     }
 
-     @GET
+    @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<SucursalResponseDTO> listarTodas() {
         return sucursalQueryInputPort.listarTodas()
