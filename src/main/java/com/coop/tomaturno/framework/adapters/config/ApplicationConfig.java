@@ -46,6 +46,9 @@ import com.coop.tomaturno.turno.application.query.service.TurnoQueryService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 
+import com.coop.tomaturno.sucursal.application.command.port.output.SucursalEventPublisher;
+import com.coop.tomaturno.framework.adapters.event.SucursalEventPublisherAdapter;
+
 @ApplicationScoped
 public class ApplicationConfig {
 
@@ -94,19 +97,6 @@ public class ApplicationConfig {
         this.turnoQueryRepository = turnoQueryRepository;
     }
 
-    @Produces
-    @ApplicationScoped
-    public SucursalCommandInputPort sucursalCommandService() {
-        return new SucursalCommandService(sucursalCommandRepository, sucursalQueryRepository,
-                configuracionCommandRepository, configuracionQueryRepository,
-                usuarioCommandRepository, usuarioQueryRepository);
-    }
-
-    @Produces
-    @ApplicationScoped
-    public SucursalQueryInputPort sucursalQueryService() {
-        return new SucursalQueryService(sucursalQueryRepository);
-    }
 
     @Produces
     @ApplicationScoped
@@ -178,5 +168,24 @@ public class ApplicationConfig {
     @ApplicationScoped
     public TurnoQueryInputPort turnoQueryService() {
         return new TurnoQueryService(turnoQueryRepository);
+    }
+
+
+    @Produces
+    @ApplicationScoped
+    public SucursalEventPublisher sucursalEventPublisher(SucursalEventPublisherAdapter adapter) {
+        return adapter;
+    }
+
+    @Produces
+    @ApplicationScoped
+    public SucursalCommandInputPort sucursalCommandService(SucursalEventPublisher sucursalEventPublisher) {
+        return new SucursalCommandService(sucursalCommandRepository, sucursalQueryRepository, sucursalEventPublisher);
+    }
+
+    @Produces
+    @ApplicationScoped
+    public SucursalQueryInputPort sucursalQueryService() {
+        return new SucursalQueryService(sucursalQueryRepository);
     }
 }

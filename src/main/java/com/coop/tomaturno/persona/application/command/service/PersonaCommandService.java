@@ -6,9 +6,7 @@ import com.coop.tomaturno.persona.application.command.usecase.CrearOActualizarPe
 import com.coop.tomaturno.persona.application.query.port.output.PersonaQueryRepository;
 import com.coop.tomaturno.persona.dominio.entity.Persona;
 
-import jakarta.enterprise.context.ApplicationScoped;
 
-@ApplicationScoped
 public class PersonaCommandService implements PersonaCommandInputPort {
 
     private final CrearOActualizarPersonaUseCase crearOActualizarPersonaUseCase;
