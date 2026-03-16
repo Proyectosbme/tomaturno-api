@@ -1,9 +1,9 @@
-package com.coop.tomaturno.cola.application.command.port.input;
+package com.empresa.tomaturno.cola.application.command.port.input;
 
 
-import com.coop.tomaturno.cola.dominio.entity.Cola;
-import com.coop.tomaturno.cola.dominio.entity.Detalle;
-import com.coop.tomaturno.cola.application.command.usecase.ReplicarColasUseCase.ResultadoReplicacion;
+import com.empresa.tomaturno.cola.application.command.usecase.ReplicarColasUseCase.ResultadoReplicacion;
+import com.empresa.tomaturno.cola.dominio.entity.Cola;
+import com.empresa.tomaturno.cola.dominio.entity.Detalle;
 
 public interface ColaCommandInputPort {
     Cola crear(Cola cola);

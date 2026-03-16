@@ -1,8 +1,9 @@
-package com.coop.tomaturno.cola.application.query.usecase;
+package com.empresa.tomaturno.cola.application.query.usecase;
 
 import java.util.List;
-import com.coop.tomaturno.cola.application.query.port.output.ColaQueryRepository;
-import com.coop.tomaturno.cola.dominio.entity.Cola;
+
+import com.empresa.tomaturno.cola.application.query.port.output.ColaQueryRepository;
+import com.empresa.tomaturno.cola.dominio.entity.Cola;
 
 
 public class BuscarColaPorFiltrosUseCase {

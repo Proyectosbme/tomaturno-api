@@ -1,8 +1,8 @@
-package com.coop.tomaturno.detallecolaxpuesto.dominio.entity;
+package com.empresa.tomaturno.detallecolaxpuesto.dominio.entity;
 
 import java.time.LocalDateTime;
 
-import com.coop.tomaturno.detallecolaxpuesto.dominio.exceptions.DetalleColaxPuestoValidationException;
+import com.empresa.tomaturno.detallecolaxpuesto.dominio.exceptions.DetalleColaxPuestoValidationException;
 
 public class DetalleColaxPuesto {
 

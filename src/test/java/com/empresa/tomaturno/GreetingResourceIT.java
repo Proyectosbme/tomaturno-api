@@ -1,4 +1,4 @@
-package com.coop.tomaturno;
+package com.empresa.tomaturno;
 
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 

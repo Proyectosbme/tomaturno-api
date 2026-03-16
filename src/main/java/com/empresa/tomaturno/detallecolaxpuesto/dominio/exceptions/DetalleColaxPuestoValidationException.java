@@ -1,4 +1,4 @@
-package com.coop.tomaturno.detallecolaxpuesto.dominio.exceptions;
+package com.empresa.tomaturno.detallecolaxpuesto.dominio.exceptions;
 
 public class DetalleColaxPuestoValidationException extends RuntimeException {
 

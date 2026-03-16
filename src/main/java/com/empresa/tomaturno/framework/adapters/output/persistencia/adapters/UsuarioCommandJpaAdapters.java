@@ -1,11 +1,11 @@
-package com.coop.tomaturno.framework.adapters.output.persistencia.adapters;
+package com.empresa.tomaturno.framework.adapters.output.persistencia.adapters;
 
-import com.coop.tomaturno.framework.adapters.exceptions.NotFoundException;
-import com.coop.tomaturno.framework.adapters.output.mapper.UsuarioOutputMapper;
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.UsuarioJpaEntity;
-import com.coop.tomaturno.framework.adapters.output.persistencia.repository.UsuarioJpaRepository;
-import com.coop.tomaturno.usuario.application.command.port.output.UsuarioCommandRepository;
-import com.coop.tomaturno.usuario.dominio.entity.Usuario;
+import com.empresa.tomaturno.framework.adapters.exceptions.NotFoundException;
+import com.empresa.tomaturno.framework.adapters.output.mapper.UsuarioOutputMapper;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.UsuarioJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.UsuarioJpaRepository;
+import com.empresa.tomaturno.usuario.application.command.port.output.UsuarioCommandRepository;
+import com.empresa.tomaturno.usuario.dominio.entity.Usuario;
 
 import jakarta.enterprise.context.ApplicationScoped;
 

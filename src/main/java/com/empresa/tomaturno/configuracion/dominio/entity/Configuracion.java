@@ -1,8 +1,8 @@
-package com.coop.tomaturno.configuracion.dominio.entity;
+package com.empresa.tomaturno.configuracion.dominio.entity;
 
-import com.coop.tomaturno.configuracion.dominio.exceptions.ConfiguracionValidationException;
-import com.coop.tomaturno.configuracion.dominio.vo.Auditoria;
-import com.coop.tomaturno.configuracion.dominio.vo.Estado;
+import com.empresa.tomaturno.configuracion.dominio.exceptions.ConfiguracionValidationException;
+import com.empresa.tomaturno.configuracion.dominio.vo.Auditoria;
+import com.empresa.tomaturno.configuracion.dominio.vo.Estado;
 
 public class Configuracion {
 

@@ -1,18 +1,18 @@
-package com.coop.tomaturno.framework.adapters.output.persistencia.adapters;
-
-import com.coop.tomaturno.configuracion.application.query.port.output.ConfiguracionQueryRepository;
-import com.coop.tomaturno.configuracion.dominio.entity.Configuracion;
-import com.coop.tomaturno.framework.adapters.output.mapper.ConfiguracionOutputMapper;
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.ConfiguracionJpaEntity;
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.SucursalJpaEntity;
-import com.coop.tomaturno.framework.adapters.output.persistencia.repository.ConfiguracionJpaRepository;
-import com.coop.tomaturno.framework.adapters.output.persistencia.repository.SucursalJpaRepository;
+package com.empresa.tomaturno.framework.adapters.output.persistencia.adapters;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import com.empresa.tomaturno.configuracion.application.query.port.output.ConfiguracionQueryRepository;
+import com.empresa.tomaturno.configuracion.dominio.entity.Configuracion;
+import com.empresa.tomaturno.framework.adapters.output.mapper.ConfiguracionOutputMapper;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.ConfiguracionJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.SucursalJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.ConfiguracionJpaRepository;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.SucursalJpaRepository;
 
 @ApplicationScoped
 public class ConfiguracionQueryJpaAdapters implements ConfiguracionQueryRepository {

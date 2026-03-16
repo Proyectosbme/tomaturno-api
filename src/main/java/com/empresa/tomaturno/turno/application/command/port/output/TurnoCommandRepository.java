@@ -1,6 +1,6 @@
-package com.coop.tomaturno.turno.application.command.port.output;
+package com.empresa.tomaturno.turno.application.command.port.output;
 
-import com.coop.tomaturno.turno.dominio.entity.Turno;
+import com.empresa.tomaturno.turno.dominio.entity.Turno;
 
 public interface TurnoCommandRepository {
     Turno save(Turno turno);

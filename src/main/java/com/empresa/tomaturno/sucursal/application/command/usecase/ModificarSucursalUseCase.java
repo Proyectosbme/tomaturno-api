@@ -1,11 +1,11 @@
-package com.coop.tomaturno.sucursal.application.command.usecase;
+package com.empresa.tomaturno.sucursal.application.command.usecase;
 
 import java.time.LocalDateTime;
 
-import com.coop.tomaturno.sucursal.application.command.port.output.SucursalCommandRepository;
-import com.coop.tomaturno.sucursal.application.query.port.output.SucursalQueryRepository;
-import com.coop.tomaturno.sucursal.dominio.entity.Sucursal;
-import com.coop.tomaturno.sucursal.dominio.exceptions.SucursalNotFoundException;
+import com.empresa.tomaturno.sucursal.application.command.port.output.SucursalCommandRepository;
+import com.empresa.tomaturno.sucursal.application.query.port.output.SucursalQueryRepository;
+import com.empresa.tomaturno.sucursal.dominio.entity.Sucursal;
+import com.empresa.tomaturno.sucursal.dominio.exceptions.SucursalNotFoundException;
 
 public class ModificarSucursalUseCase {
 

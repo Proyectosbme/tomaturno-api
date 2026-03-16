@@ -1,10 +1,10 @@
-package com.coop.tomaturno.cola.application.command.usecase;
+package com.empresa.tomaturno.cola.application.command.usecase;
 
 import java.time.LocalDateTime;
 
-import com.coop.tomaturno.cola.application.command.port.output.ColaCommandRepository;
-import com.coop.tomaturno.cola.application.query.port.output.ColaQueryRepository;
-import com.coop.tomaturno.cola.dominio.entity.Cola;
+import com.empresa.tomaturno.cola.application.command.port.output.ColaCommandRepository;
+import com.empresa.tomaturno.cola.application.query.port.output.ColaQueryRepository;
+import com.empresa.tomaturno.cola.dominio.entity.Cola;
 
 public class CrearColaCaseUse {
 

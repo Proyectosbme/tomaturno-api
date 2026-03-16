@@ -1,7 +1,7 @@
-package com.coop.tomaturno.usuario.application.query.usecase;
+package com.empresa.tomaturno.usuario.application.query.usecase;
 
-import com.coop.tomaturno.usuario.application.query.port.output.UsuarioQueryRepository;
-import com.coop.tomaturno.usuario.dominio.entity.Usuario;
+import com.empresa.tomaturno.usuario.application.query.port.output.UsuarioQueryRepository;
+import com.empresa.tomaturno.usuario.dominio.entity.Usuario;
 
 public class BuscarUsuarioPorCodigoUseCase {
 

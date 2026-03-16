@@ -1,10 +1,10 @@
-package com.coop.tomaturno.framework.adapters.input.controller;
+package com.empresa.tomaturno.framework.adapters.input.controller;
 
-import com.coop.tomaturno.framework.adapters.input.dto.PersonaRequestDTO;
-import com.coop.tomaturno.framework.adapters.input.dto.PersonaResponseDTO;
-import com.coop.tomaturno.framework.adapters.input.mapper.PersonaInputMapper;
-import com.coop.tomaturno.persona.application.command.port.input.PersonaCommandInputPort;
-import com.coop.tomaturno.persona.dominio.entity.Persona;
+import com.empresa.tomaturno.framework.adapters.input.dto.PersonaRequestDTO;
+import com.empresa.tomaturno.framework.adapters.input.dto.PersonaResponseDTO;
+import com.empresa.tomaturno.framework.adapters.input.mapper.PersonaInputMapper;
+import com.empresa.tomaturno.persona.application.command.port.input.PersonaCommandInputPort;
+import com.empresa.tomaturno.persona.dominio.entity.Persona;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;

@@ -1,13 +1,13 @@
-package com.coop.tomaturno.sucursal.application.query.service;
+package com.empresa.tomaturno.sucursal.application.query.service;
 
 import java.util.List;
 
-import com.coop.tomaturno.sucursal.application.query.port.input.SucursalQueryInputPort;
-import com.coop.tomaturno.sucursal.application.query.port.output.SucursalQueryRepository;
-import com.coop.tomaturno.sucursal.application.query.usecase.BuscarSucursalPorIdUseCase;
-import com.coop.tomaturno.sucursal.application.query.usecase.BuscarSucursalPorNombreUseCase;
-import com.coop.tomaturno.sucursal.application.query.usecase.ListarTodasLasSucursalesUseCase;
-import com.coop.tomaturno.sucursal.dominio.entity.Sucursal;
+import com.empresa.tomaturno.sucursal.application.query.port.input.SucursalQueryInputPort;
+import com.empresa.tomaturno.sucursal.application.query.port.output.SucursalQueryRepository;
+import com.empresa.tomaturno.sucursal.application.query.usecase.BuscarSucursalPorIdUseCase;
+import com.empresa.tomaturno.sucursal.application.query.usecase.BuscarSucursalPorNombreUseCase;
+import com.empresa.tomaturno.sucursal.application.query.usecase.ListarTodasLasSucursalesUseCase;
+import com.empresa.tomaturno.sucursal.dominio.entity.Sucursal;
 
 public class SucursalQueryService implements SucursalQueryInputPort {
 

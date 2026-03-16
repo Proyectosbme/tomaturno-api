@@ -1,15 +1,4 @@
-package com.coop.tomaturno.framework.adapters.input.controller;
-
-import com.coop.tomaturno.cola.application.command.port.input.ColaCommandInputPort;
-import com.coop.tomaturno.cola.application.command.usecase.ReplicarColasUseCase.ResultadoReplicacion;
-import com.coop.tomaturno.cola.application.query.port.input.ColaQueryInputPort;
-import com.coop.tomaturno.cola.dominio.entity.Cola;
-import com.coop.tomaturno.cola.dominio.entity.Detalle;
-import com.coop.tomaturno.framework.adapters.input.dto.ColaRequestDTO;
-import com.coop.tomaturno.framework.adapters.input.dto.ColaResponseDTO;
-import com.coop.tomaturno.framework.adapters.input.dto.DetalleRequestDTO;
-import com.coop.tomaturno.framework.adapters.input.dto.ReplicarResponseDTO;
-import com.coop.tomaturno.framework.adapters.input.mapper.ColaInputMapper;
+package com.empresa.tomaturno.framework.adapters.input.controller;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -18,6 +7,17 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import java.util.List;
+
+import com.empresa.tomaturno.cola.application.command.port.input.ColaCommandInputPort;
+import com.empresa.tomaturno.cola.application.command.usecase.ReplicarColasUseCase.ResultadoReplicacion;
+import com.empresa.tomaturno.cola.application.query.port.input.ColaQueryInputPort;
+import com.empresa.tomaturno.cola.dominio.entity.Cola;
+import com.empresa.tomaturno.cola.dominio.entity.Detalle;
+import com.empresa.tomaturno.framework.adapters.input.dto.ColaRequestDTO;
+import com.empresa.tomaturno.framework.adapters.input.dto.ColaResponseDTO;
+import com.empresa.tomaturno.framework.adapters.input.dto.DetalleRequestDTO;
+import com.empresa.tomaturno.framework.adapters.input.dto.ReplicarResponseDTO;
+import com.empresa.tomaturno.framework.adapters.input.mapper.ColaInputMapper;
 
 @Path("/colas")
 public class ColaController {

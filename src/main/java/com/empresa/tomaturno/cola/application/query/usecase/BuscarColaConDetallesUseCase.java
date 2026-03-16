@@ -1,8 +1,8 @@
-package com.coop.tomaturno.cola.application.query.usecase;
+package com.empresa.tomaturno.cola.application.query.usecase;
 
-import com.coop.tomaturno.cola.application.query.port.output.ColaQueryRepository;
-import com.coop.tomaturno.cola.dominio.entity.Cola;
-import com.coop.tomaturno.cola.dominio.exceptions.ColaNotFoundException;
+import com.empresa.tomaturno.cola.application.query.port.output.ColaQueryRepository;
+import com.empresa.tomaturno.cola.dominio.entity.Cola;
+import com.empresa.tomaturno.cola.dominio.exceptions.ColaNotFoundException;
 
 public class BuscarColaConDetallesUseCase {
 

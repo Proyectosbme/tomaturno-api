@@ -1,4 +1,4 @@
-package com.coop.tomaturno.turno.dominio.exceptions;
+package com.empresa.tomaturno.turno.dominio.exceptions;
 
 public class TurnoValidationException extends RuntimeException {
     public TurnoValidationException(String mensaje) {

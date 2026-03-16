@@ -1,10 +1,10 @@
-package com.coop.tomaturno.framework.adapters.output.mapper;
+package com.empresa.tomaturno.framework.adapters.output.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import com.coop.tomaturno.detallecolaxpuesto.dominio.entity.DetalleColaxPuesto;
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaxPuestoJpaEntity;
+import com.empresa.tomaturno.detallecolaxpuesto.dominio.entity.DetalleColaxPuesto;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaxPuestoJpaEntity;
 
 @Mapper(componentModel = "cdi")
 public interface DetalleColaxPuestoOutputMapper {

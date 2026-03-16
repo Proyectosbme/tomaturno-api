@@ -1,15 +1,15 @@
-package com.coop.tomaturno.turno.application.command.usecase;
+package com.empresa.tomaturno.turno.application.command.usecase;
 
 import java.time.LocalDateTime;
 
-import com.coop.tomaturno.cola.application.query.port.output.ColaQueryRepository;
-import com.coop.tomaturno.cola.dominio.entity.Cola;
-import com.coop.tomaturno.turno.application.command.port.output.TurnoCommandRepository;
-import com.coop.tomaturno.turno.application.query.port.output.TurnoQueryRepository;
-import com.coop.tomaturno.turno.dominio.entity.Turno;
-import com.coop.tomaturno.turno.dominio.exceptions.TurnoNotFoundException;
-import com.coop.tomaturno.turno.dominio.exceptions.TurnoValidationException;
-import com.coop.tomaturno.turno.dominio.vo.EstadoTurno;
+import com.empresa.tomaturno.cola.application.query.port.output.ColaQueryRepository;
+import com.empresa.tomaturno.cola.dominio.entity.Cola;
+import com.empresa.tomaturno.turno.application.command.port.output.TurnoCommandRepository;
+import com.empresa.tomaturno.turno.application.query.port.output.TurnoQueryRepository;
+import com.empresa.tomaturno.turno.dominio.entity.Turno;
+import com.empresa.tomaturno.turno.dominio.exceptions.TurnoNotFoundException;
+import com.empresa.tomaturno.turno.dominio.exceptions.TurnoValidationException;
+import com.empresa.tomaturno.turno.dominio.vo.EstadoTurno;
 
 public class ReasignarTurnoUseCase {
 

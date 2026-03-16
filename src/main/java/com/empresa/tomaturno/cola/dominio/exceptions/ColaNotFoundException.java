@@ -1,4 +1,4 @@
-package com.coop.tomaturno.cola.dominio.exceptions;
+package com.empresa.tomaturno.cola.dominio.exceptions;
 
 public class ColaNotFoundException extends RuntimeException{
     /**

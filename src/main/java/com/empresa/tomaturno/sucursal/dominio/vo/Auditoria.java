@@ -1,8 +1,8 @@
-package com.coop.tomaturno.sucursal.dominio.vo;
+package com.empresa.tomaturno.sucursal.dominio.vo;
 
 import java.time.LocalDateTime;
 
-import com.coop.tomaturno.sucursal.dominio.exceptions.SucursalValidationException;
+import com.empresa.tomaturno.sucursal.dominio.exceptions.SucursalValidationException;
 
 public class Auditoria {
 

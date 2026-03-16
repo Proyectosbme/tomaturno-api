@@ -1,12 +1,12 @@
-package com.coop.tomaturno.cola.dominio.entity;
+package com.empresa.tomaturno.cola.dominio.entity;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.coop.tomaturno.cola.dominio.exceptions.ColaValidationException;
-import com.coop.tomaturno.cola.dominio.vo.Auditoria;
-import com.coop.tomaturno.cola.dominio.vo.Estado;
-import com.coop.tomaturno.cola.dominio.vo.Sucursal;
+import com.empresa.tomaturno.cola.dominio.exceptions.ColaValidationException;
+import com.empresa.tomaturno.cola.dominio.vo.Auditoria;
+import com.empresa.tomaturno.cola.dominio.vo.Estado;
+import com.empresa.tomaturno.cola.dominio.vo.Sucursal;
 
 public class Cola {
     private Long identificador;

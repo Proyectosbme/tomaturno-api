@@ -1,11 +1,12 @@
-package com.coop.tomaturno.framework.adapters.config;
+package com.empresa.tomaturno.framework.adapters.config;
 
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.ConfiguracionJpaEntity;
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.ConfiguracionJpaEntityPK;
-import com.coop.tomaturno.framework.adapters.output.persistencia.repository.ConfiguracionJpaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.time.LocalDateTime;
+
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.ConfiguracionJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.ConfiguracionJpaEntityPK;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.ConfiguracionJpaRepository;
 
 @ApplicationScoped
 public class ConfiguracionDefaultBean {

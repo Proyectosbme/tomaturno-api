@@ -1,6 +1,6 @@
-package com.coop.tomaturno.persona.application.command.port.input;
+package com.empresa.tomaturno.persona.application.command.port.input;
 
-import com.coop.tomaturno.persona.dominio.entity.Persona;
+import com.empresa.tomaturno.persona.dominio.entity.Persona;
 
 public interface PersonaCommandInputPort {
     Persona crearOActualizar(Persona persona);

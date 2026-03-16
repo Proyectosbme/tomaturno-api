@@ -1,14 +1,14 @@
-package com.coop.tomaturno.turno.application.query.service;
+package com.empresa.tomaturno.turno.application.query.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.coop.tomaturno.turno.application.query.port.input.TurnoQueryInputPort;
-import com.coop.tomaturno.turno.application.query.port.output.TurnoQueryRepository;
-import com.coop.tomaturno.turno.application.query.usecase.BuscarTurnoPorPKUseCase;
-import com.coop.tomaturno.turno.application.query.usecase.BuscarTurnosPorFiltrosUseCase;
-import com.coop.tomaturno.turno.dominio.entity.Turno;
+import com.empresa.tomaturno.turno.application.query.port.input.TurnoQueryInputPort;
+import com.empresa.tomaturno.turno.application.query.port.output.TurnoQueryRepository;
+import com.empresa.tomaturno.turno.application.query.usecase.BuscarTurnoPorPKUseCase;
+import com.empresa.tomaturno.turno.application.query.usecase.BuscarTurnosPorFiltrosUseCase;
+import com.empresa.tomaturno.turno.dominio.entity.Turno;
 
 public class TurnoQueryService implements TurnoQueryInputPort {
 

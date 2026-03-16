@@ -1,4 +1,4 @@
-package com.coop.tomaturno.sucursal.dominio.event;
+package com.empresa.tomaturno.sucursal.dominio.event;
 
 public class SucursalCreadaEvent {
     private final Long sucursalId;

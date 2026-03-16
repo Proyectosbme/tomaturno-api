@@ -1,8 +1,8 @@
-package com.coop.tomaturno.configuracion.application.query.usecase;
+package com.empresa.tomaturno.configuracion.application.query.usecase;
 
-import com.coop.tomaturno.configuracion.application.query.port.output.ConfiguracionQueryRepository;
-import com.coop.tomaturno.configuracion.dominio.entity.Configuracion;
-import com.coop.tomaturno.configuracion.dominio.exceptions.ConfiguracionNotFoundException;
+import com.empresa.tomaturno.configuracion.application.query.port.output.ConfiguracionQueryRepository;
+import com.empresa.tomaturno.configuracion.dominio.entity.Configuracion;
+import com.empresa.tomaturno.configuracion.dominio.exceptions.ConfiguracionNotFoundException;
 
 public class BuscarConfiguracionPorIdUseCase {
 

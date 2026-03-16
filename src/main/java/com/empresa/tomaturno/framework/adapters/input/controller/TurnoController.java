@@ -1,17 +1,17 @@
-package com.coop.tomaturno.framework.adapters.input.controller;
+package com.empresa.tomaturno.framework.adapters.input.controller;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.coop.tomaturno.turno.application.command.port.input.TurnoCommandInputPort;
-import com.coop.tomaturno.turno.application.query.port.input.TurnoQueryInputPort;
-import com.coop.tomaturno.turno.dominio.entity.Turno;
-import com.coop.tomaturno.framework.adapters.input.dto.CrearTurnoRequestDTO;
-import com.coop.tomaturno.framework.adapters.input.dto.LlamarTurnoRequestDTO;
-import com.coop.tomaturno.framework.adapters.input.dto.ReasignarTurnoRequestDTO;
-import com.coop.tomaturno.framework.adapters.input.dto.TurnoResponseDTO;
-import com.coop.tomaturno.framework.adapters.input.mapper.TurnoInputMapper;
+import com.empresa.tomaturno.framework.adapters.input.dto.CrearTurnoRequestDTO;
+import com.empresa.tomaturno.framework.adapters.input.dto.LlamarTurnoRequestDTO;
+import com.empresa.tomaturno.framework.adapters.input.dto.ReasignarTurnoRequestDTO;
+import com.empresa.tomaturno.framework.adapters.input.dto.TurnoResponseDTO;
+import com.empresa.tomaturno.framework.adapters.input.mapper.TurnoInputMapper;
+import com.empresa.tomaturno.turno.application.command.port.input.TurnoCommandInputPort;
+import com.empresa.tomaturno.turno.application.query.port.input.TurnoQueryInputPort;
+import com.empresa.tomaturno.turno.dominio.entity.Turno;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;

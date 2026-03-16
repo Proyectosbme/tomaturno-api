@@ -1,4 +1,4 @@
-package com.coop.tomaturno.framework.adapters.output.persistencia.entity;
+package com.empresa.tomaturno.framework.adapters.output.persistencia.entity;
 
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;

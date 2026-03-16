@@ -1,6 +1,6 @@
-package com.coop.tomaturno.configuracion.application.command.port.input;
+package com.empresa.tomaturno.configuracion.application.command.port.input;
 
-import com.coop.tomaturno.configuracion.dominio.entity.Configuracion;
+import com.empresa.tomaturno.configuracion.dominio.entity.Configuracion;
 
 public interface ConfiguracionCommandInputPort {
     Configuracion crear(Configuracion configuracion);

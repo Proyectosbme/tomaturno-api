@@ -1,15 +1,15 @@
-package com.coop.tomaturno.turno.application.command.usecase;
+package com.empresa.tomaturno.turno.application.command.usecase;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import com.coop.tomaturno.configuracion.application.query.port.output.ConfiguracionQueryRepository;
-import com.coop.tomaturno.configuracion.dominio.entity.Configuracion;
-import com.coop.tomaturno.turno.application.command.port.output.TurnoCommandRepository;
-import com.coop.tomaturno.turno.application.query.port.output.TurnoQueryRepository;
-import com.coop.tomaturno.turno.dominio.entity.Turno;
-import com.coop.tomaturno.turno.dominio.exceptions.TurnoNotFoundException;
-import com.coop.tomaturno.turno.dominio.exceptions.TurnoValidationException;
+import com.empresa.tomaturno.configuracion.application.query.port.output.ConfiguracionQueryRepository;
+import com.empresa.tomaturno.configuracion.dominio.entity.Configuracion;
+import com.empresa.tomaturno.turno.application.command.port.output.TurnoCommandRepository;
+import com.empresa.tomaturno.turno.application.query.port.output.TurnoQueryRepository;
+import com.empresa.tomaturno.turno.dominio.entity.Turno;
+import com.empresa.tomaturno.turno.dominio.exceptions.TurnoNotFoundException;
+import com.empresa.tomaturno.turno.dominio.exceptions.TurnoValidationException;
 
 public class RellamarTurnoUseCase {
 

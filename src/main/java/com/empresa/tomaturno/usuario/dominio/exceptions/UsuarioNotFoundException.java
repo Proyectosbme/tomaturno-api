@@ -1,4 +1,4 @@
-package com.coop.tomaturno.usuario.dominio.exceptions;
+package com.empresa.tomaturno.usuario.dominio.exceptions;
 
 public class UsuarioNotFoundException extends RuntimeException {
 

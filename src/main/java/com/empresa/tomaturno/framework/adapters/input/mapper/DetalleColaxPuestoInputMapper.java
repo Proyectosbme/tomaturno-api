@@ -1,11 +1,11 @@
-package com.coop.tomaturno.framework.adapters.input.mapper;
+package com.empresa.tomaturno.framework.adapters.input.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import com.coop.tomaturno.detallecolaxpuesto.dominio.entity.DetalleColaxPuesto;
-import com.coop.tomaturno.framework.adapters.input.dto.DetalleColaxPuestoRequestDTO;
-import com.coop.tomaturno.framework.adapters.input.dto.DetalleColaxPuestoResponseDTO;
+import com.empresa.tomaturno.detallecolaxpuesto.dominio.entity.DetalleColaxPuesto;
+import com.empresa.tomaturno.framework.adapters.input.dto.DetalleColaxPuestoRequestDTO;
+import com.empresa.tomaturno.framework.adapters.input.dto.DetalleColaxPuestoResponseDTO;
 
 @Mapper(componentModel = "cdi")
 public interface DetalleColaxPuestoInputMapper {

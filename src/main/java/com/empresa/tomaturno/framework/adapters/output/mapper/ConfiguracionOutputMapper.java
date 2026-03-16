@@ -1,13 +1,13 @@
-package com.coop.tomaturno.framework.adapters.output.mapper;
+package com.empresa.tomaturno.framework.adapters.output.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
-import com.coop.tomaturno.configuracion.dominio.entity.Configuracion;
-import com.coop.tomaturno.configuracion.dominio.vo.Estado;
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.ConfiguracionJpaEntity;
+import com.empresa.tomaturno.configuracion.dominio.entity.Configuracion;
+import com.empresa.tomaturno.configuracion.dominio.vo.Estado;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.ConfiguracionJpaEntity;
 
 @Mapper(componentModel = "cdi")
 public interface ConfiguracionOutputMapper {

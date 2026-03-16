@@ -1,13 +1,13 @@
-package com.coop.tomaturno.framework.adapters.output.mapper;
+package com.empresa.tomaturno.framework.adapters.output.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.TurnoJpaEntity;
-import com.coop.tomaturno.turno.dominio.entity.Turno;
-import com.coop.tomaturno.turno.dominio.vo.EstadoTurno;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.TurnoJpaEntity;
+import com.empresa.tomaturno.turno.dominio.entity.Turno;
+import com.empresa.tomaturno.turno.dominio.vo.EstadoTurno;
 
 @Mapper(componentModel = "cdi")
 public interface TurnoOutputMapper {

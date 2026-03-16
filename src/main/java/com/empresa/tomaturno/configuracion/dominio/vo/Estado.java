@@ -1,4 +1,4 @@
-package com.coop.tomaturno.configuracion.dominio.vo;
+package com.empresa.tomaturno.configuracion.dominio.vo;
 
 public enum Estado {
 

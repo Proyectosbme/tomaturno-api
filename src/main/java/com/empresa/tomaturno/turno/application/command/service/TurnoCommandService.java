@@ -1,18 +1,18 @@
-package com.coop.tomaturno.turno.application.command.service;
+package com.empresa.tomaturno.turno.application.command.service;
 
 import java.time.LocalDateTime;
 
-import com.coop.tomaturno.cola.application.query.port.output.ColaQueryRepository;
-import com.coop.tomaturno.configuracion.application.query.port.output.ConfiguracionQueryRepository;
-import com.coop.tomaturno.turno.application.command.port.input.TurnoCommandInputPort;
-import com.coop.tomaturno.turno.application.command.port.output.TurnoCommandRepository;
-import com.coop.tomaturno.turno.application.command.usecase.CrearTurnoUseCase;
-import com.coop.tomaturno.turno.application.command.usecase.FinalizarTurnoUseCase;
-import com.coop.tomaturno.turno.application.command.usecase.LlamarTurnoUseCase;
-import com.coop.tomaturno.turno.application.command.usecase.ReasignarTurnoUseCase;
-import com.coop.tomaturno.turno.application.command.usecase.RellamarTurnoUseCase;
-import com.coop.tomaturno.turno.application.query.port.output.TurnoQueryRepository;
-import com.coop.tomaturno.turno.dominio.entity.Turno;
+import com.empresa.tomaturno.cola.application.query.port.output.ColaQueryRepository;
+import com.empresa.tomaturno.configuracion.application.query.port.output.ConfiguracionQueryRepository;
+import com.empresa.tomaturno.turno.application.command.port.input.TurnoCommandInputPort;
+import com.empresa.tomaturno.turno.application.command.port.output.TurnoCommandRepository;
+import com.empresa.tomaturno.turno.application.command.usecase.CrearTurnoUseCase;
+import com.empresa.tomaturno.turno.application.command.usecase.FinalizarTurnoUseCase;
+import com.empresa.tomaturno.turno.application.command.usecase.LlamarTurnoUseCase;
+import com.empresa.tomaturno.turno.application.command.usecase.ReasignarTurnoUseCase;
+import com.empresa.tomaturno.turno.application.command.usecase.RellamarTurnoUseCase;
+import com.empresa.tomaturno.turno.application.query.port.output.TurnoQueryRepository;
+import com.empresa.tomaturno.turno.dominio.entity.Turno;
 
 public class TurnoCommandService implements TurnoCommandInputPort {
 

@@ -1,7 +1,8 @@
-package com.coop.tomaturno.cola.application.query.port.output;
+package com.empresa.tomaturno.cola.application.query.port.output;
 
 import java.util.List;
-import com.coop.tomaturno.cola.dominio.entity.Cola;
+
+import com.empresa.tomaturno.cola.dominio.entity.Cola;
 
 public interface ColaQueryRepository {
 

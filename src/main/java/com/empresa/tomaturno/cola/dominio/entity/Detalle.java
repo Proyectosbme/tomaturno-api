@@ -1,10 +1,10 @@
-package com.coop.tomaturno.cola.dominio.entity;
+package com.empresa.tomaturno.cola.dominio.entity;
 
 import java.time.LocalDateTime;
 
-import com.coop.tomaturno.cola.dominio.exceptions.ColaValidationException;
-import com.coop.tomaturno.cola.dominio.vo.Auditoria;
-import com.coop.tomaturno.cola.dominio.vo.Estado;
+import com.empresa.tomaturno.cola.dominio.exceptions.ColaValidationException;
+import com.empresa.tomaturno.cola.dominio.vo.Auditoria;
+import com.empresa.tomaturno.cola.dominio.vo.Estado;
 
 public class Detalle {
 

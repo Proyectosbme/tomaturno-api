@@ -1,8 +1,8 @@
-package com.coop.tomaturno.turno.application.command.port.input;
+package com.empresa.tomaturno.turno.application.command.port.input;
 
 import java.time.LocalDateTime;
 
-import com.coop.tomaturno.turno.dominio.entity.Turno;
+import com.empresa.tomaturno.turno.dominio.entity.Turno;
 
 public interface TurnoCommandInputPort {
     Turno crear(Long idSucursal, Long idCola, Long idDetalle, Long idPersona, Integer tipoCasoEspecial);

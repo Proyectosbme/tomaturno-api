@@ -1,4 +1,4 @@
-package com.coop.tomaturno.framework.adapters.exceptions;
+package com.empresa.tomaturno.framework.adapters.exceptions;
 
 import lombok.*;
 

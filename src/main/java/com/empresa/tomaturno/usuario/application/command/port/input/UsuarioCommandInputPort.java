@@ -1,6 +1,6 @@
-package com.coop.tomaturno.usuario.application.command.port.input;
+package com.empresa.tomaturno.usuario.application.command.port.input;
 
-import com.coop.tomaturno.usuario.dominio.entity.Usuario;
+import com.empresa.tomaturno.usuario.dominio.entity.Usuario;
 
 public interface UsuarioCommandInputPort {
     Usuario crear(Usuario usuario);

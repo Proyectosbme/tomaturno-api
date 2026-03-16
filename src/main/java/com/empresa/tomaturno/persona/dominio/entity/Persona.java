@@ -1,4 +1,4 @@
-package com.coop.tomaturno.persona.dominio.entity;
+package com.empresa.tomaturno.persona.dominio.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

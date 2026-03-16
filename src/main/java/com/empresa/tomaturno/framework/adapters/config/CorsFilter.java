@@ -1,4 +1,4 @@
-package com.coop.tomaturno.framework.adapters.config;
+package com.empresa.tomaturno.framework.adapters.config;
 
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerResponseContext;

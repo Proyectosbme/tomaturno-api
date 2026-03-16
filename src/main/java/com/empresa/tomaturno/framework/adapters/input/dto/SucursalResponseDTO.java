@@ -1,4 +1,4 @@
-package com.coop.tomaturno.framework.adapters.input.dto;
+package com.empresa.tomaturno.framework.adapters.input.dto;
 
 import java.time.LocalDateTime;
 

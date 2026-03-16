@@ -1,11 +1,11 @@
-package com.coop.tomaturno.usuario.application.command.service;
+package com.empresa.tomaturno.usuario.application.command.service;
 
-import com.coop.tomaturno.usuario.application.command.port.input.UsuarioCommandInputPort;
-import com.coop.tomaturno.usuario.application.command.port.output.UsuarioCommandRepository;
-import com.coop.tomaturno.usuario.application.command.usecase.CrearUsuarioUseCase;
-import com.coop.tomaturno.usuario.application.command.usecase.ModificarUsuarioUseCase;
-import com.coop.tomaturno.usuario.application.query.port.output.UsuarioQueryRepository;
-import com.coop.tomaturno.usuario.dominio.entity.Usuario;
+import com.empresa.tomaturno.usuario.application.command.port.input.UsuarioCommandInputPort;
+import com.empresa.tomaturno.usuario.application.command.port.output.UsuarioCommandRepository;
+import com.empresa.tomaturno.usuario.application.command.usecase.CrearUsuarioUseCase;
+import com.empresa.tomaturno.usuario.application.command.usecase.ModificarUsuarioUseCase;
+import com.empresa.tomaturno.usuario.application.query.port.output.UsuarioQueryRepository;
+import com.empresa.tomaturno.usuario.dominio.entity.Usuario;
 
 public class UsuarioCommandService implements UsuarioCommandInputPort {
 

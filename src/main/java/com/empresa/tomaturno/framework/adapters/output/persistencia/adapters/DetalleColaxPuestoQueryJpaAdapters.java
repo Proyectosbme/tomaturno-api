@@ -1,18 +1,18 @@
-package com.coop.tomaturno.framework.adapters.output.persistencia.adapters;
+package com.empresa.tomaturno.framework.adapters.output.persistencia.adapters;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.coop.tomaturno.detallecolaxpuesto.application.query.port.output.DetalleColaxPuestoQueryRepository;
-import com.coop.tomaturno.detallecolaxpuesto.dominio.entity.DetalleColaxPuesto;
-import com.coop.tomaturno.framework.adapters.output.mapper.DetalleColaxPuestoOutputMapper;
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.ColaJpaEntity;
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaJpaEntity;
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaxPuestoJpaEntity;
-import com.coop.tomaturno.framework.adapters.output.persistencia.repository.ColaDetalleRepository;
-import com.coop.tomaturno.framework.adapters.output.persistencia.repository.ColaJpaRespository;
-import com.coop.tomaturno.framework.adapters.output.persistencia.repository.DetalleColaxPuestoJpaRepository;
+import com.empresa.tomaturno.detallecolaxpuesto.application.query.port.output.DetalleColaxPuestoQueryRepository;
+import com.empresa.tomaturno.detallecolaxpuesto.dominio.entity.DetalleColaxPuesto;
+import com.empresa.tomaturno.framework.adapters.output.mapper.DetalleColaxPuestoOutputMapper;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.ColaJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaxPuestoJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.ColaDetalleRepository;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.ColaJpaRespository;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.DetalleColaxPuestoJpaRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 

@@ -1,15 +1,15 @@
-package com.coop.tomaturno.framework.adapters.output.mapper;
+package com.empresa.tomaturno.framework.adapters.output.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.ColaJpaEntity;
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaJpaEntity;
-import com.coop.tomaturno.cola.dominio.entity.Cola;
-import com.coop.tomaturno.cola.dominio.entity.Detalle;
-import com.coop.tomaturno.cola.dominio.vo.Estado;
+import com.empresa.tomaturno.cola.dominio.entity.Cola;
+import com.empresa.tomaturno.cola.dominio.entity.Detalle;
+import com.empresa.tomaturno.cola.dominio.vo.Estado;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.ColaJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaJpaEntity;
 
 @Mapper(componentModel = "cdi")
 public interface ColaOutputMapper {
