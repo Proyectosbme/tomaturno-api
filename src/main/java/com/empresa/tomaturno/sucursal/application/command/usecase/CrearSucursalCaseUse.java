@@ -20,7 +20,6 @@ public class CrearSucursalCaseUse {
 
     public Sucursal ejecutar(Sucursal sucursal) {
         sucursal.auditoriaCreacion("bmarroquin", LocalDateTime.now());
-        sucursal.validarCreacion();
         Sucursal creada = sucursalCommandRepository.save(sucursal);
         eventPublisher.publishSucursalCreada(new SucursalCreadaEvent(creada.getIdentificador()));
         return creada;

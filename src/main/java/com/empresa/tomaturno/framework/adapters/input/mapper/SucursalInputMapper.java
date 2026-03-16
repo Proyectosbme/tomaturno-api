@@ -7,21 +7,18 @@ import org.mapstruct.Named;
 import com.empresa.tomaturno.framework.adapters.input.dto.SucursalRequestDTO;
 import com.empresa.tomaturno.framework.adapters.input.dto.SucursalResponseDTO;
 import com.empresa.tomaturno.sucursal.dominio.entity.Sucursal;
+import com.empresa.tomaturno.sucursal.dominio.vo.Contacto;
 import com.empresa.tomaturno.sucursal.dominio.vo.Estado;
 
 @Mapper(componentModel = "cdi")
 public interface SucursalInputMapper {
 
-    @Mapping(ignore = true, target = "identificador")
-    @Mapping(ignore = true, target = "auditoria")
-    @Mapping(source = "telefono", target = "contacto.telefono")
-    @Mapping(source = "correo", target = "contacto.correo")
-    @Mapping(source = "direccion", target = "contacto.direccion")
-    @Mapping(source = "estado", target = "estado", qualifiedByName = "codigoToEstado")
-    Sucursal toSucursal(SucursalRequestDTO sucursalRequestDTO);
+    default Sucursal toSucursal(SucursalRequestDTO dto) {
+        Contacto contacto = Contacto.crear(dto.getTelefono(), dto.getCorreo(), dto.getDireccion());
+        return Sucursal.crear(dto.getNombre(), contacto, Estado.fromCodigo(dto.getEstado()));
+    }
 
     @Mapping(source = "identificador", target = "codigo")
-    @Mapping(source = "nombre", target = "nombre")
     @Mapping(source = "contacto.telefono", target = "telefono")
     @Mapping(source = "contacto.correo", target = "correo")
     @Mapping(source = "contacto.direccion", target = "direccion")
@@ -35,10 +32,5 @@ public interface SucursalInputMapper {
     @Named("estadoToCodigo")
     default Integer estadoToCodigo(Estado estado) {
         return estado != null ? estado.getCodigo() : null;
-    }
-
-    @Named("codigoToEstado")
-    default Estado codigoToEstado(Integer codigo) {
-        return codigo != null ? Estado.fromCodigo(codigo) : null;
     }
 }
