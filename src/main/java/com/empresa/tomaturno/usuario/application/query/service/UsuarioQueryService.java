@@ -1,13 +1,13 @@
-package com.coop.tomaturno.usuario.application.query.service;
+package com.empresa.tomaturno.usuario.application.query.service;
 
 import java.util.List;
 
-import com.coop.tomaturno.usuario.application.query.port.input.UsuarioQueryInputPort;
-import com.coop.tomaturno.usuario.application.query.port.output.UsuarioQueryRepository;
-import com.coop.tomaturno.usuario.application.query.usecase.BuscarUsuarioPorCodigoUseCase;
-import com.coop.tomaturno.usuario.application.query.usecase.BuscarUsuarioPorFiltrosUseCase;
-import com.coop.tomaturno.usuario.application.query.usecase.BuscarUsuarioPorIdUseCase;
-import com.coop.tomaturno.usuario.dominio.entity.Usuario;
+import com.empresa.tomaturno.usuario.application.query.port.input.UsuarioQueryInputPort;
+import com.empresa.tomaturno.usuario.application.query.port.output.UsuarioQueryRepository;
+import com.empresa.tomaturno.usuario.application.query.usecase.BuscarUsuarioPorCodigoUseCase;
+import com.empresa.tomaturno.usuario.application.query.usecase.BuscarUsuarioPorFiltrosUseCase;
+import com.empresa.tomaturno.usuario.application.query.usecase.BuscarUsuarioPorIdUseCase;
+import com.empresa.tomaturno.usuario.dominio.entity.Usuario;
 
 public class UsuarioQueryService implements UsuarioQueryInputPort {
 

@@ -1,12 +1,12 @@
-package com.coop.tomaturno.cola.application.query.service;
+package com.empresa.tomaturno.cola.application.query.service;
 
 import java.util.List;
 
-import com.coop.tomaturno.cola.application.query.port.input.ColaQueryInputPort;
-import com.coop.tomaturno.cola.application.query.port.output.ColaQueryRepository;
-import com.coop.tomaturno.cola.application.query.usecase.BuscarColaConDetallesUseCase;
-import com.coop.tomaturno.cola.application.query.usecase.BuscarColaPorFiltrosUseCase;
-import com.coop.tomaturno.cola.dominio.entity.Cola;
+import com.empresa.tomaturno.cola.application.query.port.input.ColaQueryInputPort;
+import com.empresa.tomaturno.cola.application.query.port.output.ColaQueryRepository;
+import com.empresa.tomaturno.cola.application.query.usecase.BuscarColaConDetallesUseCase;
+import com.empresa.tomaturno.cola.application.query.usecase.BuscarColaPorFiltrosUseCase;
+import com.empresa.tomaturno.cola.dominio.entity.Cola;
 
 public class ColaQueryService implements ColaQueryInputPort {
 

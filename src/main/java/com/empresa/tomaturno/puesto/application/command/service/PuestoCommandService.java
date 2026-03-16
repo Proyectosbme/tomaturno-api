@@ -1,11 +1,11 @@
-package com.coop.tomaturno.puesto.application.command.service;
+package com.empresa.tomaturno.puesto.application.command.service;
 
-import com.coop.tomaturno.puesto.application.command.port.input.PuestoCommandInputPort;
-import com.coop.tomaturno.puesto.application.command.port.output.PuestoCommandRepository;
-import com.coop.tomaturno.puesto.application.command.usecase.CrearPuestoUseCase;
-import com.coop.tomaturno.puesto.application.command.usecase.ModificarPuestoUseCase;
-import com.coop.tomaturno.puesto.application.query.port.output.PuestoQueryRepository;
-import com.coop.tomaturno.puesto.dominio.entity.Puesto;
+import com.empresa.tomaturno.puesto.application.command.port.input.PuestoCommandInputPort;
+import com.empresa.tomaturno.puesto.application.command.port.output.PuestoCommandRepository;
+import com.empresa.tomaturno.puesto.application.command.usecase.CrearPuestoUseCase;
+import com.empresa.tomaturno.puesto.application.command.usecase.ModificarPuestoUseCase;
+import com.empresa.tomaturno.puesto.application.query.port.output.PuestoQueryRepository;
+import com.empresa.tomaturno.puesto.dominio.entity.Puesto;
 
 public class PuestoCommandService implements PuestoCommandInputPort {
 

@@ -1,9 +1,9 @@
-package com.coop.tomaturno.turno.dominio.entity;
+package com.empresa.tomaturno.turno.dominio.entity;
 
 import java.time.LocalDateTime;
 
-import com.coop.tomaturno.turno.dominio.exceptions.TurnoValidationException;
-import com.coop.tomaturno.turno.dominio.vo.EstadoTurno;
+import com.empresa.tomaturno.turno.dominio.exceptions.TurnoValidationException;
+import com.empresa.tomaturno.turno.dominio.vo.EstadoTurno;
 
 public class Turno {
 

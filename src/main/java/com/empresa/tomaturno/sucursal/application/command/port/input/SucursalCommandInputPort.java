@@ -1,6 +1,6 @@
-package com.coop.tomaturno.sucursal.application.command.port.input;
+package com.empresa.tomaturno.sucursal.application.command.port.input;
 
-import com.coop.tomaturno.sucursal.dominio.entity.Sucursal;
+import com.empresa.tomaturno.sucursal.dominio.entity.Sucursal;
 
 public interface SucursalCommandInputPort {
     Sucursal crear(Sucursal sucursal);

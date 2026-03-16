@@ -1,8 +1,8 @@
-package com.coop.tomaturno.configuracion.application.query.port.output;
-
-import com.coop.tomaturno.configuracion.dominio.entity.Configuracion;
+package com.empresa.tomaturno.configuracion.application.query.port.output;
 
 import java.util.List;
+
+import com.empresa.tomaturno.configuracion.dominio.entity.Configuracion;
 
 public interface ConfiguracionQueryRepository {
     List<Configuracion> buscarPorSucursal(Long idSucursal);

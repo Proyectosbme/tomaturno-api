@@ -1,4 +1,4 @@
-package com.coop.tomaturno.framework.adapters.input.mapper;
+package com.empresa.tomaturno.framework.adapters.input.mapper;
 
 import java.time.LocalDateTime;
 
@@ -6,13 +6,13 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
-import com.coop.tomaturno.cola.dominio.entity.Cola;
-import com.coop.tomaturno.cola.dominio.entity.Detalle;
-import com.coop.tomaturno.cola.dominio.vo.Estado;
-import com.coop.tomaturno.framework.adapters.input.dto.ColaRequestDTO;
-import com.coop.tomaturno.framework.adapters.input.dto.ColaResponseDTO;
-import com.coop.tomaturno.framework.adapters.input.dto.DetalleRequestDTO;
-import com.coop.tomaturno.framework.adapters.input.dto.DetalleResponseDTO;
+import com.empresa.tomaturno.cola.dominio.entity.Cola;
+import com.empresa.tomaturno.cola.dominio.entity.Detalle;
+import com.empresa.tomaturno.cola.dominio.vo.Estado;
+import com.empresa.tomaturno.framework.adapters.input.dto.ColaRequestDTO;
+import com.empresa.tomaturno.framework.adapters.input.dto.ColaResponseDTO;
+import com.empresa.tomaturno.framework.adapters.input.dto.DetalleRequestDTO;
+import com.empresa.tomaturno.framework.adapters.input.dto.DetalleResponseDTO;
 
 @Mapper(componentModel = "cdi")
 public interface ColaInputMapper {

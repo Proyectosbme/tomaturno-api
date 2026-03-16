@@ -1,10 +1,10 @@
-package com.coop.tomaturno.persona.application.command.usecase;
+package com.empresa.tomaturno.persona.application.command.usecase;
 
 import java.time.LocalDateTime;
 
-import com.coop.tomaturno.persona.application.command.port.output.PersonaCommandRepository;
-import com.coop.tomaturno.persona.application.query.port.output.PersonaQueryRepository;
-import com.coop.tomaturno.persona.dominio.entity.Persona;
+import com.empresa.tomaturno.persona.application.command.port.output.PersonaCommandRepository;
+import com.empresa.tomaturno.persona.application.query.port.output.PersonaQueryRepository;
+import com.empresa.tomaturno.persona.dominio.entity.Persona;
 
 public class CrearOActualizarPersonaUseCase {
 

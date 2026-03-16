@@ -1,8 +1,8 @@
-package com.coop.tomaturno.puesto.application.query.port.input;
+package com.empresa.tomaturno.puesto.application.query.port.input;
 
 import java.util.List;
 
-import com.coop.tomaturno.puesto.dominio.entity.Puesto;
+import com.empresa.tomaturno.puesto.dominio.entity.Puesto;
 
 public interface PuestoQueryInputPort {
     List<Puesto> buscarPorFiltro(Long idSucursal, String nombre);

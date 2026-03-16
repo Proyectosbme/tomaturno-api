@@ -1,11 +1,12 @@
-package com.coop.tomaturno.framework.adapters.output.persistencia.repository;
+package com.empresa.tomaturno.framework.adapters.output.persistencia.repository;
 
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaxPuestoJpaEntity;
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaxPuestoPK;
 import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.List;
+
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaxPuestoJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaxPuestoPK;
 
 @ApplicationScoped
 public class DetalleColaxPuestoJpaRepository

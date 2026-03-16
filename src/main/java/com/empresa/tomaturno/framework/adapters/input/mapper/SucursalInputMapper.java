@@ -1,13 +1,13 @@
-package com.coop.tomaturno.framework.adapters.input.mapper;
+package com.empresa.tomaturno.framework.adapters.input.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
-import com.coop.tomaturno.framework.adapters.input.dto.SucursalRequestDTO;
-import com.coop.tomaturno.framework.adapters.input.dto.SucursalResponseDTO;
-import com.coop.tomaturno.sucursal.dominio.entity.Sucursal;
-import com.coop.tomaturno.sucursal.dominio.vo.Estado;
+import com.empresa.tomaturno.framework.adapters.input.dto.SucursalRequestDTO;
+import com.empresa.tomaturno.framework.adapters.input.dto.SucursalResponseDTO;
+import com.empresa.tomaturno.sucursal.dominio.entity.Sucursal;
+import com.empresa.tomaturno.sucursal.dominio.vo.Estado;
 
 @Mapper(componentModel = "cdi")
 public interface SucursalInputMapper {

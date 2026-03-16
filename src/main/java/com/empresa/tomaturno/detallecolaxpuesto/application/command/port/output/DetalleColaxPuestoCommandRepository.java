@@ -1,6 +1,6 @@
-package com.coop.tomaturno.detallecolaxpuesto.application.command.port.output;
+package com.empresa.tomaturno.detallecolaxpuesto.application.command.port.output;
 
-import com.coop.tomaturno.detallecolaxpuesto.dominio.entity.DetalleColaxPuesto;
+import com.empresa.tomaturno.detallecolaxpuesto.dominio.entity.DetalleColaxPuesto;
 
 public interface DetalleColaxPuestoCommandRepository {
     DetalleColaxPuesto save(DetalleColaxPuesto asignacion);

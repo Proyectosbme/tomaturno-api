@@ -1,9 +1,9 @@
-package com.coop.tomaturno.configuracion.application.query.usecase;
-
-import com.coop.tomaturno.configuracion.application.query.port.output.ConfiguracionQueryRepository;
-import com.coop.tomaturno.configuracion.dominio.entity.Configuracion;
+package com.empresa.tomaturno.configuracion.application.query.usecase;
 
 import java.util.List;
+
+import com.empresa.tomaturno.configuracion.application.query.port.output.ConfiguracionQueryRepository;
+import com.empresa.tomaturno.configuracion.dominio.entity.Configuracion;
 
 public class BuscarConfiguracionPorSucursalUseCase {
 

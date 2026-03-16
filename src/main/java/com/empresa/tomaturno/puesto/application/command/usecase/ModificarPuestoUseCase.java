@@ -1,11 +1,11 @@
-package com.coop.tomaturno.puesto.application.command.usecase;
+package com.empresa.tomaturno.puesto.application.command.usecase;
 
 import java.time.LocalDateTime;
 
-import com.coop.tomaturno.puesto.application.command.port.output.PuestoCommandRepository;
-import com.coop.tomaturno.puesto.application.query.port.output.PuestoQueryRepository;
-import com.coop.tomaturno.puesto.dominio.entity.Puesto;
-import com.coop.tomaturno.puesto.dominio.exceptions.PuestoNotFoundException;
+import com.empresa.tomaturno.puesto.application.command.port.output.PuestoCommandRepository;
+import com.empresa.tomaturno.puesto.application.query.port.output.PuestoQueryRepository;
+import com.empresa.tomaturno.puesto.dominio.entity.Puesto;
+import com.empresa.tomaturno.puesto.dominio.exceptions.PuestoNotFoundException;
 
 public class ModificarPuestoUseCase {
 

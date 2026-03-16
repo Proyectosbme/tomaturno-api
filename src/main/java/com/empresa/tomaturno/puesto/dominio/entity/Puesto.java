@@ -1,11 +1,11 @@
-package com.coop.tomaturno.puesto.dominio.entity;
+package com.empresa.tomaturno.puesto.dominio.entity;
 
 import java.time.LocalDateTime;
 
-import com.coop.tomaturno.puesto.dominio.exceptions.PuestoValidationException;
-import com.coop.tomaturno.puesto.dominio.vo.Auditoria;
-import com.coop.tomaturno.puesto.dominio.vo.Estado;
-import com.coop.tomaturno.puesto.dominio.vo.Sucursal;
+import com.empresa.tomaturno.puesto.dominio.exceptions.PuestoValidationException;
+import com.empresa.tomaturno.puesto.dominio.vo.Auditoria;
+import com.empresa.tomaturno.puesto.dominio.vo.Estado;
+import com.empresa.tomaturno.puesto.dominio.vo.Sucursal;
 
 public class Puesto {
 

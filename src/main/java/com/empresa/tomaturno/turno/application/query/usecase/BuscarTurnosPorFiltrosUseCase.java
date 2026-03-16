@@ -1,10 +1,10 @@
-package com.coop.tomaturno.turno.application.query.usecase;
+package com.empresa.tomaturno.turno.application.query.usecase;
 
 import java.time.LocalDate;
 import java.util.List;
 
-import com.coop.tomaturno.turno.application.query.port.output.TurnoQueryRepository;
-import com.coop.tomaturno.turno.dominio.entity.Turno;
+import com.empresa.tomaturno.turno.application.query.port.output.TurnoQueryRepository;
+import com.empresa.tomaturno.turno.dominio.entity.Turno;
 
 public class BuscarTurnosPorFiltrosUseCase {
 

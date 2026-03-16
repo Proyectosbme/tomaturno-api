@@ -1,9 +1,9 @@
-package com.coop.tomaturno.puesto.application.query.usecase;
+package com.empresa.tomaturno.puesto.application.query.usecase;
 
 import java.util.List;
 
-import com.coop.tomaturno.puesto.application.query.port.output.PuestoQueryRepository;
-import com.coop.tomaturno.puesto.dominio.entity.Puesto;
+import com.empresa.tomaturno.puesto.application.query.port.output.PuestoQueryRepository;
+import com.empresa.tomaturno.puesto.dominio.entity.Puesto;
 
 public class BuscarPuestoPorFiltrosUseCase {
 

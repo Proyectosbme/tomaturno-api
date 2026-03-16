@@ -1,4 +1,4 @@
-package com.coop.tomaturno.sucursal.dominio.exceptions;
+package com.empresa.tomaturno.sucursal.dominio.exceptions;
 
 public class SucursalValidationException extends RuntimeException{
     /**

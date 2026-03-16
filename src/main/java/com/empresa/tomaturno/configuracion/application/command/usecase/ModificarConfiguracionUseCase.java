@@ -1,11 +1,11 @@
-package com.coop.tomaturno.configuracion.application.command.usecase;
-
-import com.coop.tomaturno.configuracion.application.command.port.output.ConfiguracionCommandRepository;
-import com.coop.tomaturno.configuracion.application.query.port.output.ConfiguracionQueryRepository;
-import com.coop.tomaturno.configuracion.dominio.entity.Configuracion;
-import com.coop.tomaturno.configuracion.dominio.exceptions.ConfiguracionNotFoundException;
+package com.empresa.tomaturno.configuracion.application.command.usecase;
 
 import java.time.LocalDateTime;
+
+import com.empresa.tomaturno.configuracion.application.command.port.output.ConfiguracionCommandRepository;
+import com.empresa.tomaturno.configuracion.application.query.port.output.ConfiguracionQueryRepository;
+import com.empresa.tomaturno.configuracion.dominio.entity.Configuracion;
+import com.empresa.tomaturno.configuracion.dominio.exceptions.ConfiguracionNotFoundException;
 
 public class ModificarConfiguracionUseCase {
 

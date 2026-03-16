@@ -1,7 +1,8 @@
-package com.coop.tomaturno.framework.adapters.event;
+package com.empresa.tomaturno.framework.adapters.event;
 
-import com.coop.tomaturno.sucursal.application.command.port.output.SucursalEventPublisher;
-import com.coop.tomaturno.sucursal.dominio.event.SucursalCreadaEvent;
+import com.empresa.tomaturno.sucursal.application.command.port.output.SucursalEventPublisher;
+import com.empresa.tomaturno.sucursal.dominio.event.SucursalCreadaEvent;
+
 import io.vertx.mutiny.core.eventbus.EventBus;
 
 import jakarta.enterprise.context.ApplicationScoped;

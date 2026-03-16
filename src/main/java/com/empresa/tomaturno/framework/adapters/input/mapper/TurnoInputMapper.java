@@ -1,12 +1,12 @@
-package com.coop.tomaturno.framework.adapters.input.mapper;
+package com.empresa.tomaturno.framework.adapters.input.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
-import com.coop.tomaturno.turno.dominio.entity.Turno;
-import com.coop.tomaturno.turno.dominio.vo.EstadoTurno;
-import com.coop.tomaturno.framework.adapters.input.dto.TurnoResponseDTO;
+import com.empresa.tomaturno.framework.adapters.input.dto.TurnoResponseDTO;
+import com.empresa.tomaturno.turno.dominio.entity.Turno;
+import com.empresa.tomaturno.turno.dominio.vo.EstadoTurno;
 
 @Mapper(componentModel = "cdi")
 public interface TurnoInputMapper {

@@ -1,8 +1,8 @@
-package com.coop.tomaturno.sucursal.application.query.port.output;
+package com.empresa.tomaturno.sucursal.application.query.port.output;
 
 import java.util.List;
 
-import com.coop.tomaturno.sucursal.dominio.entity.Sucursal;
+import com.empresa.tomaturno.sucursal.dominio.entity.Sucursal;
 
 public interface SucursalQueryRepository {
 

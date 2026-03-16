@@ -1,8 +1,8 @@
-package com.coop.tomaturno.detallecolaxpuesto.application.query.port.output;
+package com.empresa.tomaturno.detallecolaxpuesto.application.query.port.output;
 
 import java.util.List;
 
-import com.coop.tomaturno.detallecolaxpuesto.dominio.entity.DetalleColaxPuesto;
+import com.empresa.tomaturno.detallecolaxpuesto.dominio.entity.DetalleColaxPuesto;
 
 public interface DetalleColaxPuestoQueryRepository {
     List<DetalleColaxPuesto> buscarPorPuesto(Long idPuesto, Long idSucursalPuesto);

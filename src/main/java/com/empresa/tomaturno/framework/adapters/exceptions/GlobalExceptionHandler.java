@@ -1,11 +1,4 @@
-package com.coop.tomaturno.framework.adapters.exceptions;
-
-import com.coop.tomaturno.cola.dominio.exceptions.ColaNotFoundException;
-import com.coop.tomaturno.cola.dominio.exceptions.ColaValidationException;
-import com.coop.tomaturno.sucursal.dominio.exceptions.SucursalNotFoundException;
-import com.coop.tomaturno.sucursal.dominio.exceptions.SucursalValidationException;
-import com.coop.tomaturno.turno.dominio.exceptions.TurnoNotFoundException;
-import com.coop.tomaturno.turno.dominio.exceptions.TurnoValidationException;
+package com.empresa.tomaturno.framework.adapters.exceptions;
 
 import jakarta.json.bind.JsonbException;
 import jakarta.validation.ConstraintViolation;
@@ -16,6 +9,13 @@ import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 
 import java.util.List;
+
+import com.empresa.tomaturno.cola.dominio.exceptions.ColaNotFoundException;
+import com.empresa.tomaturno.cola.dominio.exceptions.ColaValidationException;
+import com.empresa.tomaturno.sucursal.dominio.exceptions.SucursalNotFoundException;
+import com.empresa.tomaturno.sucursal.dominio.exceptions.SucursalValidationException;
+import com.empresa.tomaturno.turno.dominio.exceptions.TurnoNotFoundException;
+import com.empresa.tomaturno.turno.dominio.exceptions.TurnoValidationException;
 
 public class GlobalExceptionHandler {
 

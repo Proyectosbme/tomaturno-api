@@ -1,11 +1,11 @@
-package com.coop.tomaturno.sucursal.dominio.entity;
+package com.empresa.tomaturno.sucursal.dominio.entity;
 
 import java.time.LocalDateTime;
 
-import com.coop.tomaturno.sucursal.dominio.exceptions.SucursalValidationException;
-import com.coop.tomaturno.sucursal.dominio.vo.Auditoria;
-import com.coop.tomaturno.sucursal.dominio.vo.Contacto;
-import com.coop.tomaturno.sucursal.dominio.vo.Estado;
+import com.empresa.tomaturno.sucursal.dominio.exceptions.SucursalValidationException;
+import com.empresa.tomaturno.sucursal.dominio.vo.Auditoria;
+import com.empresa.tomaturno.sucursal.dominio.vo.Contacto;
+import com.empresa.tomaturno.sucursal.dominio.vo.Estado;
 
 /**
  * Entidad que representa una sucursal en el sistema de toma de turnos.

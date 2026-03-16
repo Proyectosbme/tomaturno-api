@@ -1,13 +1,13 @@
-package com.coop.tomaturno.framework.adapters.output.mapper;
+package com.empresa.tomaturno.framework.adapters.output.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
-import com.coop.tomaturno.sucursal.dominio.vo.Estado;
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.SucursalJpaEntity;
-import com.coop.tomaturno.sucursal.dominio.entity.Sucursal;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.SucursalJpaEntity;
+import com.empresa.tomaturno.sucursal.dominio.entity.Sucursal;
+import com.empresa.tomaturno.sucursal.dominio.vo.Estado;
 
 @Mapper(componentModel = "cdi")
 public interface SucursalOutputMapper {

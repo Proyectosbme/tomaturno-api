@@ -1,12 +1,13 @@
-package com.coop.tomaturno.framework.adapters.output.persistencia.repository;
+package com.empresa.tomaturno.framework.adapters.output.persistencia.repository;
 
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.UsuarioJpaEntity;
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.UsuarioJpaEntityPK;
 import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.UsuarioJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.UsuarioJpaEntityPK;
 
 @ApplicationScoped
 public class UsuarioJpaRepository implements PanacheRepositoryBase<UsuarioJpaEntity, UsuarioJpaEntityPK> {

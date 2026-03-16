@@ -1,6 +1,6 @@
-package com.coop.tomaturno.sucursal.dominio.vo;
+package com.empresa.tomaturno.sucursal.dominio.vo;
 
-import com.coop.tomaturno.sucursal.dominio.exceptions.SucursalValidationException;
+import com.empresa.tomaturno.sucursal.dominio.exceptions.SucursalValidationException;
 
 public class Contacto {
     String telefono;

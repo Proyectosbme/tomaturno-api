@@ -1,13 +1,13 @@
-package com.coop.tomaturno.framework.adapters.input.controller;
+package com.empresa.tomaturno.framework.adapters.input.controller;
 
 import java.util.List;
 
-import com.coop.tomaturno.puesto.application.command.port.input.PuestoCommandInputPort;
-import com.coop.tomaturno.puesto.application.query.port.input.PuestoQueryInputPort;
-import com.coop.tomaturno.puesto.dominio.entity.Puesto;
-import com.coop.tomaturno.framework.adapters.input.dto.PuestoRequestDTO;
-import com.coop.tomaturno.framework.adapters.input.dto.PuestoResponseDTO;
-import com.coop.tomaturno.framework.adapters.input.mapper.PuestoInputMapper;
+import com.empresa.tomaturno.framework.adapters.input.dto.PuestoRequestDTO;
+import com.empresa.tomaturno.framework.adapters.input.dto.PuestoResponseDTO;
+import com.empresa.tomaturno.framework.adapters.input.mapper.PuestoInputMapper;
+import com.empresa.tomaturno.puesto.application.command.port.input.PuestoCommandInputPort;
+import com.empresa.tomaturno.puesto.application.query.port.input.PuestoQueryInputPort;
+import com.empresa.tomaturno.puesto.dominio.entity.Puesto;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;

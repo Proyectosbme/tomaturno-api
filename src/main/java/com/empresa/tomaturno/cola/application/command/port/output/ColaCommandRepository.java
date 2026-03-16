@@ -1,7 +1,7 @@
-package com.coop.tomaturno.cola.application.command.port.output;
+package com.empresa.tomaturno.cola.application.command.port.output;
 
-import com.coop.tomaturno.cola.dominio.entity.Cola;
-import com.coop.tomaturno.cola.dominio.entity.Detalle;
+import com.empresa.tomaturno.cola.dominio.entity.Cola;
+import com.empresa.tomaturno.cola.dominio.entity.Detalle;
 
 
 public interface ColaCommandRepository {

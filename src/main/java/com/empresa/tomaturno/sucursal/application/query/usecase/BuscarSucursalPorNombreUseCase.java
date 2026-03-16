@@ -1,9 +1,9 @@
-package com.coop.tomaturno.sucursal.application.query.usecase;
+package com.empresa.tomaturno.sucursal.application.query.usecase;
 
 import java.util.List;
 
-import com.coop.tomaturno.sucursal.application.query.port.output.SucursalQueryRepository;
-import com.coop.tomaturno.sucursal.dominio.entity.Sucursal;
+import com.empresa.tomaturno.sucursal.application.query.port.output.SucursalQueryRepository;
+import com.empresa.tomaturno.sucursal.dominio.entity.Sucursal;
 
 public class BuscarSucursalPorNombreUseCase {
 

@@ -1,18 +1,19 @@
-package com.coop.tomaturno.framework.adapters.output.persistencia.adapters;
+package com.empresa.tomaturno.framework.adapters.output.persistencia.adapters;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.coop.tomaturno.cola.application.command.port.output.ColaCommandRepository;
-import com.coop.tomaturno.cola.dominio.entity.Cola;
-import com.coop.tomaturno.cola.dominio.entity.Detalle;
-import com.coop.tomaturno.framework.adapters.exceptions.NotFoundException;
-import com.coop.tomaturno.framework.adapters.output.mapper.ColaOutputMapper;
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.ColaJpaEntity;
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaJpaEntity;
-import com.coop.tomaturno.framework.adapters.output.persistencia.repository.ColaDetalleRepository;
-import com.coop.tomaturno.framework.adapters.output.persistencia.repository.ColaJpaRespository;
+import com.empresa.tomaturno.cola.application.command.port.output.ColaCommandRepository;
+import com.empresa.tomaturno.cola.dominio.entity.Cola;
+import com.empresa.tomaturno.cola.dominio.entity.Detalle;
+import com.empresa.tomaturno.framework.adapters.exceptions.NotFoundException;
+import com.empresa.tomaturno.framework.adapters.output.mapper.ColaOutputMapper;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.ColaJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.ColaDetalleRepository;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.ColaJpaRespository;
+
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped

@@ -1,11 +1,11 @@
-package com.coop.tomaturno.framework.adapters.output.persistencia.adapters;
+package com.empresa.tomaturno.framework.adapters.output.persistencia.adapters;
 
-import com.coop.tomaturno.framework.adapters.output.mapper.PersonaMapper;
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.PersonaJpaEntity;
-import com.coop.tomaturno.framework.adapters.output.persistencia.repository.PersonaJpaRepository;
-import com.coop.tomaturno.persona.application.command.port.output.PersonaCommandRepository;
-import com.coop.tomaturno.persona.application.query.port.output.PersonaQueryRepository;
-import com.coop.tomaturno.persona.dominio.entity.Persona;
+import com.empresa.tomaturno.framework.adapters.output.mapper.PersonaMapper;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.PersonaJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.PersonaJpaRepository;
+import com.empresa.tomaturno.persona.application.command.port.output.PersonaCommandRepository;
+import com.empresa.tomaturno.persona.application.query.port.output.PersonaQueryRepository;
+import com.empresa.tomaturno.persona.dominio.entity.Persona;
 
 import jakarta.enterprise.context.ApplicationScoped;
 

@@ -1,7 +1,8 @@
-package com.coop.tomaturno.framework.adapters.output.persistencia.repository;
+package com.empresa.tomaturno.framework.adapters.output.persistencia.repository;
 
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaJpaEntity;
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaPK;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaPK;
+
 import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import jakarta.enterprise.context.ApplicationScoped;
 

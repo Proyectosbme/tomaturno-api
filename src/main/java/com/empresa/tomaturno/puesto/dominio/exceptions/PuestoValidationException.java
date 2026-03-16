@@ -1,4 +1,4 @@
-package com.coop.tomaturno.puesto.dominio.exceptions;
+package com.empresa.tomaturno.puesto.dominio.exceptions;
 
 public class PuestoValidationException extends RuntimeException {
 

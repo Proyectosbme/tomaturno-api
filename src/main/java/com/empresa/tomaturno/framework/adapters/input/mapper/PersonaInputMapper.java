@@ -1,10 +1,11 @@
-package com.coop.tomaturno.framework.adapters.input.mapper;
+package com.empresa.tomaturno.framework.adapters.input.mapper;
 
-import com.coop.tomaturno.framework.adapters.input.dto.PersonaRequestDTO;
-import com.coop.tomaturno.framework.adapters.input.dto.PersonaResponseDTO;
-import com.coop.tomaturno.persona.dominio.entity.Persona;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+
+import com.empresa.tomaturno.framework.adapters.input.dto.PersonaRequestDTO;
+import com.empresa.tomaturno.framework.adapters.input.dto.PersonaResponseDTO;
+import com.empresa.tomaturno.persona.dominio.entity.Persona;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

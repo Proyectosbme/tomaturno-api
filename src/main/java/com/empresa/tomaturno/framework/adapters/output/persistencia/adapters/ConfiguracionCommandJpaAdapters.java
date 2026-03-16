@@ -1,10 +1,10 @@
-package com.coop.tomaturno.framework.adapters.output.persistencia.adapters;
+package com.empresa.tomaturno.framework.adapters.output.persistencia.adapters;
 
-import com.coop.tomaturno.configuracion.application.command.port.output.ConfiguracionCommandRepository;
-import com.coop.tomaturno.configuracion.dominio.entity.Configuracion;
-import com.coop.tomaturno.framework.adapters.output.mapper.ConfiguracionOutputMapper;
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.ConfiguracionJpaEntity;
-import com.coop.tomaturno.framework.adapters.output.persistencia.repository.ConfiguracionJpaRepository;
+import com.empresa.tomaturno.configuracion.application.command.port.output.ConfiguracionCommandRepository;
+import com.empresa.tomaturno.configuracion.dominio.entity.Configuracion;
+import com.empresa.tomaturno.framework.adapters.output.mapper.ConfiguracionOutputMapper;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.ConfiguracionJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.ConfiguracionJpaRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 

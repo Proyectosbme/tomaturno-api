@@ -1,12 +1,12 @@
-package com.coop.tomaturno.configuracion.application.query.service;
-
-import com.coop.tomaturno.configuracion.application.query.port.input.ConfiguracionQueryInputPort;
-import com.coop.tomaturno.configuracion.application.query.port.output.ConfiguracionQueryRepository;
-import com.coop.tomaturno.configuracion.application.query.usecase.BuscarConfiguracionPorIdUseCase;
-import com.coop.tomaturno.configuracion.application.query.usecase.BuscarConfiguracionPorSucursalUseCase;
-import com.coop.tomaturno.configuracion.dominio.entity.Configuracion;
+package com.empresa.tomaturno.configuracion.application.query.service;
 
 import java.util.List;
+
+import com.empresa.tomaturno.configuracion.application.query.port.input.ConfiguracionQueryInputPort;
+import com.empresa.tomaturno.configuracion.application.query.port.output.ConfiguracionQueryRepository;
+import com.empresa.tomaturno.configuracion.application.query.usecase.BuscarConfiguracionPorIdUseCase;
+import com.empresa.tomaturno.configuracion.application.query.usecase.BuscarConfiguracionPorSucursalUseCase;
+import com.empresa.tomaturno.configuracion.dominio.entity.Configuracion;
 
 public class ConfiguracionQueryService implements ConfiguracionQueryInputPort {
 

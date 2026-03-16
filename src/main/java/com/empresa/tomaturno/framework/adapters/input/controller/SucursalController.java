@@ -1,14 +1,15 @@
-package com.coop.tomaturno.framework.adapters.input.controller;
+package com.empresa.tomaturno.framework.adapters.input.controller;
 
 import java.util.List;
 
-import com.coop.tomaturno.framework.adapters.config.ConfiguracionDefaultBean;
-import com.coop.tomaturno.framework.adapters.input.dto.SucursalRequestDTO;
-import com.coop.tomaturno.framework.adapters.input.dto.SucursalResponseDTO;
-import com.coop.tomaturno.framework.adapters.input.mapper.SucursalInputMapper;
-import com.coop.tomaturno.sucursal.application.command.port.input.SucursalCommandInputPort;
-import com.coop.tomaturno.sucursal.application.query.port.input.SucursalQueryInputPort;
-import com.coop.tomaturno.sucursal.dominio.entity.Sucursal;
+import com.empresa.tomaturno.framework.adapters.config.ConfiguracionDefaultBean;
+import com.empresa.tomaturno.framework.adapters.input.dto.SucursalRequestDTO;
+import com.empresa.tomaturno.framework.adapters.input.dto.SucursalResponseDTO;
+import com.empresa.tomaturno.framework.adapters.input.mapper.SucursalInputMapper;
+import com.empresa.tomaturno.sucursal.application.command.port.input.SucursalCommandInputPort;
+import com.empresa.tomaturno.sucursal.application.query.port.input.SucursalQueryInputPort;
+import com.empresa.tomaturno.sucursal.dominio.entity.Sucursal;
+
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;

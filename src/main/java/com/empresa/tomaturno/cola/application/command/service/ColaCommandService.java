@@ -1,15 +1,15 @@
-package com.coop.tomaturno.cola.application.command.service;
+package com.empresa.tomaturno.cola.application.command.service;
 
-import com.coop.tomaturno.cola.application.command.port.input.ColaCommandInputPort;
-import com.coop.tomaturno.cola.application.command.port.output.ColaCommandRepository;
-import com.coop.tomaturno.cola.application.command.usecase.CrearColaCaseUse;
-import com.coop.tomaturno.cola.application.command.usecase.CrearDetalleDeColaUseCase;
-import com.coop.tomaturno.cola.application.command.usecase.ModificarColaUseCase;
-import com.coop.tomaturno.cola.application.command.usecase.ReplicarColasUseCase;
-import com.coop.tomaturno.cola.application.command.usecase.ReplicarColasUseCase.ResultadoReplicacion;
-import com.coop.tomaturno.cola.application.query.port.output.ColaQueryRepository;
-import com.coop.tomaturno.cola.dominio.entity.Cola;
-import com.coop.tomaturno.cola.dominio.entity.Detalle;
+import com.empresa.tomaturno.cola.application.command.port.input.ColaCommandInputPort;
+import com.empresa.tomaturno.cola.application.command.port.output.ColaCommandRepository;
+import com.empresa.tomaturno.cola.application.command.usecase.CrearColaCaseUse;
+import com.empresa.tomaturno.cola.application.command.usecase.CrearDetalleDeColaUseCase;
+import com.empresa.tomaturno.cola.application.command.usecase.ModificarColaUseCase;
+import com.empresa.tomaturno.cola.application.command.usecase.ReplicarColasUseCase;
+import com.empresa.tomaturno.cola.application.command.usecase.ReplicarColasUseCase.ResultadoReplicacion;
+import com.empresa.tomaturno.cola.application.query.port.output.ColaQueryRepository;
+import com.empresa.tomaturno.cola.dominio.entity.Cola;
+import com.empresa.tomaturno.cola.dominio.entity.Detalle;
 
 public class ColaCommandService implements ColaCommandInputPort {
 

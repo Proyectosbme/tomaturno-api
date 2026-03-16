@@ -1,11 +1,6 @@
-package com.coop.tomaturno.framework.adapters.config;
+package com.empresa.tomaturno.framework.adapters.config;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.SucursalJpaEntity;
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.UsuarioJpaEntity;
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.UsuarioJpaEntityPK;
-import com.coop.tomaturno.framework.adapters.output.persistencia.repository.SucursalJpaRepository;
-import com.coop.tomaturno.framework.adapters.output.persistencia.repository.UsuarioJpaRepository;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
@@ -14,6 +9,12 @@ import jakarta.transaction.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.SucursalJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.UsuarioJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.UsuarioJpaEntityPK;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.SucursalJpaRepository;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.UsuarioJpaRepository;
 
 @ApplicationScoped
 public class AdminStartupBean {

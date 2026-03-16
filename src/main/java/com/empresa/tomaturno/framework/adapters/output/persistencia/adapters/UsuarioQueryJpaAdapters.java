@@ -1,18 +1,18 @@
-package com.coop.tomaturno.framework.adapters.output.persistencia.adapters;
+package com.empresa.tomaturno.framework.adapters.output.persistencia.adapters;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.coop.tomaturno.framework.adapters.output.mapper.UsuarioOutputMapper;
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.PuestoJpaEntity;
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.SucursalJpaEntity;
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.UsuarioJpaEntity;
-import com.coop.tomaturno.framework.adapters.output.persistencia.repository.PuestoJpaRepository;
-import com.coop.tomaturno.framework.adapters.output.persistencia.repository.SucursalJpaRepository;
-import com.coop.tomaturno.framework.adapters.output.persistencia.repository.UsuarioJpaRepository;
-import com.coop.tomaturno.usuario.application.query.port.output.UsuarioQueryRepository;
-import com.coop.tomaturno.usuario.dominio.entity.Usuario;
+import com.empresa.tomaturno.framework.adapters.output.mapper.UsuarioOutputMapper;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.PuestoJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.SucursalJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.UsuarioJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.PuestoJpaRepository;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.SucursalJpaRepository;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.UsuarioJpaRepository;
+import com.empresa.tomaturno.usuario.application.query.port.output.UsuarioQueryRepository;
+import com.empresa.tomaturno.usuario.dominio.entity.Usuario;
 
 import jakarta.enterprise.context.ApplicationScoped;
 

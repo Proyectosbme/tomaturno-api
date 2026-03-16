@@ -1,8 +1,8 @@
-package com.coop.tomaturno.configuracion.application.query.port.input;
-
-import com.coop.tomaturno.configuracion.dominio.entity.Configuracion;
+package com.empresa.tomaturno.configuracion.application.query.port.input;
 
 import java.util.List;
+
+import com.empresa.tomaturno.configuracion.dominio.entity.Configuracion;
 
 public interface ConfiguracionQueryInputPort {
     List<Configuracion> buscarPorSucursal(Long idSucursal);

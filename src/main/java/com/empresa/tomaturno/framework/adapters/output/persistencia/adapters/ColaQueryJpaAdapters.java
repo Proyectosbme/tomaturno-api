@@ -1,19 +1,19 @@
-package com.coop.tomaturno.framework.adapters.output.persistencia.adapters;
+package com.empresa.tomaturno.framework.adapters.output.persistencia.adapters;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.coop.tomaturno.cola.application.query.port.output.ColaQueryRepository;
-import com.coop.tomaturno.cola.dominio.entity.Cola;
-import com.coop.tomaturno.cola.dominio.entity.Detalle;
-import com.coop.tomaturno.framework.adapters.output.mapper.ColaOutputMapper;
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.ColaJpaEntity;
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaJpaEntity;
-import com.coop.tomaturno.framework.adapters.output.persistencia.entity.SucursalJpaEntity;
-import com.coop.tomaturno.framework.adapters.output.persistencia.repository.ColaDetalleRepository;
-import com.coop.tomaturno.framework.adapters.output.persistencia.repository.ColaJpaRespository;
-import com.coop.tomaturno.framework.adapters.output.persistencia.repository.SucursalJpaRepository;
+import com.empresa.tomaturno.cola.application.query.port.output.ColaQueryRepository;
+import com.empresa.tomaturno.cola.dominio.entity.Cola;
+import com.empresa.tomaturno.cola.dominio.entity.Detalle;
+import com.empresa.tomaturno.framework.adapters.output.mapper.ColaOutputMapper;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.ColaJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.SucursalJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.ColaDetalleRepository;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.ColaJpaRespository;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.SucursalJpaRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 

@@ -1,4 +1,4 @@
-package com.coop.tomaturno.turno.dominio.vo;
+package com.empresa.tomaturno.turno.dominio.vo;
 
 public enum EstadoTurno {
 

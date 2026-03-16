@@ -1,4 +1,4 @@
-package com.coop.tomaturno.cola.dominio.vo;
+package com.empresa.tomaturno.cola.dominio.vo;
 
 import java.time.LocalDateTime;
 

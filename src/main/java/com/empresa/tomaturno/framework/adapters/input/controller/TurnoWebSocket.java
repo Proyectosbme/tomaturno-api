@@ -1,4 +1,4 @@
-package com.coop.tomaturno.framework.adapters.input.controller;
+package com.empresa.tomaturno.framework.adapters.input.controller;
 
 import java.io.IOException;
 import java.util.Set;

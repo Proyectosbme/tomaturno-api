@@ -1,4 +1,4 @@
-package com.coop.tomaturno;
+package com.empresa.tomaturno;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;

@@ -1,6 +1,6 @@
-package com.coop.tomaturno.usuario.application.command.port.output;
+package com.empresa.tomaturno.usuario.application.command.port.output;
 
-import com.coop.tomaturno.usuario.dominio.entity.Usuario;
+import com.empresa.tomaturno.usuario.dominio.entity.Usuario;
 
 public interface UsuarioCommandRepository {
     Usuario save(Usuario usuario);

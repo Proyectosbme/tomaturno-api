@@ -1,8 +1,8 @@
-package com.coop.tomaturno.detallecolaxpuesto.application.command.usecase;
+package com.empresa.tomaturno.detallecolaxpuesto.application.command.usecase;
 
-import com.coop.tomaturno.detallecolaxpuesto.application.command.port.output.DetalleColaxPuestoCommandRepository;
-import com.coop.tomaturno.detallecolaxpuesto.application.query.port.output.DetalleColaxPuestoQueryRepository;
-import com.coop.tomaturno.detallecolaxpuesto.dominio.exceptions.DetalleColaxPuestoNotFoundException;
+import com.empresa.tomaturno.detallecolaxpuesto.application.command.port.output.DetalleColaxPuestoCommandRepository;
+import com.empresa.tomaturno.detallecolaxpuesto.application.query.port.output.DetalleColaxPuestoQueryRepository;
+import com.empresa.tomaturno.detallecolaxpuesto.dominio.exceptions.DetalleColaxPuestoNotFoundException;
 
 public class DesasignarDetalleColaPuestoUseCase {
 

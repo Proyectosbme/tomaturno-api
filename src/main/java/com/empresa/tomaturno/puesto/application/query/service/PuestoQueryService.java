@@ -1,12 +1,12 @@
-package com.coop.tomaturno.puesto.application.query.service;
+package com.empresa.tomaturno.puesto.application.query.service;
 
 import java.util.List;
 
-import com.coop.tomaturno.puesto.application.query.port.input.PuestoQueryInputPort;
-import com.coop.tomaturno.puesto.application.query.port.output.PuestoQueryRepository;
-import com.coop.tomaturno.puesto.application.query.usecase.BuscarPuestoPorFiltrosUseCase;
-import com.coop.tomaturno.puesto.application.query.usecase.BuscarPuestoPorIdUseCase;
-import com.coop.tomaturno.puesto.dominio.entity.Puesto;
+import com.empresa.tomaturno.puesto.application.query.port.input.PuestoQueryInputPort;
+import com.empresa.tomaturno.puesto.application.query.port.output.PuestoQueryRepository;
+import com.empresa.tomaturno.puesto.application.query.usecase.BuscarPuestoPorFiltrosUseCase;
+import com.empresa.tomaturno.puesto.application.query.usecase.BuscarPuestoPorIdUseCase;
+import com.empresa.tomaturno.puesto.dominio.entity.Puesto;
 
 public class PuestoQueryService implements PuestoQueryInputPort {
 

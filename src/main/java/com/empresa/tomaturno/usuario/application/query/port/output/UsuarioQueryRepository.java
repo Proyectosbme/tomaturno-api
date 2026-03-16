@@ -1,8 +1,8 @@
-package com.coop.tomaturno.usuario.application.query.port.output;
+package com.empresa.tomaturno.usuario.application.query.port.output;
 
 import java.util.List;
 
-import com.coop.tomaturno.usuario.dominio.entity.Usuario;
+import com.empresa.tomaturno.usuario.dominio.entity.Usuario;
 
 public interface UsuarioQueryRepository {
     Usuario buscarPorIdUsuarioYSucursal(Long idUsuario, Long idSucursal);

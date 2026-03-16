@@ -1,9 +1,10 @@
-package com.coop.tomaturno.framework.adapters.event;
+package com.empresa.tomaturno.framework.adapters.event;
 
-import com.coop.tomaturno.sucursal.dominio.event.SucursalCreadaEvent;
-import com.coop.tomaturno.usuario.application.command.port.input.UsuarioCommandInputPort;
-import com.coop.tomaturno.usuario.dominio.entity.Usuario;
-import com.coop.tomaturno.usuario.dominio.vo.Estado;
+import com.empresa.tomaturno.sucursal.dominio.event.SucursalCreadaEvent;
+import com.empresa.tomaturno.usuario.application.command.port.input.UsuarioCommandInputPort;
+import com.empresa.tomaturno.usuario.dominio.entity.Usuario;
+import com.empresa.tomaturno.usuario.dominio.vo.Estado;
+
 import io.quarkus.vertx.ConsumeEvent;
 
 import jakarta.enterprise.context.ApplicationScoped;

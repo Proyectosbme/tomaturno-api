@@ -1,13 +1,13 @@
-package com.coop.tomaturno.framework.adapters.input.mapper;
+package com.empresa.tomaturno.framework.adapters.input.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
-import com.coop.tomaturno.framework.adapters.input.dto.UsuarioRequestDTO;
-import com.coop.tomaturno.framework.adapters.input.dto.UsuarioResponseDTO;
-import com.coop.tomaturno.usuario.dominio.entity.Usuario;
-import com.coop.tomaturno.usuario.dominio.vo.Estado;
+import com.empresa.tomaturno.framework.adapters.input.dto.UsuarioRequestDTO;
+import com.empresa.tomaturno.framework.adapters.input.dto.UsuarioResponseDTO;
+import com.empresa.tomaturno.usuario.dominio.entity.Usuario;
+import com.empresa.tomaturno.usuario.dominio.vo.Estado;
 
 @Mapper(componentModel = "cdi")
 public interface UsuarioInputMapper {

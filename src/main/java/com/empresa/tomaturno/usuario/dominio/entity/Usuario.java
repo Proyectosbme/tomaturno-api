@@ -1,8 +1,8 @@
-package com.coop.tomaturno.usuario.dominio.entity;
+package com.empresa.tomaturno.usuario.dominio.entity;
 
-import com.coop.tomaturno.usuario.dominio.exceptions.UsuarioValidationException;
-import com.coop.tomaturno.usuario.dominio.vo.Auditoria;
-import com.coop.tomaturno.usuario.dominio.vo.Estado;
+import com.empresa.tomaturno.usuario.dominio.exceptions.UsuarioValidationException;
+import com.empresa.tomaturno.usuario.dominio.vo.Auditoria;
+import com.empresa.tomaturno.usuario.dominio.vo.Estado;
 
 public class Usuario {
 

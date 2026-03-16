@@ -1,9 +1,9 @@
-package com.coop.tomaturno.detallecolaxpuesto.application.query.usecase;
+package com.empresa.tomaturno.detallecolaxpuesto.application.query.usecase;
 
 import java.util.List;
 
-import com.coop.tomaturno.detallecolaxpuesto.application.query.port.output.DetalleColaxPuestoQueryRepository;
-import com.coop.tomaturno.detallecolaxpuesto.dominio.entity.DetalleColaxPuesto;
+import com.empresa.tomaturno.detallecolaxpuesto.application.query.port.output.DetalleColaxPuestoQueryRepository;
+import com.empresa.tomaturno.detallecolaxpuesto.dominio.entity.DetalleColaxPuesto;
 
 public class ListarDetalleColaxPuestoPorPuestoUseCase {
 
