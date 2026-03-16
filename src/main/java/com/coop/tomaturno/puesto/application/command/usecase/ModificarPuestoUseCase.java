@@ -1,0 +1,32 @@
+package com.coop.tomaturno.puesto.application.command.usecase;
+
+import java.time.LocalDateTime;
+
+import com.coop.tomaturno.puesto.application.command.port.output.PuestoCommandRepository;
+import com.coop.tomaturno.puesto.application.query.port.output.PuestoQueryRepository;
+import com.coop.tomaturno.puesto.dominio.entity.Puesto;
+import com.coop.tomaturno.puesto.dominio.exceptions.PuestoNotFoundException;
+
+public class ModificarPuestoUseCase {
+
+    private final PuestoCommandRepository puestoCommandRepository;
+    private final PuestoQueryRepository puestoQueryRepository;
+
+    public ModificarPuestoUseCase(PuestoCommandRepository puestoCommandRepository,
+            PuestoQueryRepository puestoQueryRepository) {
+        this.puestoCommandRepository = puestoCommandRepository;
+        this.puestoQueryRepository = puestoQueryRepository;
+    }
+
+    public Puesto ejecutar(Long idPuesto, Long idSucursal, Puesto datosNuevos) {
+        Puesto puesto = puestoQueryRepository.buscarPorIdPuestoYSucursal(idPuesto, idSucursal);
+        if (puesto == null) {
+            throw new PuestoNotFoundException(idPuesto,
+                    "Puesto (idPuesto=" + idPuesto + ", idSucursal=" + idSucursal + ")");
+        }
+        puesto.auditoriaModificacion("bmarroquin", LocalDateTime.now());
+        puesto.modificar(datosNuevos.getNombre(), datosNuevos.getNombreLlamada(), datosNuevos.getEstado());
+        puesto.validarModificacion();
+        return puestoCommandRepository.modificar(puesto);
+    }
+}
