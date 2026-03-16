@@ -1,78 +1,78 @@
 package com.empresa.tomaturno.sucursal.dominio.vo;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import com.empresa.tomaturno.sucursal.dominio.exceptions.SucursalValidationException;
 
 public class Auditoria {
 
-    private String usuarioCreacion;
-    private LocalDateTime fechaCreacion;
-    private String usuarioModificacion;
-    private LocalDateTime fechaModificacion;
+    private final String usuarioCreacion;
+    private final LocalDateTime fechaCreacion;
+    private final String usuarioModificacion;
+    private final LocalDateTime fechaModificacion;
 
-    public void creacion(String usuarioCreacion, LocalDateTime fechaCreacion) {
+    private Auditoria(String usuarioCreacion, LocalDateTime fechaCreacion, String usuarioModificacion,
+            LocalDateTime fechaModificacion) {
         this.usuarioCreacion = usuarioCreacion;
         this.fechaCreacion = fechaCreacion;
-    }
-
-    public void modificacion(String usuarioModificacion, LocalDateTime fechaModificacion) {
         this.usuarioModificacion = usuarioModificacion;
         this.fechaModificacion = fechaModificacion;
     }
 
-    public void validarCreacion() {
-        if (this.usuarioCreacion == null || this.fechaCreacion == null) {
-            throw new SucursalValidationException("No tiene usuario de creacion y fecha de creacion revisar ");
+    public static Auditoria deCreacion(String usuarioCreacion, LocalDateTime fechaCreacion) {
+        if (usuarioCreacion == null || usuarioCreacion.isBlank()) {
+            throw new SucursalValidationException("El usuario de crecion es obligatorio");
         }
+
+        if (fechaCreacion == null) {
+            throw new SucursalValidationException("La fecha de creacion es necesario");
+        }
+        return new Auditoria(usuarioCreacion, fechaCreacion, null, null);
     }
 
-    public void validarModificacion() {
-        this.validarCreacion();
-        if (this.usuarioModificacion == null || this.fechaModificacion == null) {
-            throw new SucursalValidationException("No tiene usuario de modificacion y fecha de modificacion revisar ");
-        }
+    public static Auditoria reconstituir(String usuarioCreacion, LocalDateTime fechaCreacion,
+            String usuarioModificacion, LocalDateTime fechaModificacion) {
+        return new Auditoria(usuarioCreacion, fechaCreacion, usuarioModificacion, fechaModificacion);
+    }
+
+    public Auditoria conModificacion(String usuario, LocalDateTime fecha) {
+        if (usuario == null || usuario.isBlank())
+            throw new SucursalValidationException("El usuario de modificación es obligatorio");
+        if (fecha == null)
+            throw new SucursalValidationException("La fecha de modificación es obligatoria");
+        return new Auditoria(this.usuarioCreacion, this.fechaCreacion, usuario, fecha);
     }
 
     public String getUsuarioCreacion() {
         return usuarioCreacion;
     }
 
-    public void setUsuarioCreacion(String usuarioCreacion) {
-        this.usuarioCreacion = usuarioCreacion;
-    }
-
     public LocalDateTime getFechaCreacion() {
         return fechaCreacion;
-    }
-
-    public void setFechaCreacion(LocalDateTime fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
     }
 
     public String getUsuarioModificacion() {
         return usuarioModificacion;
     }
 
-    public void setUsuarioModificacion(String usuarioModificacion) {
-        this.usuarioModificacion = usuarioModificacion;
-    }
-
     public LocalDateTime getFechaModificacion() {
         return fechaModificacion;
     }
 
-    public void setFechaModificacion(LocalDateTime fechaModificacion) {
-        this.fechaModificacion = fechaModificacion;
+    @Override
+    public int hashCode() {
+        return Objects.hash(usuarioCreacion, fechaCreacion, usuarioModificacion, fechaModificacion);
     }
-
 
     @Override
-    public String toString() {
-        return "Auditoria [usuarioCreacion=" + usuarioCreacion + ", fechaCreacion=" + fechaCreacion
-                + ", usuarioModificacion=" + usuarioModificacion + ", fechaModificacion=" + fechaModificacion + "]";
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Auditoria other)) return false;
+        return Objects.equals(usuarioCreacion, other.usuarioCreacion)
+                && Objects.equals(fechaCreacion, other.fechaCreacion)
+                && Objects.equals(usuarioModificacion, other.usuarioModificacion)
+                && Objects.equals(fechaModificacion, other.fechaModificacion);
     }
-
-    
 
 }
