@@ -1,22 +1,20 @@
 package com.coop.tomaturno.framework.adapters.event;
 
 import com.coop.tomaturno.sucursal.dominio.event.SucursalCreadaEvent;
-import com.coop.tomaturno.usuario.application.command.usecase.CrearUsuarioUseCase;
+import com.coop.tomaturno.usuario.application.command.port.input.UsuarioCommandInputPort;
 import com.coop.tomaturno.usuario.dominio.entity.Usuario;
 import com.coop.tomaturno.usuario.dominio.vo.Estado;
 import io.quarkus.vertx.ConsumeEvent;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class UsuarioEventHandlerAdapter {
 
-    private final CrearUsuarioUseCase crearUsuarioUseCase;
+    private final UsuarioCommandInputPort usuarioCommandInputPort;
 
-    @Inject
-    public UsuarioEventHandlerAdapter(CrearUsuarioUseCase crearUsuarioUseCase) {
-        this.crearUsuarioUseCase = crearUsuarioUseCase;
+    public UsuarioEventHandlerAdapter(UsuarioCommandInputPort usuarioCommandInputPort) {
+        this.usuarioCommandInputPort = usuarioCommandInputPort;
     }
 
     @ConsumeEvent("sucursal.creada")
@@ -36,6 +34,6 @@ public class UsuarioEventHandlerAdapter {
         usuario.setNombres(nombres);
         usuario.setApellidos(apellidos);
         usuario.setEstado(Estado.ACTIVO);
-        crearUsuarioUseCase.ejecutar(usuario);
+        usuarioCommandInputPort.crear(usuario);
     }
 }
