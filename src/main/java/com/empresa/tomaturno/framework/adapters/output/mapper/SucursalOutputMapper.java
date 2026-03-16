@@ -7,6 +7,8 @@ import org.mapstruct.Named;
 
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.SucursalJpaEntity;
 import com.empresa.tomaturno.sucursal.dominio.entity.Sucursal;
+import com.empresa.tomaturno.sucursal.dominio.vo.Auditoria;
+import com.empresa.tomaturno.sucursal.dominio.vo.Contacto;
 import com.empresa.tomaturno.sucursal.dominio.vo.Estado;
 
 @Mapper(componentModel = "cdi")
@@ -23,16 +25,13 @@ public interface SucursalOutputMapper {
     @Mapping(target = "estado", source = "estado", qualifiedByName = "estadoToCodigo")
     SucursalJpaEntity toSucursalJpaEntity(Sucursal sucursal);
 
-    @Mapping(target = "identificador", source = "id")
-    @Mapping(target = "contacto.telefono", source = "telefono")
-    @Mapping(target = "contacto.correo", source = "correo")
-    @Mapping(target = "contacto.direccion", source = "direccion")
-    @Mapping(target = "auditoria.usuarioCreacion", source = "usuarioCreacion")
-    @Mapping(target = "auditoria.fechaCreacion", source = "fechaCreacion")
-    @Mapping(target = "auditoria.usuarioModificacion", source = "usuarioModificacion")
-    @Mapping(target = "auditoria.fechaModificacion", source = "fechaModificacion")
-    @Mapping(target = "estado", source = "estado", qualifiedByName = "integerToEstado")
-    Sucursal toDomain(SucursalJpaEntity sucursalJpaEntity);
+    default Sucursal toDomain(SucursalJpaEntity e) {
+        Contacto contacto = Contacto.reconstituir(e.getTelefono(), e.getCorreo(), e.getDireccion());
+        Auditoria auditoria = Auditoria.reconstituir(
+                e.getUsuarioCreacion(), e.getFechaCreacion(),
+                e.getUsuarioModificacion(), e.getFechaModificacion());
+        return Sucursal.reconstituir(e.getId(), e.getNombre(), contacto, Estado.fromCodigo(e.getEstado()), auditoria);
+    }
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "telefono", source = "contacto.telefono")
@@ -45,14 +44,8 @@ public interface SucursalOutputMapper {
     @Mapping(target = "estado", source = "estado", qualifiedByName = "estadoToCodigo")
     void updateEntityFromDomain(Sucursal sucursal, @MappingTarget SucursalJpaEntity entity);
 
-   
-    @Named("integerToEstado")
-    public static Estado integerToEstado(Integer codigo) {
-        return codigo == null ? null : Estado.fromCodigo(codigo);
-    }
-
     @Named("estadoToCodigo")
-    public static Integer estadoToCodigo(Estado estado) {
+    static Integer estadoToCodigo(Estado estado) {
         return estado == null ? null : estado.getCodigo();
     }
 }

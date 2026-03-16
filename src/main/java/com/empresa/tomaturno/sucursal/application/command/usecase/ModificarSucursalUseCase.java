@@ -22,11 +22,7 @@ public class ModificarSucursalUseCase {
         Sucursal sucursal = sucursalQueryRepository.buscarPorId(id);
         if (sucursal != null) {
             sucursal.auditoriaModificacion("bmarroquin", LocalDateTime.now());
-            sucursal.modificar(datosNuevos.getNombre(),
-                    datosNuevos.getContacto(),
-                    datosNuevos.getEstado());                    
-                    sucursal.validarCreacion();
-                    sucursal.validarModificacion();
+            sucursal.modificar(datosNuevos.getNombre(), datosNuevos.getContacto(), datosNuevos.getEstado());
             return sucursalCommandRepository.modificar(sucursal);
 
         }
