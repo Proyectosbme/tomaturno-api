@@ -8,29 +8,23 @@ import com.empresa.tomaturno.sucursal.application.command.usecase.CrearSucursalC
 import com.empresa.tomaturno.sucursal.application.command.usecase.ModificarSucursalUseCase;
 import com.empresa.tomaturno.sucursal.application.query.port.output.SucursalQueryRepository;
 import com.empresa.tomaturno.sucursal.dominio.entity.Sucursal;
-import com.empresa.tomaturno.sucursal.dominio.event.SucursalCreadaEvent;
 
 
 public class SucursalCommandService implements SucursalCommandInputPort {
     private final CrearSucursalCaseUse crearSucursalCaseUse;
     private final ModificarSucursalUseCase modificarSucursalUseCase;
-    private final SucursalEventPublisher eventPublisher;
 
     public SucursalCommandService(SucursalCommandRepository sucursalCommandRepository,
                                   SucursalQueryRepository sucursalQueryRepository,
                                   SucursalEventPublisher eventPublisher) {
-        this.crearSucursalCaseUse = new CrearSucursalCaseUse(sucursalCommandRepository);
+        this.crearSucursalCaseUse = new CrearSucursalCaseUse(sucursalCommandRepository, eventPublisher);
         this.modificarSucursalUseCase = new ModificarSucursalUseCase(sucursalCommandRepository, sucursalQueryRepository);
-        this.eventPublisher = eventPublisher;
     }
 
 
     @Override
     public Sucursal crear(Sucursal sucursal) {
-        Sucursal creada = crearSucursalCaseUse.ejecutar(sucursal);
-        // Publicar evento de dominio usando la interfaz
-        eventPublisher.publishSucursalCreada(new SucursalCreadaEvent(creada.getIdentificador()));
-        return creada;
+        return crearSucursalCaseUse.ejecutar(sucursal);
     }
 
     @Override
