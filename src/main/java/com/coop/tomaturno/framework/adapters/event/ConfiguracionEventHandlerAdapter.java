@@ -1,22 +1,20 @@
 package com.coop.tomaturno.framework.adapters.event;
 
 import com.coop.tomaturno.sucursal.dominio.event.SucursalCreadaEvent;
-import com.coop.tomaturno.configuracion.application.command.usecase.CrearConfiguracionUseCase;
+import com.coop.tomaturno.configuracion.application.command.port.input.ConfiguracionCommandInputPort;
 import com.coop.tomaturno.configuracion.dominio.entity.Configuracion;
 import com.coop.tomaturno.configuracion.dominio.vo.Estado;
 import io.quarkus.vertx.ConsumeEvent;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class ConfiguracionEventHandlerAdapter {
 
-    private final CrearConfiguracionUseCase crearConfiguracionUseCase;
+    private final ConfiguracionCommandInputPort configuracionCommandInputPort;
 
-    @Inject
-    public ConfiguracionEventHandlerAdapter(CrearConfiguracionUseCase crearConfiguracionUseCase) {
-        this.crearConfiguracionUseCase = crearConfiguracionUseCase;
+    public ConfiguracionEventHandlerAdapter(ConfiguracionCommandInputPort configuracionCommandInputPort) {
+        this.configuracionCommandInputPort = configuracionCommandInputPort;
     }
 
     @ConsumeEvent("sucursal.creada")
@@ -35,6 +33,6 @@ public class ConfiguracionEventHandlerAdapter {
         config.setParametro(parametro);
         config.setDescripcion(descripcion);
         config.setEstado(Estado.ACTIVO);
-        crearConfiguracionUseCase.ejecutar(config);
+        configuracionCommandInputPort.crear(config);
     }
 }

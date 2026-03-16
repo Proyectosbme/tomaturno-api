@@ -42,12 +42,15 @@ import com.coop.tomaturno.turno.application.command.service.TurnoCommandService;
 import com.coop.tomaturno.turno.application.query.port.input.TurnoQueryInputPort;
 import com.coop.tomaturno.turno.application.query.port.output.TurnoQueryRepository;
 import com.coop.tomaturno.turno.application.query.service.TurnoQueryService;
+import com.coop.tomaturno.persona.application.command.port.input.PersonaCommandInputPort;
+import com.coop.tomaturno.persona.application.command.port.output.PersonaCommandRepository;
+import com.coop.tomaturno.persona.application.command.service.PersonaCommandService;
+import com.coop.tomaturno.persona.application.query.port.output.PersonaQueryRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 
 import com.coop.tomaturno.sucursal.application.command.port.output.SucursalEventPublisher;
-import com.coop.tomaturno.framework.adapters.event.SucursalEventPublisherAdapter;
 
 @ApplicationScoped
 public class ApplicationConfig {
@@ -66,6 +69,8 @@ public class ApplicationConfig {
     private final ConfiguracionQueryRepository configuracionQueryRepository;
     private final TurnoCommandRepository turnoCommandRepository;
     private final TurnoQueryRepository turnoQueryRepository;
+    private final PersonaCommandRepository personaCommandRepository;
+    private final PersonaQueryRepository personaQueryRepository;
 
     public ApplicationConfig(SucursalQueryRepository sucursalQueryRepository,
                              SucursalCommandRepository sucursalCommandRepository,
@@ -80,7 +85,9 @@ public class ApplicationConfig {
                              ConfiguracionCommandRepository configuracionCommandRepository,
                              ConfiguracionQueryRepository configuracionQueryRepository,
                              TurnoCommandRepository turnoCommandRepository,
-                             TurnoQueryRepository turnoQueryRepository) {
+                             TurnoQueryRepository turnoQueryRepository,
+                             PersonaCommandRepository personaCommandRepository,
+                             PersonaQueryRepository personaQueryRepository) {
         this.sucursalQueryRepository = sucursalQueryRepository;
         this.sucursalCommandRepository = sucursalCommandRepository;
         this.colaCommandRepository = colaCommandRepository;
@@ -95,8 +102,16 @@ public class ApplicationConfig {
         this.configuracionQueryRepository = configuracionQueryRepository;
         this.turnoCommandRepository = turnoCommandRepository;
         this.turnoQueryRepository = turnoQueryRepository;
+        this.personaCommandRepository = personaCommandRepository;
+        this.personaQueryRepository = personaQueryRepository;
     }
 
+
+    @Produces
+    @ApplicationScoped
+    public PersonaCommandInputPort personaCommandService() {
+        return new PersonaCommandService(personaCommandRepository, personaQueryRepository);
+    }
 
     @Produces
     @ApplicationScoped
@@ -170,12 +185,6 @@ public class ApplicationConfig {
         return new TurnoQueryService(turnoQueryRepository);
     }
 
-
-    @Produces
-    @ApplicationScoped
-    public SucursalEventPublisher sucursalEventPublisher(SucursalEventPublisherAdapter adapter) {
-        return adapter;
-    }
 
     @Produces
     @ApplicationScoped
