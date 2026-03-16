@@ -4,4 +4,5 @@ import com.empresa.tomaturno.sucursal.dominio.event.SucursalCreadaEvent;
 
 public interface SucursalEventPublisher {
     void publishSucursalCreada(SucursalCreadaEvent event);
+    //valor
 }
