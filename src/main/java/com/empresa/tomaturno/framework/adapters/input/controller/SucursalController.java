@@ -10,6 +10,11 @@ import com.empresa.tomaturno.sucursal.application.command.port.input.SucursalCom
 import com.empresa.tomaturno.sucursal.application.query.port.input.SucursalQueryInputPort;
 import com.empresa.tomaturno.sucursal.dominio.entity.Sucursal;
 
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -17,6 +22,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 @Path("/sucursal")
+@Tag(name = "Sucursal", description = "Operaciones para la gestión de sucursales")
 public class SucursalController {
 
     private final SucursalCommandInputPort sucursalCommandInputPort;
@@ -42,6 +48,9 @@ public class SucursalController {
     @Transactional
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Crear sucursal", description = "Registra una nueva sucursal en el sistema y crea su configuración por defecto")
+    @APIResponse(responseCode = "201", description = "Sucursal creada exitosamente")
+    @APIResponse(responseCode = "400", description = "Datos de la sucursal inválidos")
     public Response crearSucursal(@Valid SucursalRequestDTO sucursalRequestDTO) {
         Sucursal sucursal = sucursalInputMapper.toSucursal(sucursalRequestDTO);
         Sucursal sucursalCreada = sucursalCommandInputPort.crear(sucursal);
@@ -58,7 +67,11 @@ public class SucursalController {
     @Transactional
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response modificarSucursal(@QueryParam("id") Long id,
+    @Operation(summary = "Modificar sucursal", description = "Actualiza los datos de una sucursal existente")
+    @APIResponse(responseCode = "200", description = "Sucursal modificada exitosamente")
+    @APIResponse(responseCode = "400", description = "Datos inválidos")
+    @APIResponse(responseCode = "404", description = "Sucursal no encontrada")
+    public Response modificarSucursal(@Parameter(description = "ID de la sucursal a modificar", required = true) @QueryParam("id") Long id,
                                       @Valid SucursalRequestDTO sucursalRequestDTO) {
         Sucursal sucursalDatosNuevos = sucursalInputMapper.toSucursal(sucursalRequestDTO);
         Sucursal sucursalModificada = sucursalCommandInputPort.actualizar(id, sucursalDatosNuevos);
@@ -68,6 +81,8 @@ public class SucursalController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Listar sucursales", description = "Retorna todas las sucursales registradas en el sistema")
+    @APIResponse(responseCode = "200", description = "Lista de sucursales")
     public List<SucursalResponseDTO> listarTodas() {
         return sucursalQueryInputPort.listarTodas()
                 .stream()
@@ -78,7 +93,10 @@ public class SucursalController {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public SucursalResponseDTO obtenerSucursalPorId(@PathParam("id") Long id) {
+    @Operation(summary = "Obtener sucursal por ID", description = "Retorna una sucursal específica por su identificador")
+    @APIResponse(responseCode = "200", description = "Sucursal encontrada")
+    @APIResponse(responseCode = "404", description = "Sucursal no encontrada")
+    public SucursalResponseDTO obtenerSucursalPorId(@Parameter(description = "ID de la sucursal", required = true) @PathParam("id") Long id) {
         Sucursal sucursal = sucursalQueryInputPort.buscarPorId(id);
         return sucursalInputMapper.toSucursalResponseDTO(sucursal);
     }
@@ -86,7 +104,9 @@ public class SucursalController {
     @GET
     @Path("/sucursales")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<SucursalResponseDTO> obtenerSucursalesPorNombre(@QueryParam("nombre") String nombre) {
+    @Operation(summary = "Buscar sucursales por nombre", description = "Retorna las sucursales que coincidan con el nombre proporcionado")
+    @APIResponse(responseCode = "200", description = "Lista de sucursales encontradas")
+    public List<SucursalResponseDTO> obtenerSucursalesPorNombre(@Parameter(description = "Nombre o parte del nombre de la sucursal") @QueryParam("nombre") String nombre) {
         List<Sucursal> lstSucursales = sucursalQueryInputPort.buscarPorNombre(nombre);
         return lstSucursales.stream().map(sucursalInputMapper::toSucursalResponseDTO).toList();
     }
