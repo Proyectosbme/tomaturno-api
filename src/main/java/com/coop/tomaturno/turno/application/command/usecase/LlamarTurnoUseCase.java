@@ -1,0 +1,60 @@
+package com.coop.tomaturno.turno.application.command.usecase;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import com.coop.tomaturno.configuracion.application.query.port.output.ConfiguracionQueryRepository;
+import com.coop.tomaturno.configuracion.dominio.entity.Configuracion;
+import com.coop.tomaturno.turno.application.command.port.output.TurnoCommandRepository;
+import com.coop.tomaturno.turno.application.query.port.output.TurnoQueryRepository;
+import com.coop.tomaturno.turno.dominio.entity.Turno;
+import com.coop.tomaturno.turno.dominio.exceptions.TurnoNotFoundException;
+import com.coop.tomaturno.turno.dominio.exceptions.TurnoValidationException;
+import com.coop.tomaturno.turno.dominio.vo.EstadoTurno;
+
+public class LlamarTurnoUseCase {
+
+    private final TurnoCommandRepository turnoCommandRepository;
+    private final TurnoQueryRepository turnoQueryRepository;
+    private final ConfiguracionQueryRepository configuracionQueryRepository;
+
+    public LlamarTurnoUseCase(TurnoCommandRepository turnoCommandRepository,
+            TurnoQueryRepository turnoQueryRepository,
+            ConfiguracionQueryRepository configuracionQueryRepository) {
+        this.turnoCommandRepository = turnoCommandRepository;
+        this.turnoQueryRepository = turnoQueryRepository;
+        this.configuracionQueryRepository = configuracionQueryRepository;
+    }
+
+    public Turno ejecutar(Long idSucursal, LocalDateTime fechaCreacion, String codigoTurno,
+            Long idPuesto, Long idSucursalPuesto, Long idUsuario) {
+
+        Turno turno = turnoQueryRepository.buscarPorPK(idSucursal, fechaCreacion, codigoTurno);
+        if (turno == null) {
+            throw new TurnoNotFoundException("Turno no encontrado: " + codigoTurno + " sucursal=" + idSucursal);
+        }
+
+        // Re-anuncio: el turno ya está LLAMADO por este mismo operador — no bloquear
+        boolean mismoOperador = idPuesto.equals(turno.getIdPuesto())
+                && (idUsuario == null || idUsuario.equals(turno.getIdUsuario()));
+        if (EstadoTurno.LLAMADO.equals(turno.getEstado()) && mismoOperador) {
+            turno.rellamar();
+            return turnoCommandRepository.actualizar(turno);
+        }
+
+        // Llamada nueva: verificar LLAMAR_CON_ACTIVO
+        Configuracion config = configuracionQueryRepository.buscarPorNombreYSucursal(idSucursal, "LLAMAR_CON_ACTIVO");
+        if (config != null && Integer.valueOf(0).equals(config.getParametro())) {
+            boolean tieneActivo = (idUsuario != null)
+                    ? turnoQueryRepository.existeTurnoLlamadoPorUsuario(idUsuario, idSucursal, LocalDate.now())
+                    : turnoQueryRepository.existeTurnoLlamadoPorPuesto(idPuesto, idSucursal, LocalDate.now());
+            if (tieneActivo) {
+                throw new TurnoValidationException("El operador ya tiene un turno activo. Finalícelo antes de llamar otro.");
+            }
+        }
+
+        turno.validarTransicionLlamar(idPuesto, idSucursalPuesto);
+        turno.llamar(idPuesto, idSucursalPuesto, idUsuario);
+        return turnoCommandRepository.actualizar(turno);
+    }
+}
