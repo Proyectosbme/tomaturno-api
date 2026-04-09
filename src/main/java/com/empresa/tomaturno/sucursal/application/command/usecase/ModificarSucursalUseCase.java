@@ -20,13 +20,10 @@ public class ModificarSucursalUseCase {
 
     public Sucursal ejecutar(Long id, Sucursal datosNuevos, String usuario) {
         Sucursal sucursal = sucursalQueryRepository.buscarPorId(id);
-        if (sucursal != null) {
-            sucursal.auditoriaModificacion(usuario, LocalDateTime.now());
-            sucursal.modificar(datosNuevos.getNombre(), datosNuevos.getContacto(), datosNuevos.getEstado());
-            return sucursalCommandRepository.modificar(sucursal);
-
-        }
-        throw new SucursalNotFoundException(id, "Sucursal");
+        if (sucursal == null)
+            throw new SucursalNotFoundException(id, "Sucursal");
+        sucursal.modificar(datosNuevos.getNombre(), datosNuevos.getContacto(), datosNuevos.getEstado(), usuario);
+        return sucursalCommandRepository.modificar(sucursal);
 
     }
 }
