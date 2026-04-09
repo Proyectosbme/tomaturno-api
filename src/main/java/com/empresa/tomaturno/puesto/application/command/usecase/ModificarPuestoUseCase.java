@@ -23,10 +23,8 @@ public class ModificarPuestoUseCase {
         if (puesto == null) {
             throw new PuestoNotFoundException(idPuesto,
                     "Puesto (idPuesto=" + idPuesto + ", idSucursal=" + idSucursal + ")");
-        }
-        puesto.auditoriaModificacion(usuario, LocalDateTime.now());
-        puesto.modificar(datosNuevos.getNombre(), datosNuevos.getNombreLlamada(), datosNuevos.getEstado());
-        puesto.validarModificacion();
+        }  
+        puesto.modificar(datosNuevos.getNombre(), datosNuevos.getNombreLlamada(), datosNuevos.getEstado(),usuario);
         return puestoCommandRepository.modificar(puesto);
     }
 }

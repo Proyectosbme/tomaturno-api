@@ -24,8 +24,8 @@ public class PuestoCommandJpaAdapters implements PuestoCommandRepository {
     @Override
     public Puesto save(Puesto puesto) {
         Long nextId = puestoJpaRepository.obtenerSiguienteId(puesto.getSucursal().getIdentificador());
-        puesto.setIdentificador(nextId);
         PuestoJpaEntity entity = puestoOutputMapper.toJpaEntity(puesto);
+        entity.getIdpk().setId(nextId);
         puestoJpaRepository.persist(entity);
         return puestoOutputMapper.toDomain(entity);
     }
@@ -34,12 +34,10 @@ public class PuestoCommandJpaAdapters implements PuestoCommandRepository {
     public Puesto modificar(Puesto puesto) {
         PuestoJpaEntity existente = puestoJpaRepository
                 .buscarPorIdPuestoYSucursal(puesto.getIdentificador(), puesto.getSucursal().getIdentificador());
-
         if (existente == null) {
             throw new NotFoundException("Puesto no encontrado con idPuesto: " + puesto.getIdentificador()
                     + " e idSucursal: " + puesto.getSucursal().getIdentificador());
         }
-
         puestoOutputMapper.updateEntityFromDomain(puesto, existente);
         return puestoOutputMapper.toDomain(existente);
     }
