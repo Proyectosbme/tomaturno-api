@@ -18,13 +18,13 @@ public class ModificarPuestoUseCase {
         this.puestoQueryRepository = puestoQueryRepository;
     }
 
-    public Puesto ejecutar(Long idPuesto, Long idSucursal, Puesto datosNuevos) {
+    public Puesto ejecutar(Long idPuesto, Long idSucursal, Puesto datosNuevos, String usuario) {
         Puesto puesto = puestoQueryRepository.buscarPorIdPuestoYSucursal(idPuesto, idSucursal);
         if (puesto == null) {
             throw new PuestoNotFoundException(idPuesto,
                     "Puesto (idPuesto=" + idPuesto + ", idSucursal=" + idSucursal + ")");
         }
-        puesto.auditoriaModificacion("bmarroquin", LocalDateTime.now());
+        puesto.auditoriaModificacion(usuario, LocalDateTime.now());
         puesto.modificar(datosNuevos.getNombre(), datosNuevos.getNombreLlamada(), datosNuevos.getEstado());
         puesto.validarModificacion();
         return puestoCommandRepository.modificar(puesto);

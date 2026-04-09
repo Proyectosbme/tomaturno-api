@@ -19,14 +19,14 @@ public class CrearDetalleDeColaUseCase {
         this.colaQueryRepository = colaQueryRepository;
     }
 
-    public Cola ejecutar(Long idCola, Long idSucursal, Detalle detalle) {
+    public Cola ejecutar(Long idCola, Long idSucursal, Detalle detalle,String usuario) {
         // Verificar que la cola existe
         Cola cola = colaQueryRepository.buscarPorIdColaYSucursal(idCola, idSucursal);
         if (cola == null) {
             throw new ColaNotFoundException(idCola, "Cola no encontrada");
         }
 
-        detalle.auditoriaCreacion("bmarroquin", LocalDateTime.now());
+        detalle.auditoriaCreacion(usuario, LocalDateTime.now());
         detalle.validarCreacion();
 
         // Validar que no exista otro detalle con el mismo nombre en esta cola

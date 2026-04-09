@@ -55,7 +55,7 @@ public class ConfiguracionController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response crear(@Valid ConfiguracionRequestDTO dto) {
         Configuracion configuracion = mapper.toDomain(dto);
-        configuracion = commandPort.crear(configuracion);
+        configuracion = commandPort.crear(configuracion, dto.getUsuario());
         return Response.status(Response.Status.CREATED).entity(mapper.toResponse(configuracion)).build();
     }
 
@@ -69,7 +69,7 @@ public class ConfiguracionController {
             @PathParam("idSucursal") Long idSucursal,
             @Valid ConfiguracionRequestDTO dto) {
         Configuracion datosNuevos = mapper.toDomain(dto);
-        Configuracion actualizado = commandPort.actualizar(idConfiguracion, idSucursal, datosNuevos);
+        Configuracion actualizado = commandPort.actualizar(idConfiguracion, idSucursal, datosNuevos, dto.getUsuario());
         return Response.ok(mapper.toResponse(actualizado)).build();
     }
 }

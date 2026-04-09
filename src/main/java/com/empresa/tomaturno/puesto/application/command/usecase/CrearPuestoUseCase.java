@@ -17,8 +17,8 @@ public class CrearPuestoUseCase {
         this.puestoQueryRepository = puestoQueryRepository;
     }
 
-    public Puesto ejecutar(Puesto puesto) {
-        puesto.auditoriaCreacion("bmarroquin", LocalDateTime.now());
+    public Puesto ejecutar(Puesto puesto, String usuario) {
+        puesto.auditoriaCreacion(usuario, LocalDateTime.now());
         puesto.validarCreacion();
 
         boolean existeNombre = puestoQueryRepository.existeNombreEnSucursal(

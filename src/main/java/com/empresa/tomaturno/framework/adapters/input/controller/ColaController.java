@@ -8,15 +8,15 @@ import jakarta.ws.rs.core.Response;
 
 import java.util.List;
 
+import com.empresa.tomaturno.cola.DTO.ResultadoReplicacion;
 import com.empresa.tomaturno.cola.application.command.port.input.ColaCommandInputPort;
-import com.empresa.tomaturno.cola.application.command.usecase.ReplicarColasUseCase.ResultadoReplicacion;
+
 import com.empresa.tomaturno.cola.application.query.port.input.ColaQueryInputPort;
 import com.empresa.tomaturno.cola.dominio.entity.Cola;
 import com.empresa.tomaturno.cola.dominio.entity.Detalle;
 import com.empresa.tomaturno.framework.adapters.input.dto.ColaRequestDTO;
 import com.empresa.tomaturno.framework.adapters.input.dto.ColaResponseDTO;
 import com.empresa.tomaturno.framework.adapters.input.dto.DetalleRequestDTO;
-import com.empresa.tomaturno.framework.adapters.input.dto.ReplicarResponseDTO;
 import com.empresa.tomaturno.framework.adapters.input.mapper.ColaInputMapper;
 
 @Path("/colas")
@@ -45,8 +45,9 @@ public class ColaController {
             @QueryParam("idSucursal") Long idSucursal,
             @QueryParam("nombre") String nombre) {
         List<Cola> lstColas = colaQueryInputPort.buscarPorFiltro(id, idSucursal, nombre);
-         if (turnoWebSocket != null) {
-            turnoWebSocket.enviarTurno("Se ha buscado una cola con filtro: id=" + id + ", idSucursal=" + idSucursal + ", nombre=" + nombre);
+        if (turnoWebSocket != null) {
+            turnoWebSocket.enviarTurno("Se ha buscado una cola con filtro: id=" + id + ", idSucursal=" + idSucursal
+                    + ", nombre=" + nombre);
         }
         return lstColas.stream().map(colaInputMapper::toResponse).toList();
     }
@@ -68,7 +69,7 @@ public class ColaController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response crearCola(@Valid ColaRequestDTO colaRequestDTO) {
         Cola cola = colaInputMapper.toDomain(colaRequestDTO);
-        cola = colaCommandInputPort.crear(cola);
+        cola = colaCommandInputPort.crear(cola , colaRequestDTO.getUsuario());
         return Response.status(Response.Status.CREATED)
                 .entity(colaInputMapper.toResponse(cola)).build();
     }
@@ -83,7 +84,7 @@ public class ColaController {
             @PathParam("idSucursal") Long idSucursal,
             @Valid ColaRequestDTO colaRequestDTO) {
         Cola colaDatosNuevos = colaInputMapper.toDomain(colaRequestDTO);
-        Cola colaModificada = colaCommandInputPort.actualizar(idCola, idSucursal, colaDatosNuevos);
+        Cola colaModificada = colaCommandInputPort.actualizar(idCola, idSucursal, colaDatosNuevos, colaRequestDTO.getUsuario());
         return Response.ok(colaInputMapper.toResponse(colaModificada)).build();
     }
 
@@ -97,7 +98,7 @@ public class ColaController {
             @PathParam("idSucursal") Long idSucursal,
             @Valid DetalleRequestDTO request) {
         Detalle detalle = colaInputMapper.toDetalleDomain(request);
-        Cola cola = colaCommandInputPort.crearDetalle(idCola, idSucursal, detalle);
+        Cola cola = colaCommandInputPort.crearDetalle(idCola, idSucursal, detalle, request.getUsuario());
         return Response.status(Response.Status.CREATED)
                 .entity(colaInputMapper.toResponse(cola)).build();
     }
@@ -108,7 +109,8 @@ public class ColaController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response replicarColas(
             @QueryParam("idOrigen") Long idOrigen,
-            @QueryParam("idDestino") Long idDestino) {
+            @QueryParam("idDestino") Long idDestino,
+            @QueryParam("usuario") String usuario) {
         if (idOrigen == null || idDestino == null) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("Los parámetros idOrigen e idDestino son obligatorios").build();
@@ -118,14 +120,8 @@ public class ColaController {
                     .entity("La sucursal origen y destino no pueden ser la misma").build();
         }
 
-        ResultadoReplicacion resultado = colaCommandInputPort.replicar(idOrigen, idDestino);
+        ResultadoReplicacion resultado = colaCommandInputPort.replicar(idOrigen, idDestino, usuario);
 
-        ReplicarResponseDTO dto = new ReplicarResponseDTO(
-                resultado.getTotalCopiadas(),
-                resultado.getTotalSaltadas(),
-                resultado.getColasCopidas(),
-                resultado.getColasSaltadas());
-
-        return Response.ok(dto).build();
+        return Response.ok(colaInputMapper.toReplicarResponse(resultado)).build();
     }
 }

@@ -48,6 +48,16 @@ public interface ColaOutputMapper {
     @Mapping(target = "estado", source = "estado", qualifiedByName = "estadoToCodigo")
     void updateEntityFromDomain(Cola cola, @MappingTarget ColaJpaEntity entity);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "nombre", source = "nombre")
+    @Mapping(target = "codigo", source = "codigo")
+    @Mapping(target = "estado", source = "estado", qualifiedByName = "estadoToCodigo")
+    @Mapping(target = "userCreacion", ignore = true)
+    @Mapping(target = "fechaCreacion", ignore = true)
+    @Mapping(target = "userModificacion", source = "auditoria.usuarioModificacion")
+    @Mapping(target = "fechaModificacion", source = "auditoria.fechaModificacion")
+    void updateDetalleEntityFromDomain(Detalle detalle, @MappingTarget DetalleColaJpaEntity entity);
+
     @Mapping(target = "id.idCola", source = "idCola")
     @Mapping(target = "id.idSucursal", source = "idSucursal")
     @Mapping(target = "id.idDetalle", source = "detalle.correlativo")

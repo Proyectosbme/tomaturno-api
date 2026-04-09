@@ -18,7 +18,7 @@ public class AsignarDetalleColaPuestoUseCase {
         this.queryRepository = queryRepository;
     }
 
-    public DetalleColaxPuesto ejecutar(DetalleColaxPuesto asignacion) {
+    public DetalleColaxPuesto ejecutar(DetalleColaxPuesto asignacion,String usuario) {
         asignacion.validarAsignacion();
 
         boolean existe = queryRepository.existeAsignacion(
@@ -30,7 +30,7 @@ public class AsignarDetalleColaPuestoUseCase {
                     "Ya existe la asignación de este detalle de cola al puesto indicado");
         }
 
-        asignacion.auditoriaCreacion("bmarroquin", LocalDateTime.now());
+        asignacion.auditoriaCreacion(usuario, LocalDateTime.now());
         return commandRepository.save(asignacion);
     }
 }

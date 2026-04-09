@@ -6,8 +6,10 @@ import com.empresa.tomaturno.usuario.dominio.entity.Usuario;
 import com.empresa.tomaturno.usuario.dominio.vo.Estado;
 
 import io.quarkus.vertx.ConsumeEvent;
+import io.smallrye.common.annotation.Blocking;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
 
 @ApplicationScoped
 public class UsuarioEventHandlerAdapter {
@@ -18,6 +20,8 @@ public class UsuarioEventHandlerAdapter {
         this.usuarioCommandInputPort = usuarioCommandInputPort;
     }
 
+    @Blocking
+    @Transactional
     @ConsumeEvent("sucursal.creada")
     public void onSucursalCreada(SucursalCreadaEvent event) {
         Long idSucursal = event.getSucursalId();
@@ -35,6 +39,6 @@ public class UsuarioEventHandlerAdapter {
         usuario.setNombres(nombres);
         usuario.setApellidos(apellidos);
         usuario.setEstado(Estado.ACTIVO);
-        usuarioCommandInputPort.crear(usuario);
+        usuarioCommandInputPort.crear(usuario, "sistema");
     }
 }

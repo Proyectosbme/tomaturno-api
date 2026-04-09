@@ -19,8 +19,8 @@ public class DetalleColaxPuestoCommandService implements DetalleColaxPuestoComma
     }
 
     @Override
-    public DetalleColaxPuesto asignar(DetalleColaxPuesto asignacion) {
-        return asignarUseCase.ejecutar(asignacion);
+    public DetalleColaxPuesto asignar(DetalleColaxPuesto asignacion, String usuario) {
+        return asignarUseCase.ejecutar(asignacion, usuario);
     }
 
     @Override

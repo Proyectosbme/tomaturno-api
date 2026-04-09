@@ -23,12 +23,12 @@ public class SucursalCommandService implements SucursalCommandInputPort {
 
 
     @Override
-    public Sucursal crear(Sucursal sucursal) {
-        return crearSucursalCaseUse.ejecutar(sucursal);
+    public Sucursal crear(Sucursal sucursal, String usuario) {
+        return crearSucursalCaseUse.ejecutar(sucursal, usuario);
     }
 
     @Override
-    public Sucursal actualizar(Long id, Sucursal datosActualizados) {
-        return modificarSucursalUseCase.ejecutar(id, datosActualizados);
+    public Sucursal actualizar(Long id, Sucursal datosActualizados, String usuario) {
+        return modificarSucursalUseCase.ejecutar(id, datosActualizados, usuario);
     }
 }

@@ -4,7 +4,14 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public class ConfiguracionRequestDTO {
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+public class ConfiguracionRequestDTO extends AuditRequestDTO {
 
     @NotNull(message = "La sucursal es obligatoria")
     public Long idSucursal;

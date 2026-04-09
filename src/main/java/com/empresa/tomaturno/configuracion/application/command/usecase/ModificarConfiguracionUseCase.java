@@ -18,7 +18,7 @@ public class ModificarConfiguracionUseCase {
         this.queryRepository = queryRepository;
     }
 
-    public Configuracion ejecutar(Long idConfiguracion, Long idSucursal, Configuracion datosNuevos) {
+    public Configuracion ejecutar(Long idConfiguracion, Long idSucursal, Configuracion datosNuevos,String usuario) {
         Configuracion existente = queryRepository.buscarPorIdYSucursal(idConfiguracion, idSucursal);
         if (existente == null) {
             throw new ConfiguracionNotFoundException(
@@ -32,7 +32,7 @@ public class ModificarConfiguracionUseCase {
                 datosNuevos.getDescripcion(),
                 datosNuevos.getEstado()
         );
-        existente.auditoriaModificacion("bmarroquin", LocalDateTime.now());
+        existente.auditoriaModificacion(usuario, LocalDateTime.now());
         existente.validarModificacion();
 
         return commandRepository.modificar(existente);

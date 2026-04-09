@@ -53,7 +53,7 @@ public class SucursalController {
     @APIResponse(responseCode = "400", description = "Datos de la sucursal inválidos")
     public Response crearSucursal(@Valid SucursalRequestDTO sucursalRequestDTO) {
         Sucursal sucursal = sucursalInputMapper.toSucursal(sucursalRequestDTO);
-        Sucursal sucursalCreada = sucursalCommandInputPort.crear(sucursal);
+        Sucursal sucursalCreada = sucursalCommandInputPort.crear(sucursal, sucursalRequestDTO.getUsuario());
         configuracionDefaultBean.crearConfiguracionesParaSucursal(sucursalCreada.getIdentificador());
         if (turnoWebSocket != null) {
             turnoWebSocket.enviarTurno("Se ha creado una nueva sucursal");
@@ -74,7 +74,7 @@ public class SucursalController {
     public Response modificarSucursal(@Parameter(description = "ID de la sucursal a modificar", required = true) @QueryParam("id") Long id,
                                       @Valid SucursalRequestDTO sucursalRequestDTO) {
         Sucursal sucursalDatosNuevos = sucursalInputMapper.toSucursal(sucursalRequestDTO);
-        Sucursal sucursalModificada = sucursalCommandInputPort.actualizar(id, sucursalDatosNuevos);
+        Sucursal sucursalModificada = sucursalCommandInputPort.actualizar(id, sucursalDatosNuevos, sucursalRequestDTO.getUsuario());
         SucursalResponseDTO responseDTO = sucursalInputMapper.toSucursalResponseDTO(sucursalModificada);
         return Response.ok(responseDTO).build();
     }

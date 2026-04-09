@@ -57,7 +57,7 @@ public class PuestoController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response crearPuesto(@Valid PuestoRequestDTO dto) {
         Puesto puesto = puestoInputMapper.toDomain(dto);
-        puesto = puestoCommandInputPort.crear(puesto);
+        puesto = puestoCommandInputPort.crear(puesto, dto.getUsuario());
         return Response.status(Response.Status.CREATED)
                 .entity(puestoInputMapper.toResponse(puesto)).build();
     }
@@ -72,7 +72,7 @@ public class PuestoController {
             @PathParam("idSucursal") Long idSucursal,
             @Valid PuestoRequestDTO dto) {
         Puesto datosNuevos = puestoInputMapper.toDomain(dto);
-        Puesto puestoModificado = puestoCommandInputPort.actualizar(idPuesto, idSucursal, datosNuevos);
+        Puesto puestoModificado = puestoCommandInputPort.actualizar(idPuesto, idSucursal, datosNuevos, dto.getUsuario());
         return Response.ok(puestoInputMapper.toResponse(puestoModificado)).build();
     }
 }
