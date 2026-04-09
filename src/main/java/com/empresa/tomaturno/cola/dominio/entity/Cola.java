@@ -103,15 +103,6 @@ public class Cola {
             return c;
         }
     }
-
-    /** Referencia ligera (solo id y nombre), sin datos completos. */
-    public static Cola referencia(Long id, String nombre) {
-        Cola c = new Cola();
-        c.identificador = id;
-        c.nombre = nombre;
-        return c;
-    }
-
     // ─── Comportamiento ───────────────────────────────────────────────────
 
     public void crear(String usuario) {

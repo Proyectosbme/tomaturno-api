@@ -11,7 +11,6 @@ import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.U
 import com.empresa.tomaturno.sucursal.application.command.port.input.SucursalCommandInputPort;
 import com.empresa.tomaturno.sucursal.dominio.entity.Sucursal;
 import com.empresa.tomaturno.sucursal.dominio.vo.Contacto;
-import com.empresa.tomaturno.shared.*;
 import com.empresa.tomaturno.shared.clases.Estado;
 import com.empresa.tomaturno.usuario.application.command.port.input.UsuarioCommandInputPort;
 import com.empresa.tomaturno.usuario.dominio.entity.Usuario;

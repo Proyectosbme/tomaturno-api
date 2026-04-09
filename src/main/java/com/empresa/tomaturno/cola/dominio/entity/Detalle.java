@@ -14,7 +14,8 @@ public class Detalle {
     private Estado estado;
     private Auditoria auditoria;
 
-    private Detalle() {}
+    private Detalle() {
+    }
 
     public static Detalle inicializar(String nombre, String codigo, Estado estado) {
         Detalle d = new Detalle();
@@ -67,9 +68,23 @@ public class Detalle {
         validarCreacion();
     }
 
-    public Long getCorrelativo() { return correlativo; }
-    public String getNombre() { return nombre; }
-    public String getCodigo() { return codigo; }
-    public Estado getEstado() { return estado; }
-    public Auditoria getAuditoria() { return auditoria; }
+    public Long getCorrelativo() {
+        return correlativo;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public Estado getEstado() {
+        return estado;
+    }
+
+    public Auditoria getAuditoria() {
+        return auditoria;
+    }
 }
