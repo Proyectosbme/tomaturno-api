@@ -3,6 +3,7 @@ package com.empresa.tomaturno.cola.application.command.usecase;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.empresa.tomaturno.cola.DTO.ResultadoReplicacion;
 import com.empresa.tomaturno.cola.application.command.port.output.ColaCommandRepository;
 import com.empresa.tomaturno.cola.application.query.port.output.ColaQueryRepository;
 import com.empresa.tomaturno.cola.dominio.entity.Cola;
@@ -19,7 +20,8 @@ public class ReplicarColasUseCase {
         this.colaQueryRepository = colaQueryRepository;
     }
 
-    public ResultadoReplicacion ejecutar(Long idSucursalOrigen, Long idSucursalDestino) {
+    public ResultadoReplicacion ejecutar(Long idSucursalOrigen, Long idSucursalDestino , String usuario) {
+        List<String> detallesCopiados = new ArrayList<>();
         // Traer todas las colas con detalles de la sucursal origen
         List<Cola> colasOrigen = colaQueryRepository.buscarConDetallesPorSucursal(idSucursalOrigen);
 
@@ -32,44 +34,36 @@ public class ReplicarColasUseCase {
                     idSucursalDestino, cola.getNombre());
 
             if (existeNombre) {
-                replicarDetallesFaltantes(cola, idSucursalDestino);
+               String detalleCopiados = replicarDetallesFaltantes(cola, idSucursalDestino);
+               if(detalleCopiados != null) {
+                   detallesCopiados.add(detalleCopiados);
+               }
                 saltadas.add(cola.getNombre());
                 continue;
             }
 
-            colaCommandRepository.replicarCola(cola, idSucursalDestino);
+            colaCommandRepository.replicarCola(cola, idSucursalDestino,usuario);
             copiadas.add(cola.getNombre());
         }
 
-        return new ResultadoReplicacion(copiadas, saltadas);
+        return new ResultadoReplicacion(copiadas, saltadas, detallesCopiados);
     }
 
-    private void replicarDetallesFaltantes(Cola colaOrigen, Long idSucursalDestino) {
+    private String replicarDetallesFaltantes(Cola colaOrigen, Long idSucursalDestino) {
+        StringBuilder response = new StringBuilder(colaOrigen.getNombre());
+        Integer contador = 0;
         List<Cola> colasDestino = colaQueryRepository.buscarPorFiltro(null, idSucursalDestino, colaOrigen.getNombre());
-        if (colasDestino.isEmpty() || colaOrigen.getDetalles() == null) return;
+        if (colasDestino.isEmpty() || colaOrigen.getDetalles() == null) return null;
         Cola colaDestino = colasDestino.get(0);
         for (Detalle detalle : colaOrigen.getDetalles()) {
             boolean existeDetalle = colaQueryRepository.existeNombreDetalleEnCola(
                     colaDestino.getIdentificador(), idSucursalDestino, detalle.getNombre());
             if (!existeDetalle) {
+                response.append(" - Detalle: ").append(detalle.getNombre());
+                contador++;
                 colaCommandRepository.guardarDetalle(colaDestino.getIdentificador(), idSucursalDestino, detalle);
             }
         }
-    }
-
-    /** DTO de resultado embebido en el use case */
-    public static class ResultadoReplicacion {
-        private final List<String> colasCopidas;
-        private final List<String> colasSaltadas;
-
-        public ResultadoReplicacion(List<String> colasCopidas, List<String> colasSaltadas) {
-            this.colasCopidas = colasCopidas;
-            this.colasSaltadas = colasSaltadas;
-        }
-
-        public int getTotalCopiadas() { return colasCopidas.size(); }
-        public int getTotalSaltadas() { return colasSaltadas.size(); }
-        public List<String> getColasCopidas() { return colasCopidas; }
-        public List<String> getColasSaltadas() { return colasSaltadas; }
+        return contador>0 ? response.toString() : null;
     }
 }

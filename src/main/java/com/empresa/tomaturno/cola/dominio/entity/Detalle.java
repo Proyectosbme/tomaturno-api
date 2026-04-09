@@ -33,10 +33,12 @@ public class Detalle {
         this.auditoria = auditoria;
     }
 
-    public void modificar(String nombre, String codigo, Estado estado) {
+    public void modificar(String nombre, String codigo, Estado estado, String usuario, LocalDateTime fechaModificacion) {
         this.nombre = nombre;
         this.codigo = codigo;
         this.estado = estado;
+        this.auditoria.setUsuarioModificacion(usuario);
+        this.auditoria.setFechaModificacion(fechaModificacion);
     }
 
    

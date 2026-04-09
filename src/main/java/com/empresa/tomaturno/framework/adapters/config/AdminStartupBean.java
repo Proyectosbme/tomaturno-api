@@ -1,86 +1,74 @@
 package com.empresa.tomaturno.framework.adapters.config;
 
-import at.favre.lib.crypto.bcrypt.BCrypt;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.SucursalJpaEntity;
-import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.UsuarioJpaEntity;
-import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.UsuarioJpaEntityPK;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.SucursalJpaRepository;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.UsuarioJpaRepository;
+import com.empresa.tomaturno.sucursal.application.command.port.input.SucursalCommandInputPort;
+import com.empresa.tomaturno.sucursal.dominio.entity.Sucursal;
+import com.empresa.tomaturno.sucursal.dominio.vo.Contacto;
+import com.empresa.tomaturno.shared.*;
+import com.empresa.tomaturno.shared.clases.Estado;
+import com.empresa.tomaturno.usuario.application.command.port.input.UsuarioCommandInputPort;
+import com.empresa.tomaturno.usuario.dominio.entity.Usuario;
 
 @ApplicationScoped
 public class AdminStartupBean {
 
     private static final String USUARIO_SISTEMA = "sistema";
 
-    
     private final SucursalJpaRepository sucursalJpaRepository;
-
     private final UsuarioJpaRepository usuarioJpaRepository;
-
-    private final ConfiguracionDefaultBean configuracionDefaultBean;
+    private final SucursalCommandInputPort sucursalCommandInputPort;
+    private final UsuarioCommandInputPort usuarioCommandInputPort;
 
     @Inject
-    public AdminStartupBean(SucursalJpaRepository sucursalJpaRepository, UsuarioJpaRepository usuarioJpaRepository, ConfiguracionDefaultBean configuracionDefaultBean) {
+    public AdminStartupBean(SucursalJpaRepository sucursalJpaRepository,
+                            UsuarioJpaRepository usuarioJpaRepository,
+                            SucursalCommandInputPort sucursalCommandInputPort,
+                            UsuarioCommandInputPort usuarioCommandInputPort) {
         this.sucursalJpaRepository = sucursalJpaRepository;
         this.usuarioJpaRepository = usuarioJpaRepository;
-        this.configuracionDefaultBean = configuracionDefaultBean;
+        this.sucursalCommandInputPort = sucursalCommandInputPort;
+        this.usuarioCommandInputPort = usuarioCommandInputPort;
     }
 
     @Transactional
     void onStart(@Observes StartupEvent event) {
-        SucursalJpaEntity sucursal = obtenerOCrearSucursalDefault();
-        crearAdminSiNoExiste(sucursal.getId());
-        crearConfiguracionesDefault();
+        Long idSucursal = obtenerOCrearSucursalDefault();
+        crearAdminSiNoExiste(idSucursal);
     }
 
-    private SucursalJpaEntity obtenerOCrearSucursalDefault() {
-        List<SucursalJpaEntity> sucursales = sucursalJpaRepository.listAll();
-        if (!sucursales.isEmpty()) {
-            return sucursales.get(0);
+    private Long obtenerOCrearSucursalDefault() {
+        if (sucursalJpaRepository.count() > 0) {
+            return sucursalJpaRepository.listAll().get(0).getId();
         }
-        SucursalJpaEntity nueva = new SucursalJpaEntity();
-        nueva.setNombre("Sede Central");
-        nueva.setEstado(1);
-        nueva.setUsuarioCreacion(USUARIO_SISTEMA);
-        nueva.setFechaCreacion(LocalDateTime.now());
-        sucursalJpaRepository.persist(nueva);
-        return nueva;
+        // Al crear por el port se dispara el evento sucursal.creada
+        // que crea automáticamente las configuraciones y usuarios por defecto
+        Sucursal nueva = sucursalCommandInputPort.crear(
+                Sucursal.crear(
+                        "Administracion Central",
+                        Contacto.crear("00000000", "admin@sistema.com", "Sin direccion"),
+                        Estado.ACTIVO),
+                USUARIO_SISTEMA);
+        return nueva.getIdentificador();
     }
 
     private void crearAdminSiNoExiste(Long idSucursal) {
-        boolean adminExiste = usuarioJpaRepository
-                .count("upper(codigoUsuario) = 'ADMIN'") > 0;
-        if (adminExiste) return;
+        if (usuarioJpaRepository.count("upper(codigoUsuario) = 'ADMIN'") > 0) return;
 
-        Long nextId = usuarioJpaRepository.obtenerSiguienteId(idSucursal);
-        UsuarioJpaEntityPK pk = new UsuarioJpaEntityPK(nextId, idSucursal);
-
-        UsuarioJpaEntity admin = new UsuarioJpaEntity();
-        admin.setIdpk(pk);
+        Usuario admin = new Usuario();
+        admin.setIdSucursal(idSucursal);
         admin.setCodigoUsuario("admin");
-        admin.setContrasena(BCrypt.withDefaults().hashToString(12, "admin".toCharArray()));
+        admin.setContrasena("admin");
         admin.setPerfil("ADMIN");
         admin.setNombres("Administrador");
         admin.setApellidos("Sistema");
-        admin.setEstado(1);
-        admin.setFechaCreacion(LocalDateTime.now());
-        admin.setUserCreacion(USUARIO_SISTEMA);
-        usuarioJpaRepository.persist(admin);
-    }
-
-    private void crearConfiguracionesDefault() {
-        List<SucursalJpaEntity> sucursales = sucursalJpaRepository.listAll();
-        for (SucursalJpaEntity sucursal : sucursales) {
-            configuracionDefaultBean.crearConfiguracionesParaSucursal(sucursal.getId());
-        }
+        admin.setEstado(com.empresa.tomaturno.usuario.dominio.vo.Estado.ACTIVO);
+        usuarioCommandInputPort.crear(admin, USUARIO_SISTEMA);
     }
 }

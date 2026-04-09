@@ -18,12 +18,12 @@ public class CrearConfiguracionUseCase {
         this.queryRepository = queryRepository;
     }
 
-    public Configuracion ejecutar(Configuracion configuracion) {
+    public Configuracion ejecutar(Configuracion configuracion,String usuario) {
         Long siguienteId = queryRepository.obtenerSiguienteId(configuracion.getIdSucursal());
         configuracion.setIdConfiguracion(siguienteId);
 
         configuracion.setAuditoria(new Auditoria());
-        configuracion.auditoriaCreacion("bmarroquin", LocalDateTime.now());
+        configuracion.auditoriaCreacion(usuario, LocalDateTime.now());
         configuracion.validarCreacion();
 
         return commandRepository.save(configuracion);

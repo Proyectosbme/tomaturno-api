@@ -18,13 +18,13 @@ public class ModificarColaUseCase {
         this.colaQueryRepository = colaQueryRepository;
     }
 
-    public Cola ejecutar(Long idCola, Long idSucursal, Cola datosNuevos) {
+    public Cola ejecutar(Long idCola, Long idSucursal, Cola datosNuevos, String usuario) {
         Cola cola = colaQueryRepository.buscarPorIdColaYSucursal(idCola, idSucursal);
         if (cola == null) {
             throw new ColaNotFoundException(idCola,
                     "Cola (idCola=" + idCola + ", idSucursal=" + idSucursal + ")");
         }
-        cola.auditoriaModificacion("bmarroquin", LocalDateTime.now());
+        cola.auditoriaModificacion(usuario, LocalDateTime.now());
         cola.modificar(datosNuevos.getNombre(),
                 datosNuevos.getCodigo(),
                 datosNuevos.getPrioridad(),

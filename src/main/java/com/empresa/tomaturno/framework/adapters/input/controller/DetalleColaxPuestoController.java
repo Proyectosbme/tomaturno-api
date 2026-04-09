@@ -46,7 +46,7 @@ public class DetalleColaxPuestoController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response asignar(@Valid DetalleColaxPuestoRequestDTO dto) {
         DetalleColaxPuesto domain = mapper.toDomain(dto);
-        DetalleColaxPuesto resultado = commandPort.asignar(domain);
+        DetalleColaxPuesto resultado = commandPort.asignar(domain, dto.getUsuario());
         return Response.status(Response.Status.CREATED).entity(mapper.toResponse(resultado)).build();
     }
 

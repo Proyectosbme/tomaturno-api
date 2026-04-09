@@ -3,9 +3,8 @@ package com.empresa.tomaturno.sucursal.dominio.entity;
 import java.time.LocalDateTime;
 
 import com.empresa.tomaturno.sucursal.dominio.exceptions.SucursalValidationException;
-import com.empresa.tomaturno.sucursal.dominio.vo.Auditoria;
+import com.empresa.tomaturno.shared.clases.*;
 import com.empresa.tomaturno.sucursal.dominio.vo.Contacto;
-import com.empresa.tomaturno.sucursal.dominio.vo.Estado;
 
 public class Sucursal {
 

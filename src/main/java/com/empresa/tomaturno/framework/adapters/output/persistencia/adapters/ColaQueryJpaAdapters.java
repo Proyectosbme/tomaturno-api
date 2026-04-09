@@ -10,6 +10,7 @@ import com.empresa.tomaturno.cola.dominio.entity.Detalle;
 import com.empresa.tomaturno.framework.adapters.output.mapper.ColaOutputMapper;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.ColaJpaEntity;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaPK;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.SucursalJpaEntity;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.ColaDetalleRepository;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.ColaJpaRespository;
@@ -65,6 +66,7 @@ public class ColaQueryJpaAdapters implements ColaQueryRepository {
             SucursalJpaEntity sucursal = sucursalesMap.get(cola.getSucursal().getIdentificador());
             if (sucursal != null)
                 cola.crearSucursal(sucursal.getId(), sucursal.getNombre());
+            cargarDetalles(cola);
         });
 
         return lstCola;
@@ -110,10 +112,7 @@ public class ColaQueryJpaAdapters implements ColaQueryRepository {
 
     private void cargarDetalles(Cola cola) {
         List<DetalleColaJpaEntity> entidades = colaDetalleRepository
-                .find("id.idCola = ?1 and id.idSucursal = ?2",
-                        cola.getIdentificador(),
-                        cola.getSucursal().getIdentificador().intValue())
-                .list();
+                .buscarPorFiltro(cola.getSucursal().getIdentificador(), cola.getIdentificador(), null);
 
         List<Detalle> detalles = entidades.stream()
                 .map(colaOutputMapper::toDomainDetalle)
@@ -127,5 +126,13 @@ public class ColaQueryJpaAdapters implements ColaQueryRepository {
                 .findById(cola.getSucursal().getIdentificador());
         if (sucursal != null)
             cola.crearSucursal(sucursal.getId(), sucursal.getNombre());
+    }
+
+    @Override
+    public Detalle obtenerDetalle(Long idCola, Long idSucursal, Long idDetalle) {
+        DetalleColaPK pk = new DetalleColaPK(idCola, idSucursal.intValue(), idDetalle);
+        DetalleColaJpaEntity entity = colaDetalleRepository.findById(pk);
+        if (entity == null) return null;
+        return colaOutputMapper.toDomainDetalle(entity);
     }
 }

@@ -19,12 +19,12 @@ public class PuestoCommandService implements PuestoCommandInputPort {
     }
 
     @Override
-    public Puesto crear(Puesto puesto) {
-        return crearPuestoUseCase.ejecutar(puesto);
+    public Puesto crear(Puesto puesto, String usuario) {
+        return crearPuestoUseCase.ejecutar(puesto, usuario);
     }
 
     @Override
-    public Puesto actualizar(Long idPuesto, Long idSucursal, Puesto datosActualizados) {
-        return modificarPuestoUseCase.ejecutar(idPuesto, idSucursal, datosActualizados);
+    public Puesto actualizar(Long idPuesto, Long idSucursal, Puesto datosActualizados, String usuario   ) {
+        return modificarPuestoUseCase.ejecutar(idPuesto, idSucursal, datosActualizados, usuario);
     }
 }

@@ -20,8 +20,8 @@ public class CrearUsuarioUseCase {
         this.queryRepository = queryRepository;
     }
 
-    public Usuario ejecutar(Usuario usuario) {
-        usuario.auditoriaCreacion("bmarroquin", LocalDateTime.now());
+    public Usuario ejecutar(Usuario usuario, String usuarioCreador) {
+        usuario.auditoriaCreacion(usuarioCreador, LocalDateTime.now());
 
         String creador = usuario.getPerfilCreador();
         if (creador != null && creador.equalsIgnoreCase("PUBLICO")

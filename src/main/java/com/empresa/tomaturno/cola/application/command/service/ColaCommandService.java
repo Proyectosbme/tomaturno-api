@@ -1,12 +1,12 @@
 package com.empresa.tomaturno.cola.application.command.service;
 
+import com.empresa.tomaturno.cola.DTO.ResultadoReplicacion;
 import com.empresa.tomaturno.cola.application.command.port.input.ColaCommandInputPort;
 import com.empresa.tomaturno.cola.application.command.port.output.ColaCommandRepository;
 import com.empresa.tomaturno.cola.application.command.usecase.CrearColaCaseUse;
 import com.empresa.tomaturno.cola.application.command.usecase.CrearDetalleDeColaUseCase;
 import com.empresa.tomaturno.cola.application.command.usecase.ModificarColaUseCase;
 import com.empresa.tomaturno.cola.application.command.usecase.ReplicarColasUseCase;
-import com.empresa.tomaturno.cola.application.command.usecase.ReplicarColasUseCase.ResultadoReplicacion;
 import com.empresa.tomaturno.cola.application.query.port.output.ColaQueryRepository;
 import com.empresa.tomaturno.cola.dominio.entity.Cola;
 import com.empresa.tomaturno.cola.dominio.entity.Detalle;
@@ -27,22 +27,28 @@ public class ColaCommandService implements ColaCommandInputPort {
     }
 
     @Override
-    public Cola crear(Cola cola) {
-        return crearColaCaseUse.ejecutar(cola);
+    public Cola crear(Cola cola ,String usuario) {
+        return crearColaCaseUse.ejecutar(cola, usuario);
     }
 
     @Override
-    public Cola actualizar(Long idCola, Long idSucursal, Cola datosActualizados) {
-        return modificarColaUseCase.ejecutar(idCola, idSucursal, datosActualizados);
+    public Cola actualizar(Long idCola, Long idSucursal, Cola datosActualizados, String usuario) {
+        return modificarColaUseCase.ejecutar(idCola, idSucursal, datosActualizados, usuario);
     }
 
     @Override
-    public Cola crearDetalle(Long idCola, Long idSucursal, Detalle detalle) {
-        return crearDetalleDeColaUseCase.ejecutar(idCola, idSucursal, detalle);
+    public Cola crearDetalle(Long idCola, Long idSucursal, Detalle detalle,String usuario) {
+        return crearDetalleDeColaUseCase.ejecutar(idCola, idSucursal, detalle, usuario);
     }
 
     @Override
-    public ResultadoReplicacion replicar(Long idSucursalOrigen, Long idSucursalDestino) {
-        return replicarColasUseCase.ejecutar(idSucursalOrigen, idSucursalDestino);
+    public ResultadoReplicacion replicar(Long idSucursalOrigen, Long idSucursalDestino,String usuario) {
+        return replicarColasUseCase.ejecutar(idSucursalOrigen, idSucursalDestino, usuario);
+    }
+
+    @Override
+    public Cola editarDetalleCola(Long idCola, Long idSucursal, Long idDetalle, Detalle detalleActualizado, String usuario) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'editarDetalleCola'");
     }
 }

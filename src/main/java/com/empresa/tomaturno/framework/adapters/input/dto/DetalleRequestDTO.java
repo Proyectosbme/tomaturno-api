@@ -3,13 +3,14 @@ package com.empresa.tomaturno.framework.adapters.input.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-public class DetalleRequestDTO {
+public class DetalleRequestDTO extends AuditRequestDTO {
 
     @NotBlank(message = "El nombre del detalle es obligatorio")
     @Size(min = 2, max = 100, message = "El nombre debe tener entre 2 y 100 caracteres")

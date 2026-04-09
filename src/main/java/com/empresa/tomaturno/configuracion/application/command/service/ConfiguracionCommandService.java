@@ -19,12 +19,12 @@ public class ConfiguracionCommandService implements ConfiguracionCommandInputPor
     }
 
     @Override
-    public Configuracion crear(Configuracion configuracion) {
-        return crearUseCase.ejecutar(configuracion);
+    public Configuracion crear(Configuracion configuracion, String usuario) {
+        return crearUseCase.ejecutar(configuracion, usuario);
     }
 
     @Override
-    public Configuracion actualizar(Long idConfiguracion, Long idSucursal, Configuracion configuracion) {
-        return modificarUseCase.ejecutar(idConfiguracion, idSucursal, configuracion);
+    public Configuracion actualizar(Long idConfiguracion, Long idSucursal, Configuracion configuracion, String usuario) {
+        return modificarUseCase.ejecutar(idConfiguracion, idSucursal, configuracion, usuario);
     }
 }

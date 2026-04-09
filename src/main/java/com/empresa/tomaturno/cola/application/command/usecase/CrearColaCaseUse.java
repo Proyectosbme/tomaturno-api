@@ -17,8 +17,8 @@ public class CrearColaCaseUse {
         this.colaQueryRepository = colaQueryRepository;
     }
 
-    public Cola ejecutar(Cola cola) {
-        cola.auditoriaCreacion("bmarroquin", LocalDateTime.now());
+    public Cola ejecutar(Cola cola, String usuario) {
+        cola.auditoriaCreacion(usuario, LocalDateTime.now());
         cola.validarCreacion();
 
         // Validar que no exista otra cola con el mismo nombre en la misma sucursal

@@ -16,4 +16,5 @@ public class ReplicarResponseDTO {
     private int totalSaltadas;
     private List<String> colasCopidas;
     private List<String> colasSaltadas;
+    private List<String> detallesCopiados;
 }

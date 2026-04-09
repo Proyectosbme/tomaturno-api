@@ -19,12 +19,12 @@ public class UsuarioCommandService implements UsuarioCommandInputPort {
     }
 
     @Override
-    public Usuario crear(Usuario usuario) {
-        return crearUseCase.ejecutar(usuario);
+    public Usuario crear(Usuario usuario, String usuarioCreador) {
+        return crearUseCase.ejecutar(usuario, usuarioCreador);
     }
 
     @Override
-    public Usuario actualizar(Long idUsuario, Long idSucursal, Usuario datosActualizados) {
-        return modificarUseCase.ejecutar(idUsuario, idSucursal, datosActualizados);
+    public Usuario actualizar(Long idUsuario, Long idSucursal, Usuario datosActualizados, String usuarioActualizador) {
+        return modificarUseCase.ejecutar(idUsuario, idSucursal, datosActualizados, usuarioActualizador);
     }
 }

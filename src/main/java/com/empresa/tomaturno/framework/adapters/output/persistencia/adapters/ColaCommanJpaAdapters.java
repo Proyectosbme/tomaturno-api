@@ -11,6 +11,7 @@ import com.empresa.tomaturno.framework.adapters.exceptions.NotFoundException;
 import com.empresa.tomaturno.framework.adapters.output.mapper.ColaOutputMapper;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.ColaJpaEntity;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaPK;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.ColaDetalleRepository;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.ColaJpaRespository;
 
@@ -61,17 +62,13 @@ public class ColaCommanJpaAdapters implements ColaCommandRepository {
             throw new NotFoundException("Cola no encontrada con idCola: " + idCola
                     + " e idSucursal: " + idSucursal);
         }
-
         Long nextId = colaDetalleRepository.obtenerSiguienteIdDetalle(idCola, idSucursal.intValue());
         detalle.setCorrelativo(nextId);
-
         DetalleColaJpaEntity detalleEntity = colaOutputMapper.toDetalleJpaEntity(
                 idCola, idSucursal.intValue(), detalle);
         colaDetalleRepository.persist(detalleEntity);
-
         List<DetalleColaJpaEntity> todosLosDetalles = colaDetalleRepository
-                .find("id.idCola = ?1 and id.idSucursal = ?2", idCola, idSucursal.intValue())
-                .list();
+                .buscarPorFiltro(idSucursal, idCola, null);
 
         Cola dominio = colaOutputMapper.toDomain(cola);
         dominio.setDetalles(todosLosDetalles.stream()
@@ -81,7 +78,7 @@ public class ColaCommanJpaAdapters implements ColaCommandRepository {
     }
 
     @Override
-    public Cola replicarCola(Cola colaOrigen, Long idSucursalDestino) {
+    public Cola replicarCola(Cola colaOrigen, Long idSucursalDestino, String usuario) {
         Long nextIdCola = colaJpaRepository.obtenerSiguienteId(idSucursalDestino);
 
         // Construir cola destino limpia — auditoria propia, sucursal destino
@@ -92,7 +89,7 @@ public class ColaCommanJpaAdapters implements ColaCommandRepository {
         colaDestino.setPrioridad(colaOrigen.getPrioridad());
         colaDestino.setEstado(colaOrigen.getEstado());
         colaDestino.crearSucursal(idSucursalDestino, null);
-        colaDestino.auditoriaCreacion("bmarroquin", LocalDateTime.now());
+        colaDestino.auditoriaCreacion(usuario, LocalDateTime.now());
 
         ColaJpaEntity colaEntity = colaOutputMapper.toColaJpaEntity(colaDestino);
         colaJpaRepository.persist(colaEntity);
@@ -111,7 +108,7 @@ public class ColaCommanJpaAdapters implements ColaCommandRepository {
                 detalleNuevo.setNombre(detalleOrigen.getNombre());
                 detalleNuevo.setCodigo(detalleOrigen.getCodigo());
                 detalleNuevo.setEstado(detalleOrigen.getEstado());
-                detalleNuevo.auditoriaCreacion("bmarroquin", LocalDateTime.now());
+                detalleNuevo.auditoriaCreacion(usuario, LocalDateTime.now());
 
                 DetalleColaJpaEntity detalleEntity = colaOutputMapper.toDetalleJpaEntity(
                         nextIdCola, idSucursalDestino.intValue(), detalleNuevo);
@@ -125,5 +122,27 @@ public class ColaCommanJpaAdapters implements ColaCommandRepository {
                 .map(colaOutputMapper::toDomainDetalle)
                 .toList());
         return resultado;
+    }
+
+    @Override
+    public Cola modificarDetalle(Long idCola, Long idSucursal, Detalle detalleActualizado) {
+        DetalleColaPK pk = new DetalleColaPK(idCola, idSucursal.intValue(), detalleActualizado.getCorrelativo());
+        DetalleColaJpaEntity existente = colaDetalleRepository.findById(pk);
+        if (existente == null) {
+            throw new NotFoundException("Detalle no encontrado con idCola: " + idCola
+                    + ", idSucursal: " + idSucursal + " y idDetalle: " + detalleActualizado.getCorrelativo());
+        }
+
+        colaOutputMapper.updateDetalleEntityFromDomain(detalleActualizado, existente);
+
+        ColaJpaEntity colaEntity = colaJpaRepository.buscarPorIdColaYSucursal(idCola, idSucursal);
+        List<DetalleColaJpaEntity> todosLosDetalles = colaDetalleRepository
+                .buscarPorFiltro(idSucursal, idCola, null);
+
+        Cola cola = colaOutputMapper.toDomain(colaEntity);
+        cola.setDetalles(todosLosDetalles.stream()
+                .map(colaOutputMapper::toDomainDetalle)
+                .toList());
+        return cola;
     }
 }

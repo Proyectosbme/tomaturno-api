@@ -20,7 +20,7 @@ public class ModificarUsuarioUseCase {
         this.queryRepository = queryRepository;
     }
 
-    public Usuario ejecutar(Long idUsuario, Long idSucursal, Usuario datosNuevos) {
+    public Usuario ejecutar(Long idUsuario, Long idSucursal, Usuario datosNuevos,String user) {
         Usuario usuario = queryRepository.buscarPorIdUsuarioYSucursal(idUsuario, idSucursal);
         if (usuario == null) {
             throw new UsuarioNotFoundException(idUsuario,
@@ -37,7 +37,7 @@ public class ModificarUsuarioUseCase {
                 datosNuevos.getEstado(), datosNuevos.getTelefono(), datosNuevos.getIp(),
                 datosNuevos.getPerfil(), datosNuevos.getCorrelativo(), datosNuevos.getAtenderCasosEspeciales());
 
-        usuario.auditoriaModificacion("bmarroquin", LocalDateTime.now());
+        usuario.auditoriaModificacion(user, LocalDateTime.now());
         usuario.validarModificacion();
         return commandRepository.modificar(usuario);
     }

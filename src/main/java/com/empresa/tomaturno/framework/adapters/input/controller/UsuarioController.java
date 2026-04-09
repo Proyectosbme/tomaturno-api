@@ -58,7 +58,7 @@ public class UsuarioController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response crear(@Valid UsuarioRequestDTO dto) {
         Usuario usuario = mapper.toDomain(dto);
-        usuario = commandPort.crear(usuario);
+        usuario = commandPort.crear(usuario, dto.getUsuario());
         return Response.status(Response.Status.CREATED).entity(mapper.toResponse(usuario)).build();
     }
 
@@ -72,7 +72,7 @@ public class UsuarioController {
             @PathParam("idSucursal") Long idSucursal,
             @Valid UsuarioRequestDTO dto) {
         Usuario datosNuevos = mapper.toDomain(dto);
-        Usuario actualizado = commandPort.actualizar(idUsuario, idSucursal, datosNuevos);
+        Usuario actualizado = commandPort.actualizar(idUsuario, idSucursal, datosNuevos, dto.getUsuario());
         return Response.ok(mapper.toResponse(actualizado)).build();
     }
 }

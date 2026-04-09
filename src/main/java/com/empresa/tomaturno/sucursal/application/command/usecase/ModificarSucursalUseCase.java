@@ -18,10 +18,10 @@ public class ModificarSucursalUseCase {
         this.sucursalQueryRepository = sucursalQueryRepository;
     }
 
-    public Sucursal ejecutar(Long id, Sucursal datosNuevos) {
+    public Sucursal ejecutar(Long id, Sucursal datosNuevos, String usuario) {
         Sucursal sucursal = sucursalQueryRepository.buscarPorId(id);
         if (sucursal != null) {
-            sucursal.auditoriaModificacion("bmarroquin", LocalDateTime.now());
+            sucursal.auditoriaModificacion(usuario, LocalDateTime.now());
             sucursal.modificar(datosNuevos.getNombre(), datosNuevos.getContacto(), datosNuevos.getEstado());
             return sucursalCommandRepository.modificar(sucursal);
 

@@ -11,8 +11,6 @@ public interface ColaCommandRepository {
     Cola modificar(Cola cola);
 
     Cola guardarDetalle(Long idCola, Long idSucursal, Detalle detalle);
-
-
-    /** Persiste una cola con todos sus detalles en la sucursal destino */
-    Cola replicarCola(Cola colaOrigen, Long idSucursalDestino);
+    Cola modificarDetalle(Long idCola, Long idSucursal, Detalle detalleActualizado);
+    Cola replicarCola(Cola colaOrigen, Long idSucursalDestino,String usuario);
 }

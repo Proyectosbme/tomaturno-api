@@ -6,9 +6,10 @@ import org.mapstruct.Named;
 
 import com.empresa.tomaturno.framework.adapters.input.dto.SucursalRequestDTO;
 import com.empresa.tomaturno.framework.adapters.input.dto.SucursalResponseDTO;
+import com.empresa.tomaturno.shared.clases.Estado;
 import com.empresa.tomaturno.sucursal.dominio.entity.Sucursal;
 import com.empresa.tomaturno.sucursal.dominio.vo.Contacto;
-import com.empresa.tomaturno.sucursal.dominio.vo.Estado;
+
 
 @Mapper(componentModel = "cdi")
 public interface SucursalInputMapper {
