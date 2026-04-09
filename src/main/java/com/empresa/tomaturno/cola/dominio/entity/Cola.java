@@ -4,11 +4,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.empresa.tomaturno.cola.dominio.exceptions.ColaValidationException;
-import com.empresa.tomaturno.cola.dominio.vo.Auditoria;
-import com.empresa.tomaturno.cola.dominio.vo.Estado;
+import com.empresa.tomaturno.shared.clases.Auditoria;
+import com.empresa.tomaturno.shared.clases.Estado;
 import com.empresa.tomaturno.cola.dominio.vo.Sucursal;
 
 public class Cola {
+
     private Long identificador;
     private String nombre;
     private String codigo;
@@ -18,44 +19,119 @@ public class Cola {
     private Auditoria auditoria;
     private List<Detalle> detalles;
 
-    public Cola() {
+    private Cola() {
     }
 
-    public Cola(String nombre, String codigo, Long prioridad, Estado estado, Sucursal sucursal, Auditoria auditoria) {
+    // ─── Builder ──────────────────────────────────────────────────────────
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private Long identificador;
+        private String nombre;
+        private String codigo;
+        private Long prioridad;
+        private Estado estado;
+        private Sucursal sucursal;
+        private Auditoria auditoria;
+        private List<Detalle> detalles;
+
+        public Builder identificador(Long identificador) {
+            this.identificador = identificador;
+            return this;
+        }
+
+        public Builder nombre(String nombre) {
+            this.nombre = nombre;
+            return this;
+        }
+
+        public Builder codigo(String codigo) {
+            this.codigo = codigo;
+            return this;
+        }
+
+        public Builder prioridad(Long prioridad) {
+            this.prioridad = prioridad;
+            return this;
+        }
+
+        public Builder estado(Estado estado) {
+            this.estado = estado;
+            return this;
+        }
+
+        public Builder sucursal(Sucursal sucursal) {
+            this.sucursal = sucursal;
+            return this;
+        }
+
+        public Builder auditoria(Auditoria auditoria) {
+            this.auditoria = auditoria;
+            return this;
+        }
+
+        public Builder detalles(List<Detalle> detalles) {
+            this.detalles = detalles;
+            return this;
+        }
+
+        /** Para colas nuevas: sin identificador ni auditoría. */
+        public Cola inicializar() {
+            Cola c = new Cola();
+            c.nombre = this.nombre;
+            c.codigo = this.codigo;
+            c.prioridad = this.prioridad;
+            c.estado = this.estado;
+            c.sucursal = this.sucursal;
+            return c;
+        }
+
+        /** Para reconstituir desde la base de datos: todos los campos. */
+        public Cola reconstituir() {
+            Cola c = new Cola();
+            c.identificador = this.identificador;
+            c.nombre = this.nombre;
+            c.codigo = this.codigo;
+            c.prioridad = this.prioridad;
+            c.estado = this.estado;
+            c.sucursal = this.sucursal;
+            c.auditoria = this.auditoria;
+            c.detalles = this.detalles;
+            return c;
+        }
+    }
+
+    /** Referencia ligera (solo id y nombre), sin datos completos. */
+    public static Cola referencia(Long id, String nombre) {
+        Cola c = new Cola();
+        c.identificador = id;
+        c.nombre = nombre;
+        return c;
+    }
+
+    // ─── Comportamiento ───────────────────────────────────────────────────
+
+    public void crear(String usuario) {
+        this.auditoria = Auditoria.deCreacion(usuario, LocalDateTime.now());
+        validarCreacion();
+    }
+
+    public void modificar(String nombre, String codigo, Long prioridad, Estado estado, String usuario) {
         this.nombre = nombre;
         this.codigo = codigo;
         this.prioridad = prioridad;
         this.estado = estado;
-        this.sucursal = sucursal;
-        this.auditoria = auditoria;
-    }
-
-    public Cola(Long identificador, String nombre, String codigo, Long prioridad, Estado estado, Sucursal sucursal,
-            Auditoria auditoria) {
-        this.identificador = identificador;
-        this.nombre = nombre;
-        this.codigo = codigo;
-        this.prioridad = prioridad;
-        this.estado = estado;
-        this.sucursal = sucursal;
-        this.auditoria = auditoria;
+        this.auditoria = this.auditoria.conModificacion(usuario, LocalDateTime.now());
+        validarModificacion();
     }
 
     public void agregarDetalle(Detalle detalle) {
         this.detalles.add(detalle);
     }
 
-    public void modificar(String nombre, String codigo, Long prioridad, Estado estado) {
-        this.nombre = nombre;
-        this.codigo = codigo;
-        this.prioridad = prioridad;
-        this.estado = estado;
-    }
-
-    /**
-     * Valida que no exista ya una cola con el mismo nombre en la misma sucursal.
-     * Se llama ANTES de persistir (crear o modificar).
-     */
     public void validarNombreUnico(boolean existeNombreEnSucursal) {
         if (existeNombreEnSucursal) {
             throw new ColaValidationException(
@@ -63,10 +139,6 @@ public class Cola {
         }
     }
 
-    /**
-     * Valida que no exista ya un detalle con el mismo nombre dentro de esta cola.
-     * Se llama ANTES de persistir un nuevo detalle.
-     */
     public void validarNombreDetalleUnico(String nombreDetalle, boolean existeNombreEnCola) {
         if (existeNombreEnCola) {
             throw new ColaValidationException(
@@ -74,7 +146,7 @@ public class Cola {
         }
     }
 
-    public void validarCreacion() {
+    private void validarCreacion() {
         if (this.nombre == null || this.nombre.isEmpty()) {
             throw new ColaValidationException("El nombre de la cola es obligatorio");
         }
@@ -90,96 +162,46 @@ public class Cola {
         if (this.sucursal == null) {
             throw new ColaValidationException("La sucursal de la cola es obligatoria");
         }
-        auditoria.validarCreacion();
     }
 
-    public void validarModificacion() {
+    private void validarModificacion() {
         if (this.identificador == null) {
             throw new ColaValidationException("El identificador de la cola es obligatorio");
         }
-        this.validarCreacion();
-        auditoria.validarModificacion();
+        validarCreacion();
     }
 
-    public void crearSucursal(Long identificado, String nombre) {
-        this.sucursal = new Sucursal(identificado, nombre);
-    }
-
-    public void auditoriaCreacion(String usuarioCreacion, LocalDateTime fechaCreacion) {
-        if (this.auditoria == null) {
-            this.auditoria = new Auditoria();
-        }
-        this.auditoria.creacion(usuarioCreacion, fechaCreacion);
-    }
-
-    public void auditoriaModificacion(String usuarioModificacion, LocalDateTime fechaModificacion) {
-        if (this.auditoria == null) {
-            throw new ColaValidationException("No tiene usuario de creacion y modificacion revisar ");
-        }
-        this.auditoria.modificacion(usuarioModificacion, fechaModificacion);
-    }
+    // ─── Getters ──────────────────────────────────────────────────────────
 
     public Long getIdentificador() {
         return identificador;
-    }
-
-    public void setIdentificador(Long identificador) {
-        this.identificador = identificador;
     }
 
     public String getNombre() {
         return nombre;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
     public String getCodigo() {
         return codigo;
-    }
-
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
     }
 
     public Long getPrioridad() {
         return prioridad;
     }
 
-    public void setPrioridad(Long prioridad) {
-        this.prioridad = prioridad;
-    }
-
     public Estado getEstado() {
         return estado;
-    }
-
-    public void setEstado(Estado estado) {
-        this.estado = estado;
     }
 
     public Sucursal getSucursal() {
         return sucursal;
     }
 
-    public void setSucursal(Sucursal sucursal) {
-        this.sucursal = sucursal;
-    }
-
     public Auditoria getAuditoria() {
         return auditoria;
     }
 
-    public void setAuditoria(Auditoria auditoria) {
-        this.auditoria = auditoria;
-    }
-
     public List<Detalle> getDetalles() {
         return detalles;
-    }
-
-    public void setDetalles(List<Detalle> detalles) {
-        this.detalles = detalles;
     }
 }
