@@ -1,7 +1,4 @@
 package com.empresa.tomaturno.configuracion.application.command.usecase;
-
-import java.time.LocalDateTime;
-
 import com.empresa.tomaturno.configuracion.application.command.port.output.ConfiguracionCommandRepository;
 import com.empresa.tomaturno.configuracion.application.query.port.output.ConfiguracionQueryRepository;
 import com.empresa.tomaturno.configuracion.dominio.entity.Configuracion;

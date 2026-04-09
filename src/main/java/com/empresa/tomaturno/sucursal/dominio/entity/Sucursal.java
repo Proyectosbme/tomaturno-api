@@ -31,10 +31,6 @@ public class Sucursal {
         return new Sucursal(id, nombre, contacto, estado, auditoria);
     }
 
-    public static Sucursal referencia(Long id, String nombre) {
-        return new Sucursal(id, nombre, null, null, null);
-    }
-
     public void crear(String usuario) {
         this.auditoria = Auditoria.deCreacion(usuario, LocalDateTime.now());
         this.validarCreacion();
@@ -55,10 +51,6 @@ public class Sucursal {
                 || this.auditoria.getFechaCreacion() == null) {
             throw new SucursalValidationException("La sucursal debe tener auditoria de creación");
         }
-    }
-
-    private void auditoriaCreacion(String usuario, LocalDateTime fecha) {
-
     }
 
     public void modificar(String nombre, Contacto contacto, Estado estado, String usuario) {
