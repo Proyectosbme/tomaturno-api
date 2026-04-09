@@ -1,7 +1,5 @@
 package com.empresa.tomaturno.cola.application.command.usecase;
 
-import java.time.LocalDateTime;
-
 import com.empresa.tomaturno.cola.application.command.port.output.ColaCommandRepository;
 import com.empresa.tomaturno.cola.application.query.port.output.ColaQueryRepository;
 import com.empresa.tomaturno.cola.dominio.entity.Cola;
@@ -24,12 +22,10 @@ public class ModificarColaUseCase {
             throw new ColaNotFoundException(idCola,
                     "Cola (idCola=" + idCola + ", idSucursal=" + idSucursal + ")");
         }
-        cola.auditoriaModificacion(usuario, LocalDateTime.now());
         cola.modificar(datosNuevos.getNombre(),
                 datosNuevos.getCodigo(),
                 datosNuevos.getPrioridad(),
-                datosNuevos.getEstado());
-        cola.validarModificacion();
+                datosNuevos.getEstado(),usuario);
         return colaCommandRepository.modificar(cola);
     }
 }

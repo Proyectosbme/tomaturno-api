@@ -13,28 +13,23 @@ public class ModificarConfiguracionUseCase {
     private final ConfiguracionQueryRepository queryRepository;
 
     public ModificarConfiguracionUseCase(ConfiguracionCommandRepository commandRepository,
-                                         ConfiguracionQueryRepository queryRepository) {
+            ConfiguracionQueryRepository queryRepository) {
         this.commandRepository = commandRepository;
         this.queryRepository = queryRepository;
     }
 
-    public Configuracion ejecutar(Long idConfiguracion, Long idSucursal, Configuracion datosNuevos,String usuario) {
+    public Configuracion ejecutar(Long idConfiguracion, Long idSucursal, Configuracion datosNuevos, String usuario) {
         Configuracion existente = queryRepository.buscarPorIdYSucursal(idConfiguracion, idSucursal);
-        if (existente == null) {
+        if (existente == null)
             throw new ConfiguracionNotFoundException(
                     "No se encontró la configuración con id " + idConfiguracion + " y sucursal " + idSucursal);
-        }
 
         existente.modificar(
                 datosNuevos.getNombre(),
                 datosNuevos.getParametro(),
                 datosNuevos.getValorTexto(),
                 datosNuevos.getDescripcion(),
-                datosNuevos.getEstado()
-        );
-        existente.auditoriaModificacion(usuario, LocalDateTime.now());
-        existente.validarModificacion();
-
+                datosNuevos.getEstado(), usuario);
         return commandRepository.modificar(existente);
     }
 }

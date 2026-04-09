@@ -14,7 +14,7 @@ public class ConfiguracionCommandService implements ConfiguracionCommandInputPor
 
     public ConfiguracionCommandService(ConfiguracionCommandRepository commandRepository,
                                        ConfiguracionQueryRepository queryRepository) {
-        this.crearUseCase = new CrearConfiguracionUseCase(commandRepository, queryRepository);
+        this.crearUseCase = new CrearConfiguracionUseCase(commandRepository);
         this.modificarUseCase = new ModificarConfiguracionUseCase(commandRepository, queryRepository);
     }
 

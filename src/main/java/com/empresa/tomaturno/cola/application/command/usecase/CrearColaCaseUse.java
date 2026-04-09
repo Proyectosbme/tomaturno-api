@@ -1,7 +1,5 @@
 package com.empresa.tomaturno.cola.application.command.usecase;
 
-import java.time.LocalDateTime;
-
 import com.empresa.tomaturno.cola.application.command.port.output.ColaCommandRepository;
 import com.empresa.tomaturno.cola.application.query.port.output.ColaQueryRepository;
 import com.empresa.tomaturno.cola.dominio.entity.Cola;
@@ -18,14 +16,10 @@ public class CrearColaCaseUse {
     }
 
     public Cola ejecutar(Cola cola, String usuario) {
-        cola.auditoriaCreacion(usuario, LocalDateTime.now());
-        cola.validarCreacion();
-
-        // Validar que no exista otra cola con el mismo nombre en la misma sucursal
+        cola.crear(usuario);
         boolean existeNombre = colaQueryRepository.existeNombreEnSucursal(
                 cola.getSucursal().getIdentificador(), cola.getNombre());
         cola.validarNombreUnico(existeNombre);
-
         return colaCommandRepository.save(cola);
     }
 }
