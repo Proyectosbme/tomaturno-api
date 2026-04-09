@@ -3,8 +3,8 @@ package com.empresa.tomaturno.puesto.dominio.entity;
 import java.time.LocalDateTime;
 
 import com.empresa.tomaturno.puesto.dominio.exceptions.PuestoValidationException;
-import com.empresa.tomaturno.puesto.dominio.vo.Auditoria;
-import com.empresa.tomaturno.puesto.dominio.vo.Estado;
+import com.empresa.tomaturno.shared.clases.Auditoria;
+import com.empresa.tomaturno.shared.clases.Estado;
 import com.empresa.tomaturno.puesto.dominio.vo.Sucursal;
 
 public class Puesto {
@@ -16,30 +16,45 @@ public class Puesto {
     private Sucursal sucursal;
     private Auditoria auditoria;
 
-    public Puesto() {
+    private Puesto() {
     }
 
-    public Puesto(String nombre, String nombreLlamada, Estado estado, Sucursal sucursal, Auditoria auditoria) {
+    // ─── Factory methods ──────────────────────────────────────────────────
+
+    public static Puesto inicializar(String nombre, String nombreLlamada, Estado estado, Sucursal sucursal) {
+        Puesto p = new Puesto();
+        p.nombre = nombre;
+        p.nombreLlamada = nombreLlamada;
+        p.estado = estado;
+        p.sucursal = sucursal;
+        return p;
+    }
+
+    public static Puesto reconstituir(Long identificador, String nombre, String nombreLlamada,
+            Estado estado, Sucursal sucursal, Auditoria auditoria) {
+        Puesto p = new Puesto();
+        p.identificador = identificador;
+        p.nombre = nombre;
+        p.nombreLlamada = nombreLlamada;
+        p.estado = estado;
+        p.sucursal = sucursal;
+        p.auditoria = auditoria;
+        return p;
+    }
+
+    // ─── Comportamiento ───────────────────────────────────────────────────
+
+    public void crear(String usuario) {
+        this.auditoria = Auditoria.deCreacion(usuario, LocalDateTime.now());
+        validarCreacion();
+    }
+
+    public void modificar(String nombre, String nombreLlamada, Estado estado, String usuario) {
         this.nombre = nombre;
         this.nombreLlamada = nombreLlamada;
         this.estado = estado;
-        this.sucursal = sucursal;
-        this.auditoria = auditoria;
-    }
-
-    public Puesto(Long identificador, String nombre, String nombreLlamada, Estado estado, Sucursal sucursal, Auditoria auditoria) {
-        this.identificador = identificador;
-        this.nombre = nombre;
-        this.nombreLlamada = nombreLlamada;
-        this.estado = estado;
-        this.sucursal = sucursal;
-        this.auditoria = auditoria;
-    }
-
-    public void modificar(String nombre, String nombreLlamada, Estado estado) {
-        this.nombre = nombre;
-        this.nombreLlamada = nombreLlamada;
-        this.estado = estado;
+        this.auditoria = this.auditoria.conModificacion(usuario, LocalDateTime.now());
+        validarModificacion();
     }
 
     public void validarNombreUnico(boolean existeNombreEnSucursal) {
@@ -49,7 +64,7 @@ public class Puesto {
         }
     }
 
-    public void validarCreacion() {
+    private void validarCreacion() {
         if (this.nombre == null || this.nombre.isEmpty()) {
             throw new PuestoValidationException("El nombre del puesto es obligatorio");
         }
@@ -59,82 +74,38 @@ public class Puesto {
         if (this.sucursal == null) {
             throw new PuestoValidationException("La sucursal del puesto es obligatoria");
         }
-        auditoria.validarCreacion();
     }
 
-    public void validarModificacion() {
+    private void validarModificacion() {
         if (this.identificador == null) {
             throw new PuestoValidationException("El identificador del puesto es obligatorio");
         }
-        this.validarCreacion();
-        auditoria.validarModificacion();
+        validarCreacion();
     }
 
-    public void crearSucursal(Long identificador, String nombre) {
-        this.sucursal = new Sucursal(identificador, nombre);
-    }
-
-    public void auditoriaCreacion(String usuarioCreacion, LocalDateTime fechaCreacion) {
-        if (this.auditoria == null) {
-            this.auditoria = new Auditoria();
-        }
-        this.auditoria.creacion(usuarioCreacion, fechaCreacion);
-    }
-
-    public void auditoriaModificacion(String usuarioModificacion, LocalDateTime fechaModificacion) {
-        if (this.auditoria == null) {
-            throw new PuestoValidationException("No tiene usuario de creacion y modificacion revisar ");
-        }
-        this.auditoria.modificacion(usuarioModificacion, fechaModificacion);
-    }
+    // ─── Getters ──────────────────────────────────────────────────────────
 
     public Long getIdentificador() {
         return identificador;
-    }
-
-    public void setIdentificador(Long identificador) {
-        this.identificador = identificador;
     }
 
     public String getNombre() {
         return nombre;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public String getNombreLlamada() {
+        return nombreLlamada;
     }
 
     public Estado getEstado() {
         return estado;
     }
 
-    public void setEstado(Estado estado) {
-        this.estado = estado;
-    }
-
     public Sucursal getSucursal() {
         return sucursal;
-    }
-
-    public void setSucursal(Sucursal sucursal) {
-        this.sucursal = sucursal;
     }
 
     public Auditoria getAuditoria() {
         return auditoria;
     }
-
-    public void setAuditoria(Auditoria auditoria) {
-        this.auditoria = auditoria;
-    }
-
-    public String getNombreLlamada() {
-        return nombreLlamada;
-    }
-
-    public void setNombreLlamada(String nombreLlamada) {
-        this.nombreLlamada = nombreLlamada;
-    }
-
-    
 }
