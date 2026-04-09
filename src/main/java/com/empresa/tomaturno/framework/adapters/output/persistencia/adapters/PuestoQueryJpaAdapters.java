@@ -33,9 +33,8 @@ public class PuestoQueryJpaAdapters implements PuestoQueryRepository {
     public Puesto buscarPorIdPuestoYSucursal(Long idPuesto, Long idSucursal) {
         PuestoJpaEntity entity = puestoJpaRepository.buscarPorIdPuestoYSucursal(idPuesto, idSucursal);
         if (entity == null) return null;
-        Puesto puesto = puestoOutputMapper.toDomain(entity);
-        enriquecerConSucursal(puesto);
-        return puesto;
+        SucursalJpaEntity sucursal = sucursalJpaRepository.findById(idSucursal);
+        return puestoOutputMapper.toDomainConSucursal(entity, sucursal);
     }
 
     @Override
@@ -43,36 +42,21 @@ public class PuestoQueryJpaAdapters implements PuestoQueryRepository {
         List<PuestoJpaEntity> entities = puestoJpaRepository.buscarPorFiltros(idSucursal, nombre);
         if (entities.isEmpty()) return List.of();
 
-        List<Puesto> puestos = entities.stream()
-                .map(puestoOutputMapper::toDomain)
-                .toList();
-
-        List<Long> idsSucursales = puestos.stream()
-                .map(p -> p.getSucursal().getIdentificador())
+        List<Long> idsSucursales = entities.stream()
+                .map(e -> e.getIdpk().getIdSucursal())
                 .distinct().toList();
-
         Map<Long, SucursalJpaEntity> sucursalesMap = sucursalJpaRepository
                 .find("id in ?1", idsSucursales).stream()
                 .collect(Collectors.toMap(SucursalJpaEntity::getId, s -> s));
 
-        puestos.forEach(puesto -> {
-            SucursalJpaEntity sucursal = sucursalesMap.get(puesto.getSucursal().getIdentificador());
-            if (sucursal != null)
-                puesto.crearSucursal(sucursal.getId(), sucursal.getNombre());
-        });
-
-        return puestos;
+        return entities.stream().map(entity -> {
+            SucursalJpaEntity sucursal = sucursalesMap.get(entity.getIdpk().getIdSucursal());
+            return puestoOutputMapper.toDomainConSucursal(entity, sucursal);
+        }).toList();
     }
 
     @Override
     public boolean existeNombreEnSucursal(Long idSucursal, String nombre) {
         return puestoJpaRepository.existeNombreEnSucursal(idSucursal, nombre);
-    }
-
-    private void enriquecerConSucursal(Puesto puesto) {
-        SucursalJpaEntity sucursal = sucursalJpaRepository
-                .findById(puesto.getSucursal().getIdentificador());
-        if (sucursal != null)
-            puesto.crearSucursal(sucursal.getId(), sucursal.getNombre());
     }
 }

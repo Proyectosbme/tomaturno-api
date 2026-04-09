@@ -18,9 +18,7 @@ public class CrearPuestoUseCase {
     }
 
     public Puesto ejecutar(Puesto puesto, String usuario) {
-        puesto.auditoriaCreacion(usuario, LocalDateTime.now());
-        puesto.validarCreacion();
-
+        puesto.crear(usuario);
         boolean existeNombre = puestoQueryRepository.existeNombreEnSucursal(
                 puesto.getSucursal().getIdentificador(), puesto.getNombre());
         puesto.validarNombreUnico(existeNombre);
