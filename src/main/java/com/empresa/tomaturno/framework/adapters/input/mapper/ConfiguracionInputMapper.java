@@ -5,18 +5,23 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
 import com.empresa.tomaturno.configuracion.dominio.entity.Configuracion;
-import com.empresa.tomaturno.configuracion.dominio.vo.Estado;
 import com.empresa.tomaturno.framework.adapters.input.dto.ConfiguracionRequestDTO;
 import com.empresa.tomaturno.framework.adapters.input.dto.ConfiguracionResponseDTO;
+import com.empresa.tomaturno.shared.clases.Estado;
 
 @Mapper(componentModel = "cdi")
 public interface ConfiguracionInputMapper {
 
-    @Mapping(target = "idConfiguracion", ignore = true)
-    @Mapping(target = "auditoria", ignore = true)
-    @Mapping(target = "nombreSucursal", ignore = true)
-    @Mapping(target = "estado", source = "estado", qualifiedByName = "integerToEstado")
-    Configuracion toDomain(ConfiguracionRequestDTO dto);
+    default Configuracion toDomain(ConfiguracionRequestDTO dto) {
+        return Configuracion.builder()
+                .idSucursal(dto.getIdSucursal())
+                .nombre(dto.getNombre())
+                .parametro(dto.getParametro())
+                .valorTexto(dto.getValorTexto())
+                .descripcion(dto.getDescripcion())
+                .estado(Estado.fromCodigo(dto.getEstado()))
+                .inicializar();
+    }
 
     @Mapping(target = "idConfiguracion", source = "idConfiguracion")
     @Mapping(target = "idSucursal", source = "idSucursal")
@@ -27,11 +32,6 @@ public interface ConfiguracionInputMapper {
     @Mapping(target = "userModificacion", source = "auditoria.usuarioModificacion")
     @Mapping(target = "fechaModificacion", source = "auditoria.fechaModificacion")
     ConfiguracionResponseDTO toResponse(Configuracion configuracion);
-
-    @Named("integerToEstado")
-    static Estado integerToEstado(Integer codigo) {
-        return codigo == null ? null : Estado.fromCodigo(codigo);
-    }
 
     @Named("estadoToCodigo")
     static Integer estadoToCodigo(Estado estado) {
