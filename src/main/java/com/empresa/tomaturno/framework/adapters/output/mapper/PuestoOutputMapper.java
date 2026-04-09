@@ -6,11 +6,16 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.PuestoJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.SucursalJpaEntity;
 import com.empresa.tomaturno.puesto.dominio.entity.Puesto;
-import com.empresa.tomaturno.puesto.dominio.vo.Estado;
+import com.empresa.tomaturno.puesto.dominio.vo.Sucursal;
+import com.empresa.tomaturno.shared.clases.Auditoria;
+import com.empresa.tomaturno.shared.clases.Estado;
 
 @Mapper(componentModel = "cdi")
 public interface PuestoOutputMapper {
+
+    // ─── Dominio → JPA ────────────────────────────────────────────────────
 
     @Mapping(target = "idpk.id", source = "identificador")
     @Mapping(target = "idpk.idSucursal", source = "sucursal.identificador")
@@ -23,16 +28,6 @@ public interface PuestoOutputMapper {
     @Mapping(target = "estado", source = "estado", qualifiedByName = "estadoToCodigo")
     PuestoJpaEntity toJpaEntity(Puesto puesto);
 
-    @Mapping(target = "identificador", source = "idpk.id")
-    @Mapping(target = "sucursal.identificador", source = "idpk.idSucursal")
-    @Mapping(target = "sucursal.nombre", ignore = true)
-    @Mapping(target = "auditoria.usuarioCreacion", source = "userCreacion")
-    @Mapping(target = "auditoria.fechaCreacion", source = "fechaCreacion")
-    @Mapping(target = "auditoria.usuarioModificacion", source = "userModificacion")
-    @Mapping(target = "auditoria.fechaModificacion", source = "fechaModificacion")
-    @Mapping(target = "estado", source = "estado", qualifiedByName = "integerToEstado")
-    Puesto toDomain(PuestoJpaEntity entity);
-
     @Mapping(target = "idpk", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "idSucursal", ignore = true)
@@ -43,9 +38,26 @@ public interface PuestoOutputMapper {
     @Mapping(target = "estado", source = "estado", qualifiedByName = "estadoToCodigo")
     void updateEntityFromDomain(Puesto puesto, @MappingTarget PuestoJpaEntity entity);
 
-    @Named("integerToEstado")
-    static Estado integerToEstado(Integer codigo) {
-        return codigo == null ? null : Estado.fromCodigo(codigo);
+    // ─── JPA → Dominio ────────────────────────────────────────────────────
+
+    default Puesto toDomain(PuestoJpaEntity e) {
+        return toDomainConSucursal(e, null);
+    }
+
+    default Puesto toDomainConSucursal(PuestoJpaEntity e, SucursalJpaEntity sucursal) {
+        Sucursal sucursalVo = sucursal != null
+                ? new Sucursal(sucursal.getId(), sucursal.getNombre())
+                : new Sucursal(e.getIdpk().getIdSucursal(), null);
+        Auditoria auditoria = Auditoria.reconstituir(
+                e.getUserCreacion(), e.getFechaCreacion(),
+                e.getUserModificacion(), e.getFechaModificacion());
+        return Puesto.reconstituir(
+                e.getIdpk().getId(),
+                e.getNombre(),
+                e.getNombreLlamada(),
+                Estado.fromCodigo(e.getEstado()),
+                sucursalVo,
+                auditoria);
     }
 
     @Named("estadoToCodigo")
