@@ -22,7 +22,9 @@ public class ConfiguracionCommandJpaAdapters implements ConfiguracionCommandRepo
 
     @Override
     public Configuracion save(Configuracion configuracion) {
+        Long nextId = repository.obtenerSiguienteId(configuracion.getIdSucursal());
         ConfiguracionJpaEntity entity = mapper.toJpaEntity(configuracion);
+        entity.getIdpk().setIdConfiguracion(nextId);
         repository.persist(entity);
         return mapper.toDomain(entity);
     }

@@ -3,8 +3,6 @@ package com.empresa.tomaturno.framework.adapters.output.persistencia.adapters;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.empresa.tomaturno.configuracion.application.query.port.output.ConfiguracionQueryRepository;
 import com.empresa.tomaturno.configuracion.dominio.entity.Configuracion;
@@ -22,8 +20,8 @@ public class ConfiguracionQueryJpaAdapters implements ConfiguracionQueryReposito
     private final SucursalJpaRepository sucursalJpaRepository;
 
     public ConfiguracionQueryJpaAdapters(ConfiguracionJpaRepository repository,
-                                         ConfiguracionOutputMapper mapper,
-                                         SucursalJpaRepository sucursalJpaRepository) {
+            ConfiguracionOutputMapper mapper,
+            SucursalJpaRepository sucursalJpaRepository) {
         this.repository = repository;
         this.mapper = mapper;
         this.sucursalJpaRepository = sucursalJpaRepository;
@@ -32,23 +30,21 @@ public class ConfiguracionQueryJpaAdapters implements ConfiguracionQueryReposito
     @Override
     public List<Configuracion> buscarPorSucursal(Long idSucursal) {
         List<ConfiguracionJpaEntity> entities = repository.buscarPorSucursal(idSucursal);
-        if (entities.isEmpty()) return List.of();
-
-        List<Configuracion> configs = entities.stream()
-                .map(mapper::toDomain)
+        if (entities.isEmpty())
+            return List.of();
+        SucursalJpaEntity sucursal = sucursalJpaRepository.findById(idSucursal);
+        return entities.stream()
+                .map(e -> mapper.toDomainConSucursal(e, sucursal))
                 .toList();
-
-        enriquecerConNombreSucursal(configs);
-        return configs;
     }
 
     @Override
     public Configuracion buscarPorIdYSucursal(Long idConfiguracion, Long idSucursal) {
         ConfiguracionJpaEntity entity = repository.buscarPorIdYSucursal(idConfiguracion, idSucursal);
-        if (entity == null) return null;
-        Configuracion config = mapper.toDomain(entity);
-        enriquecerConNombreSucursal(List.of(config));
-        return config;
+        if (entity == null)
+            return null;
+        SucursalJpaEntity sucursal = sucursalJpaRepository.findById(idSucursal);
+        return mapper.toDomainConSucursal(entity, sucursal);
     }
 
     @Override
@@ -60,17 +56,5 @@ public class ConfiguracionQueryJpaAdapters implements ConfiguracionQueryReposito
     @Override
     public Long obtenerSiguienteId(Long idSucursal) {
         return repository.obtenerSiguienteId(idSucursal);
-    }
-
-    private void enriquecerConNombreSucursal(List<Configuracion> configs) {
-        List<Long> idsSucursales = configs.stream()
-                .map(Configuracion::getIdSucursal).distinct().toList();
-
-        Map<Long, String> nombresSucursales = sucursalJpaRepository
-                .find("id in ?1", idsSucursales).stream()
-                .collect(Collectors.toMap(SucursalJpaEntity::getId, SucursalJpaEntity::getNombre));
-
-        configs.forEach(c -> c.setNombreSucursal(
-                nombresSucursales.getOrDefault(c.getIdSucursal(), "")));
     }
 }
