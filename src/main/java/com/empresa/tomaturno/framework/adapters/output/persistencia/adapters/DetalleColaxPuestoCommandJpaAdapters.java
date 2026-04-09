@@ -16,7 +16,7 @@ public class DetalleColaxPuestoCommandJpaAdapters implements DetalleColaxPuestoC
     private final DetalleColaxPuestoOutputMapper mapper;
 
     public DetalleColaxPuestoCommandJpaAdapters(DetalleColaxPuestoJpaRepository repository,
-                                                 DetalleColaxPuestoOutputMapper mapper) {
+            DetalleColaxPuestoOutputMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
     }

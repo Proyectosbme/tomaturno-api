@@ -16,7 +16,7 @@ public interface SucursalInputMapper {
 
     default Sucursal toSucursal(SucursalRequestDTO dto) {
         Contacto contacto = Contacto.crear(dto.getTelefono(), dto.getCorreo(), dto.getDireccion());
-        return Sucursal.crear(dto.getNombre(), contacto, Estado.fromCodigo(dto.getEstado()));
+        return Sucursal.inicializar(dto.getNombre(), contacto, Estado.fromCodigo(dto.getEstado()));
     }
 
     @Mapping(source = "identificador", target = "codigo")

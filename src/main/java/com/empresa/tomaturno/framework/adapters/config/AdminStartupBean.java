@@ -47,14 +47,10 @@ public class AdminStartupBean {
         if (sucursalJpaRepository.count() > 0) {
             return sucursalJpaRepository.listAll().get(0).getId();
         }
-        // Al crear por el port se dispara el evento sucursal.creada
-        // que crea automáticamente las configuraciones y usuarios por defecto
-        Sucursal nueva = sucursalCommandInputPort.crear(
-                Sucursal.crear(
-                        "Administracion Central",
-                        Contacto.crear("00000000", "admin@sistema.com", "Sin direccion"),
-                        Estado.ACTIVO),
-                USUARIO_SISTEMA);
+
+          Sucursal sucursal = Sucursal.inicializar( "Administracion Central",  Contacto.crear("00000000", "admin@sistema.com", "Sin direccion"), Estado.ACTIVO);
+          sucursal.crear(USUARIO_SISTEMA);
+        Sucursal nueva = sucursalCommandInputPort.crear(sucursal, USUARIO_SISTEMA);
         return nueva.getIdentificador();
     }
 
