@@ -6,8 +6,11 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.UsuarioJpaEntity;
+import com.empresa.tomaturno.shared.clases.Auditoria;
+import com.empresa.tomaturno.shared.clases.Estado;
 import com.empresa.tomaturno.usuario.dominio.entity.Usuario;
-import com.empresa.tomaturno.usuario.dominio.vo.Estado;
+import com.empresa.tomaturno.usuario.dominio.vo.ConfiguracionOperador;
+import com.empresa.tomaturno.usuario.dominio.vo.DatosPersonales;
 
 @Mapper(componentModel = "cdi")
 public interface UsuarioOutputMapper {
@@ -23,14 +26,23 @@ public interface UsuarioOutputMapper {
     @Mapping(target = "estado", source = "estado", qualifiedByName = "estadoToCodigo")
     UsuarioJpaEntity toJpaEntity(Usuario usuario);
 
-    @Mapping(target = "identificador", source = "idpk.id")
-    @Mapping(target = "idSucursal", source = "idpk.idSucursal")
-    @Mapping(target = "auditoria.usuarioCreacion", source = "userCreacion")
-    @Mapping(target = "auditoria.fechaCreacion", source = "fechaCreacion")
-    @Mapping(target = "auditoria.usuarioModificacion", source = "userModificacion")
-    @Mapping(target = "auditoria.fechaModificacion", source = "fechaModificacion")
-    @Mapping(target = "estado", source = "estado", qualifiedByName = "integerToEstado")
-    Usuario toDomain(UsuarioJpaEntity entity);
+    default Usuario toDomain(UsuarioJpaEntity e) {
+        return Usuario.builder()
+                .identificador(e.getIdpk().getId())
+                .idSucursal(e.getIdpk().getIdSucursal())
+                .idPuesto(e.getIdPuesto())
+                .codigoUsuario(e.getCodigoUsuario())
+                .contrasena(e.getContrasena())
+                .estado(Estado.fromCodigo(e.getEstado()))
+                .datosPersonales(DatosPersonales.reconstituir(
+                        e.getNombres(), e.getApellidos(), e.getDui(), e.getTelefono()))
+                .configuracion(ConfiguracionOperador.reconstituir(
+                        e.getPerfil(), e.getIp(), e.getCorrelativo(), e.getAtenderCasosEspeciales()))
+                .auditoria(Auditoria.reconstituir(
+                        e.getUserCreacion(), e.getFechaCreacion(),
+                        e.getUserModificacion(), e.getFechaModificacion()))
+                .build();
+    }
 
     @Mapping(target = "idpk", ignore = true)
     @Mapping(target = "id", ignore = true)
@@ -41,11 +53,6 @@ public interface UsuarioOutputMapper {
     @Mapping(target = "fechaModificacion", source = "auditoria.fechaModificacion")
     @Mapping(target = "estado", source = "estado", qualifiedByName = "estadoToCodigo")
     void updateEntityFromDomain(Usuario usuario, @MappingTarget UsuarioJpaEntity entity);
-
-    @Named("integerToEstado")
-    static Estado integerToEstado(Integer codigo) {
-        return codigo == null ? null : Estado.fromCodigo(codigo);
-    }
 
     @Named("estadoToCodigo")
     static Integer estadoToCodigo(Estado estado) {

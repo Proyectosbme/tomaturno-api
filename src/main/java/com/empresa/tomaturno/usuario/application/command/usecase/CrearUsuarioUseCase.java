@@ -1,7 +1,5 @@
 package com.empresa.tomaturno.usuario.application.command.usecase;
 
-import java.time.LocalDateTime;
-
 import com.empresa.tomaturno.usuario.application.command.port.output.UsuarioCommandRepository;
 import com.empresa.tomaturno.usuario.application.query.port.output.UsuarioQueryRepository;
 import com.empresa.tomaturno.usuario.dominio.entity.Usuario;
@@ -21,8 +19,6 @@ public class CrearUsuarioUseCase {
     }
 
     public Usuario ejecutar(Usuario usuario, String usuarioCreador) {
-        usuario.auditoriaCreacion(usuarioCreador, LocalDateTime.now());
-
         String creador = usuario.getPerfilCreador();
         if (creador != null && creador.equalsIgnoreCase("PUBLICO")
                 && !"OPERADOR".equalsIgnoreCase(usuario.getPerfil())) {
@@ -33,10 +29,10 @@ public class CrearUsuarioUseCase {
                 usuario.getIdSucursal(), usuario.getCodigoUsuario());
         usuario.validarCodigoUnico(existeCodigo);
 
-        String hashContrasena = BCrypt.withDefaults().hashToString(12, usuario.getContrasena().toCharArray());
-        usuario.setContrasena(hashContrasena);
+        String hash = BCrypt.withDefaults().hashToString(12, usuario.getContrasena().toCharArray());
+        usuario.asignarContrasenaHasheada(hash);
 
-        usuario.validarCreacion();
+        usuario.crear(usuarioCreador);
         return commandRepository.save(usuario);
     }
 }

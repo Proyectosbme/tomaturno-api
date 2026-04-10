@@ -1,8 +1,12 @@
 package com.empresa.tomaturno.usuario.dominio.entity;
 
+import java.time.LocalDateTime;
+
+import com.empresa.tomaturno.shared.clases.Auditoria;
+import com.empresa.tomaturno.shared.clases.Estado;
 import com.empresa.tomaturno.usuario.dominio.exceptions.UsuarioValidationException;
-import com.empresa.tomaturno.usuario.dominio.vo.Auditoria;
-import com.empresa.tomaturno.usuario.dominio.vo.Estado;
+import com.empresa.tomaturno.usuario.dominio.vo.ConfiguracionOperador;
+import com.empresa.tomaturno.usuario.dominio.vo.DatosPersonales;
 
 public class Usuario {
 
@@ -11,260 +15,267 @@ public class Usuario {
     private Long idPuesto;
     private String codigoUsuario;
     private String contrasena;
-    private String perfil;
-    private String nombres;
-    private String apellidos;
-    private String dui;
     private Estado estado;
-    private String telefono;
-    private String ip;
     private Auditoria auditoria;
-    private Integer correlativo; // Nuevo campo para el número de puesto dentro de la sucursal
-    private Integer atenderCasosEspeciales;
+    private DatosPersonales datosPersonales;
+    private ConfiguracionOperador configuracion;
     // Campos enriquecidos (no persistidos)
+    private String perfilCreador;
     private String nombreSucursal;
     private String nombrePuesto;
-    private String perfilCreador;
 
-    public Usuario() {
+    private Usuario(Builder builder) {
+        this.identificador = builder.identificador;
+        this.idSucursal = builder.idSucursal;
+        this.idPuesto = builder.idPuesto;
+        this.codigoUsuario = builder.codigoUsuario;
+        this.contrasena = builder.contrasena;
+        this.estado = builder.estado;
+        this.auditoria = builder.auditoria;
+        this.datosPersonales = builder.datosPersonales;
+        this.configuracion = builder.configuracion;
     }
 
-    public void modificar(String codigoUsuario, String contrasena, Long idPuesto,
-            String nombres, String apellidos, String dui,
-            Estado estado, String telefono, String ip, String perfil, Integer correlativo,
-            Integer atenderCasosEspeciales) {
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /* ── Factory methods ──────────────────────────────────────────────── */
+
+    public static Usuario inicializar(Long idSucursal, Long idPuesto, String codigoUsuario,
+            String contrasena, Estado estado, DatosPersonales datosPersonales,
+            ConfiguracionOperador configuracion) {
+        return builder()
+                .idSucursal(idSucursal)
+                .idPuesto(idPuesto)
+                .codigoUsuario(codigoUsuario)
+                .contrasena(contrasena)
+                .estado(estado)
+                .datosPersonales(datosPersonales)
+                .configuracion(configuracion)
+                .build();
+    }
+
+    /* ── Comportamiento ───────────────────────────────────────────────── */
+
+    public void crear(String usuarioCreador) {
+        this.auditoria = Auditoria.deCreacion(usuarioCreador, LocalDateTime.now());
+        validarCreacion();
+    }
+
+    public void modificar(Long idPuesto, String codigoUsuario, String contrasena,
+            Estado estado, DatosPersonales datosPersonales,
+            ConfiguracionOperador configuracion, String usuarioModificador) {
+        this.idPuesto = idPuesto;
         this.codigoUsuario = codigoUsuario;
         if (contrasena != null && !contrasena.isBlank()) {
             this.contrasena = contrasena;
         }
-        this.idPuesto = idPuesto;
-        this.correlativo = correlativo;
-        this.atenderCasosEspeciales = atenderCasosEspeciales;
-        this.nombres = nombres;
-        this.apellidos = apellidos;
-        this.dui = dui;
         this.estado = estado;
-        this.telefono = telefono;
-        this.ip = ip;
-        this.perfil = perfil;
+        this.datosPersonales = datosPersonales;
+        this.configuracion = configuracion;
+        this.auditoria = this.auditoria.conModificacion(usuarioModificador, LocalDateTime.now());
+        validarModificacion();
     }
 
-    public void auditoriaCreacion(String usuario, java.time.LocalDateTime fecha) {
-        if (this.auditoria == null)
-            this.auditoria = new Auditoria();
-        this.auditoria.creacion(usuario, fecha);
+    public void asignarIdentificador(Long identificador) {
+        this.identificador = identificador;
     }
 
-    public void auditoriaModificacion(String usuario, java.time.LocalDateTime fecha) {
-        if (this.auditoria == null) {
-            throw new UsuarioValidationException("No tiene auditoría de creación");
-        }
-        this.auditoria.modificacion(usuario, fecha);
-    }
-
-    public void validarCreacion() {
-        if (this.codigoUsuario == null || this.codigoUsuario.isBlank()) {
-            throw new UsuarioValidationException("El código de usuario es obligatorio");
-        }
-        if (this.contrasena == null || this.contrasena.isBlank()) {
-            throw new UsuarioValidationException("La contraseña es obligatoria");
-        }
-        if (this.nombres == null || this.nombres.isBlank()) {
-            throw new UsuarioValidationException("Los nombres son obligatorios");
-        }
-        if (this.apellidos == null || this.apellidos.isBlank()) {
-            throw new UsuarioValidationException("Los apellidos son obligatorios");
-        }
-        if (this.idSucursal == null) {
-            throw new UsuarioValidationException("La sucursal es obligatoria");
-        }
-        if (this.estado == null) {
-            throw new UsuarioValidationException("El estado es obligatorio");
-        }
-        if (this.perfil == null || this.perfil.isBlank()) {
-            throw new UsuarioValidationException("El perfil es obligatorio");
-        }
-        if ("OPERADOR".equals(this.perfil) && this.correlativo == null) {
-            throw new UsuarioValidationException("El número de estación es obligatorio para el perfil Operador");
-        }
-        auditoria.validarCreacion();
-    }
-
-    public void validarModificacion() {
-        if (this.identificador == null) {
-            throw new UsuarioValidationException("El identificador del usuario es obligatorio");
-        }
-        if (this.codigoUsuario == null || this.codigoUsuario.isBlank()) {
-            throw new UsuarioValidationException("El código de usuario es obligatorio");
-        }
-        if (this.nombres == null || this.nombres.isBlank()) {
-            throw new UsuarioValidationException("Los nombres son obligatorios");
-        }
-        if (this.apellidos == null || this.apellidos.isBlank()) {
-            throw new UsuarioValidationException("Los apellidos son obligatorios");
-        }
-        if (this.estado == null) {
-            throw new UsuarioValidationException("El estado es obligatorio");
-        }
-        if (this.perfil == null || this.perfil.isBlank()) {
-            throw new UsuarioValidationException("El perfil es obligatorio");
-        }
-        if ("OPERADOR".equals(this.perfil) && this.correlativo == null) {
-            throw new UsuarioValidationException("El número de estación es obligatorio para el perfil Operador");
-        }
-
-        auditoria.validarModificacion();
+    public void asignarContrasenaHasheada(String hash) {
+        this.contrasena = hash;
     }
 
     public void validarCodigoUnico(boolean existeCodigo) {
-        if (existeCodigo) {
+        if (existeCodigo)
             throw new UsuarioValidationException(
                     "Ya existe un usuario con el código '" + this.codigoUsuario + "' en esta sucursal");
-        }
     }
+
+    /* ── Enriquecimiento ──────────────────────────────────────────────── */
+
+    public void asignarPerfilCreador(String perfilCreador) {
+        this.perfilCreador = perfilCreador;
+    }
+
+    public void enriquecerNombreSucursal(String nombreSucursal) {
+        this.nombreSucursal = nombreSucursal;
+    }
+
+    public void enriquecerNombrePuesto(String nombrePuesto) {
+        this.nombrePuesto = nombrePuesto;
+    }
+
+    /* ── Validaciones privadas ────────────────────────────────────────── */
+
+    private void validarCreacion() {
+        if (this.codigoUsuario == null || this.codigoUsuario.isBlank())
+            throw new UsuarioValidationException("El código de usuario es obligatorio");
+        if (this.contrasena == null || this.contrasena.isBlank())
+            throw new UsuarioValidationException("La contraseña es obligatoria");
+        if (this.idSucursal == null)
+            throw new UsuarioValidationException("La sucursal es obligatoria");
+        if (this.estado == null)
+            throw new UsuarioValidationException("El estado es obligatorio");
+    }
+
+    private void validarModificacion() {
+        if (this.identificador == null)
+            throw new UsuarioValidationException("El identificador del usuario es obligatorio");
+        if (this.codigoUsuario == null || this.codigoUsuario.isBlank())
+            throw new UsuarioValidationException("El código de usuario es obligatorio");
+        if (this.estado == null)
+            throw new UsuarioValidationException("El estado es obligatorio");
+    }
+
+    /* ── Getters ──────────────────────────────────────────────────────── */
 
     public Long getIdentificador() {
         return identificador;
-    }
-
-    public void setIdentificador(Long identificador) {
-        this.identificador = identificador;
     }
 
     public Long getIdSucursal() {
         return idSucursal;
     }
 
-    public void setIdSucursal(Long idSucursal) {
-        this.idSucursal = idSucursal;
-    }
-
     public Long getIdPuesto() {
         return idPuesto;
-    }
-
-    public void setIdPuesto(Long idPuesto) {
-        this.idPuesto = idPuesto;
     }
 
     public String getCodigoUsuario() {
         return codigoUsuario;
     }
 
-    public void setCodigoUsuario(String codigoUsuario) {
-        this.codigoUsuario = codigoUsuario;
-    }
-
     public String getContrasena() {
         return contrasena;
-    }
-
-    public void setContrasena(String contrasena) {
-        this.contrasena = contrasena;
-    }
-
-    public String getPerfil() {
-        return perfil;
-    }
-
-    public void setPerfil(String perfil) {
-        this.perfil = perfil;
-    }
-
-    public String getNombres() {
-        return nombres;
-    }
-
-    public void setNombres(String nombres) {
-        this.nombres = nombres;
-    }
-
-    public String getApellidos() {
-        return apellidos;
-    }
-
-    public void setApellidos(String apellidos) {
-        this.apellidos = apellidos;
-    }
-
-    public String getDui() {
-        return dui;
-    }
-
-    public void setDui(String dui) {
-        this.dui = dui;
     }
 
     public Estado getEstado() {
         return estado;
     }
 
-    public void setEstado(Estado estado) {
-        this.estado = estado;
-    }
-
-    public String getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
-    }
-
-    public String getIp() {
-        return ip;
-    }
-
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
-
     public Auditoria getAuditoria() {
         return auditoria;
     }
 
-    public void setAuditoria(Auditoria auditoria) {
-        this.auditoria = auditoria;
+    public DatosPersonales getDatosPersonales() {
+        return datosPersonales;
     }
 
-    public String getNombreSucursal() {
-        return nombreSucursal;
-    }
-
-    public void setNombreSucursal(String nombreSucursal) {
-        this.nombreSucursal = nombreSucursal;
-    }
-
-    public String getNombrePuesto() {
-        return nombrePuesto;
-    }
-
-    public void setNombrePuesto(String nombrePuesto) {
-        this.nombrePuesto = nombrePuesto;
+    public ConfiguracionOperador getConfiguracion() {
+        return configuracion;
     }
 
     public String getPerfilCreador() {
         return perfilCreador;
     }
 
-    public void setPerfilCreador(String perfilCreador) {
-        this.perfilCreador = perfilCreador;
+    public String getNombreSucursal() {
+        return nombreSucursal;
+    }
+
+    public String getNombrePuesto() {
+        return nombrePuesto;
+    }
+
+    /* ── Delegate getters (compatibilidad con mappers) ────────────────── */
+
+    public String getNombres() {
+        return datosPersonales != null ? datosPersonales.getNombres() : null;
+    }
+
+    public String getApellidos() {
+        return datosPersonales != null ? datosPersonales.getApellidos() : null;
+    }
+
+    public String getDui() {
+        return datosPersonales != null ? datosPersonales.getDui() : null;
+    }
+
+    public String getTelefono() {
+        return datosPersonales != null ? datosPersonales.getTelefono() : null;
+    }
+
+    public String getPerfil() {
+        return configuracion != null ? configuracion.getPerfil() : null;
+    }
+
+    public String getIp() {
+        return configuracion != null ? configuracion.getIp() : null;
     }
 
     public Integer getCorrelativo() {
-        return correlativo;
-    }
-
-    public void setCorrelativo(Integer correlativo) {
-        this.correlativo = correlativo;
+        return configuracion != null ? configuracion.getCorrelativo() : null;
     }
 
     public Integer getAtenderCasosEspeciales() {
-        return atenderCasosEspeciales;
+        return configuracion != null ? configuracion.getAtenderCasosEspeciales() : null;
     }
 
-    public void setAtenderCasosEspeciales(Integer atenderCasosEspeciales) {
-        this.atenderCasosEspeciales = atenderCasosEspeciales;
-    }
+    /* ── Builder ──────────────────────────────────────────────────────── */
 
+    public static class Builder {
+
+        private Long identificador;
+        private Long idSucursal;
+        private Long idPuesto;
+        private String codigoUsuario;
+        private String contrasena;
+        private Estado estado;
+        private Auditoria auditoria;
+        private DatosPersonales datosPersonales;
+        private ConfiguracionOperador configuracion;
+
+        private Builder() {
+        }
+
+        public Builder identificador(Long identificador) {
+            this.identificador = identificador;
+            return this;
+        }
+
+        public Builder idSucursal(Long idSucursal) {
+            this.idSucursal = idSucursal;
+            return this;
+        }
+
+        public Builder idPuesto(Long idPuesto) {
+            this.idPuesto = idPuesto;
+            return this;
+        }
+
+        public Builder codigoUsuario(String codigoUsuario) {
+            this.codigoUsuario = codigoUsuario;
+            return this;
+        }
+
+        public Builder contrasena(String contrasena) {
+            this.contrasena = contrasena;
+            return this;
+        }
+
+        public Builder estado(Estado estado) {
+            this.estado = estado;
+            return this;
+        }
+
+        public Builder auditoria(Auditoria auditoria) {
+            this.auditoria = auditoria;
+            return this;
+        }
+
+        public Builder datosPersonales(DatosPersonales datosPersonales) {
+            this.datosPersonales = datosPersonales;
+            return this;
+        }
+
+        public Builder configuracion(ConfiguracionOperador configuracion) {
+            this.configuracion = configuracion;
+            return this;
+        }
+
+        public Usuario build() {
+            return new Usuario(this);
+        }
+    }
 }

@@ -6,18 +6,27 @@ import org.mapstruct.Named;
 
 import com.empresa.tomaturno.framework.adapters.input.dto.UsuarioRequestDTO;
 import com.empresa.tomaturno.framework.adapters.input.dto.UsuarioResponseDTO;
+import com.empresa.tomaturno.shared.clases.Estado;
 import com.empresa.tomaturno.usuario.dominio.entity.Usuario;
-import com.empresa.tomaturno.usuario.dominio.vo.Estado;
+import com.empresa.tomaturno.usuario.dominio.vo.ConfiguracionOperador;
+import com.empresa.tomaturno.usuario.dominio.vo.DatosPersonales;
 
 @Mapper(componentModel = "cdi")
 public interface UsuarioInputMapper {
 
-    @Mapping(ignore = true, target = "identificador")
-    @Mapping(ignore = true, target = "auditoria")
-    @Mapping(ignore = true, target = "nombreSucursal")
-    @Mapping(ignore = true, target = "nombrePuesto")
-    @Mapping(source = "estado", target = "estado", qualifiedByName = "codigoToEstado")
-    Usuario toDomain(UsuarioRequestDTO dto);
+    default Usuario toDomain(UsuarioRequestDTO dto) {
+        DatosPersonales datos = DatosPersonales.crear(
+                dto.getNombres(), dto.getApellidos(), dto.getDui(), dto.getTelefono());
+        ConfiguracionOperador config = ConfiguracionOperador.crear(
+                dto.getPerfil(), dto.getIp(), dto.getCorrelativo(), dto.getAtenderCasosEspeciales());
+        Usuario usuario = Usuario.inicializar(
+                dto.getIdSucursal(), dto.getIdPuesto(), dto.getCodigoUsuario(),
+                dto.getContrasena(), dto.getEstado() != null ? Estado.fromCodigo(dto.getEstado()) : null,
+                datos, config);
+        if (dto.getPerfilCreador() != null)
+            usuario.asignarPerfilCreador(dto.getPerfilCreador());
+        return usuario;
+    }
 
     @Mapping(source = "identificador", target = "id")
     @Mapping(source = "nombreSucursal", target = "nombreSucursal")
@@ -28,11 +37,6 @@ public interface UsuarioInputMapper {
     @Mapping(source = "auditoria.fechaModificacion", target = "fechaModificacion")
     @Mapping(source = "estado", target = "estado", qualifiedByName = "estadoToCodigo")
     UsuarioResponseDTO toResponse(Usuario usuario);
-
-    @Named("codigoToEstado")
-    default Estado codigoToEstado(Integer codigo) {
-        return codigo != null ? Estado.fromCodigo(codigo) : null;
-    }
 
     @Named("estadoToCodigo")
     default Integer estadoToCodigo(Estado estado) {

@@ -24,7 +24,7 @@ public class UsuarioCommandJpaAdapters implements UsuarioCommandRepository {
     @Override
     public Usuario save(Usuario usuario) {
         Long nextId = usuarioJpaRepository.obtenerSiguienteId(usuario.getIdSucursal());
-        usuario.setIdentificador(nextId);
+        usuario.asignarIdentificador(nextId);
         UsuarioJpaEntity entity = usuarioOutputMapper.toJpaEntity(usuario);
         usuarioJpaRepository.persist(entity);
         return usuarioOutputMapper.toDomain(entity);
