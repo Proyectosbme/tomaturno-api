@@ -4,4 +4,5 @@ import com.empresa.tomaturno.persona.dominio.entity.Persona;
 
 public interface PersonaQueryRepository {
     Persona buscarPorDui(String dui);
+    Persona buscarPorId(Long id);
 }

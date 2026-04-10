@@ -40,4 +40,10 @@ public class PersonaJpaAdapter implements PersonaCommandRepository, PersonaQuery
         PersonaJpaEntity entity = personaJpaRepository.buscarPorDui(dui);
         return entity != null ? personaMapper.toDomain(entity) : null;
     }
+
+    @Override
+    public Persona buscarPorId(Long id) {
+        PersonaJpaEntity entity = personaJpaRepository.findById(id);
+        return entity != null ? personaMapper.toDomain(entity) : null;
+    }
 }

@@ -13,7 +13,19 @@ public interface PersonaMapper {
     @Mapping(target = "id", ignore = true)
     PersonaJpaEntity toEntity(Persona persona);
 
-    Persona toDomain(PersonaJpaEntity entity);
+    default Persona toDomain(PersonaJpaEntity e) {
+        return Persona.builder()
+                .id(e.getId())
+                .dui(e.getDui())
+                .nombres(e.getNombres())
+                .apellidos(e.getApellidos())
+                .fechaNacimiento(e.getFechaNacimiento())
+                .sexo(e.getSexo())
+                .foto(e.getFoto())
+                .fechaCreacion(e.getFechaCreacion())
+                .fechaModificacion(e.getFechaModificacion())
+                .build();
+    }
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "dui", ignore = true)

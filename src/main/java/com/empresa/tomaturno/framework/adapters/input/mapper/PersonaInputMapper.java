@@ -17,6 +17,7 @@ public interface PersonaInputMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "fechaCreacion", ignore = true)
     @Mapping(target = "fechaModificacion", ignore = true)
+    @Mapping(target = "foto", ignore = true)
     @Mapping(target = "fechaNacimiento", expression = "java(parseFecha(dto.getFechaNacimiento()))")
     Persona toDomain(PersonaRequestDTO dto);
 
