@@ -10,11 +10,16 @@ import com.empresa.tomaturno.framework.adapters.input.dto.DetalleColaxPuestoResp
 @Mapper(componentModel = "cdi")
 public interface DetalleColaxPuestoInputMapper {
 
-    @Mapping(ignore = true, target = "userCreacion")
-    @Mapping(ignore = true, target = "fechaCreacion")
-    @Mapping(ignore = true, target = "nombreCola")
-    @Mapping(ignore = true, target = "nombreDetalle")
-    DetalleColaxPuesto toDomain(DetalleColaxPuestoRequestDTO dto);
+    default DetalleColaxPuesto toDomain(DetalleColaxPuestoRequestDTO dto) {
+        return DetalleColaxPuesto.inicializar(
+                dto.getIdPuesto(),
+                dto.getIdSucursalPuesto(),
+                dto.getIdCola(),
+                dto.getIdDetalle(),
+                dto.getIdSucursalCola());
+    }
 
+    @Mapping(target = "userCreacion", source = "auditoria.usuarioCreacion")
+    @Mapping(target = "fechaCreacion", source = "auditoria.fechaCreacion")
     DetalleColaxPuestoResponseDTO toResponse(DetalleColaxPuesto domain);
 }

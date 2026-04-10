@@ -43,8 +43,7 @@ public class DetalleColaxPuestoQueryJpaAdapters implements DetalleColaxPuestoQue
                 .map(mapper::toDomain)
                 .toList();
 
-        enriquecerConNombres(asignaciones);
-        return asignaciones;
+        return enriquecerConNombres(asignaciones);
     }
 
     @Override
@@ -53,8 +52,7 @@ public class DetalleColaxPuestoQueryJpaAdapters implements DetalleColaxPuestoQue
         return repository.existeAsignacion(idPuesto, idSucursalPuesto, idCola, idDetalle, idSucursalCola);
     }
 
-    private void enriquecerConNombres(List<DetalleColaxPuesto> asignaciones) {
-        // Obtener nombres de colas
+    private List<DetalleColaxPuesto> enriquecerConNombres(List<DetalleColaxPuesto> asignaciones) {
         List<Long> idsColas = asignaciones.stream()
                 .map(DetalleColaxPuesto::getIdCola).distinct().toList();
 
@@ -65,15 +63,14 @@ public class DetalleColaxPuestoQueryJpaAdapters implements DetalleColaxPuestoQue
                         ColaJpaEntity::getNombre,
                         (a, b) -> a));
 
-        // Enriquecer cada asignación con nombre de cola y nombre de detalle
-        asignaciones.forEach(a -> {
-            a.setNombreCola(nombresColas.getOrDefault(a.getIdCola(), ""));
-
-            DetalleColaJpaEntity detalle = colaDetalleRepository.buscarPorId(
-                    a.getIdCola(), a.getIdSucursalCola().intValue(), a.getIdDetalle());
-            if (detalle != null) {
-                a.setNombreDetalle(detalle.getNombre());
-            }
-        });
+        return asignaciones.stream()
+                .map(a -> {
+                    String nombreCola = nombresColas.getOrDefault(a.getIdCola(), "");
+                    DetalleColaJpaEntity detalle = colaDetalleRepository.buscarPorId(
+                            a.getIdCola(), a.getIdSucursalCola().intValue(), a.getIdDetalle());
+                    String nombreDetalle = detalle != null ? detalle.getNombre() : null;
+                    return a.conNombres(nombreCola, nombreDetalle);
+                })
+                .toList();
     }
 }

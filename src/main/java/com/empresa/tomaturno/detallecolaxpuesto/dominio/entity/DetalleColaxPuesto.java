@@ -3,37 +3,51 @@ package com.empresa.tomaturno.detallecolaxpuesto.dominio.entity;
 import java.time.LocalDateTime;
 
 import com.empresa.tomaturno.detallecolaxpuesto.dominio.exceptions.DetalleColaxPuestoValidationException;
+import com.empresa.tomaturno.shared.clases.Auditoria;
 
 public class DetalleColaxPuesto {
 
-    private Long idPuesto;
-    private Long idSucursalPuesto;
-    private Long idCola;
-    private Long idDetalle;
-    private Long idSucursalCola;
-    private String userCreacion;
-    private LocalDateTime fechaCreacion;
+    private final Long idPuesto;
+    private final Long idSucursalPuesto;
+    private final Long idCola;
+    private final Long idDetalle;
+    private final Long idSucursalCola;
+    private Auditoria auditoria;
     // Campos enriquecidos (no persistidos)
-    private String nombreCola;
-    private String nombreDetalle;
+    private final String nombreCola;
+    private final String nombreDetalle;
 
-    public DetalleColaxPuesto() {
-    }
-
-    public DetalleColaxPuesto(Long idPuesto, Long idSucursalPuesto, Long idCola, Long idDetalle, Long idSucursalCola) {
+    private DetalleColaxPuesto(Long idPuesto, Long idSucursalPuesto, Long idCola, Long idDetalle,
+            Long idSucursalCola, String nombreCola, String nombreDetalle) {
         this.idPuesto = idPuesto;
         this.idSucursalPuesto = idSucursalPuesto;
         this.idCola = idCola;
         this.idDetalle = idDetalle;
         this.idSucursalCola = idSucursalCola;
+        this.nombreCola = nombreCola;
+        this.nombreDetalle = nombreDetalle;
     }
 
-    public void auditoriaCreacion(String usuario, LocalDateTime fecha) {
-        this.userCreacion = usuario;
-        this.fechaCreacion = fecha;
+    public static DetalleColaxPuesto inicializar(Long idPuesto, Long idSucursalPuesto, Long idCola,
+            Long idDetalle, Long idSucursalCola) {
+        return new DetalleColaxPuesto(idPuesto, idSucursalPuesto, idCola, idDetalle, idSucursalCola,
+                null, null);
     }
 
-    public void validarAsignacion() {
+    public static DetalleColaxPuesto reconstituir(Long idPuesto, Long idSucursalPuesto, Long idCola,
+            Long idDetalle, Long idSucursalCola, Auditoria auditoria) {
+        DetalleColaxPuesto d = new DetalleColaxPuesto(idPuesto, idSucursalPuesto, idCola, idDetalle,
+                idSucursalCola, null, null);
+        d.auditoria = auditoria;
+        return d;
+    }
+
+    public void asignar(String usuario) {
+        this.auditoria = Auditoria.deCreacion(usuario, LocalDateTime.now());
+        this.validarAsignacion();
+    }
+
+    private void validarAsignacion() {
         if (this.idPuesto == null) {
             throw new DetalleColaxPuestoValidationException("El id del puesto es obligatorio");
         }
@@ -51,30 +65,42 @@ public class DetalleColaxPuesto {
         }
     }
 
-    public Long getIdPuesto() { return idPuesto; }
-    public void setIdPuesto(Long idPuesto) { this.idPuesto = idPuesto; }
+    public DetalleColaxPuesto conNombres(String nombreCola, String nombreDetalle) {
+        DetalleColaxPuesto enriquecido = new DetalleColaxPuesto(this.idPuesto, this.idSucursalPuesto,
+                this.idCola, this.idDetalle, this.idSucursalCola, nombreCola, nombreDetalle);
+        enriquecido.auditoria = this.auditoria;
+        return enriquecido;
+    }
 
-    public Long getIdSucursalPuesto() { return idSucursalPuesto; }
-    public void setIdSucursalPuesto(Long idSucursalPuesto) { this.idSucursalPuesto = idSucursalPuesto; }
+    public Long getIdPuesto() {
+        return idPuesto;
+    }
 
-    public Long getIdCola() { return idCola; }
-    public void setIdCola(Long idCola) { this.idCola = idCola; }
+    public Long getIdSucursalPuesto() {
+        return idSucursalPuesto;
+    }
 
-    public Long getIdDetalle() { return idDetalle; }
-    public void setIdDetalle(Long idDetalle) { this.idDetalle = idDetalle; }
+    public Long getIdCola() {
+        return idCola;
+    }
 
-    public Long getIdSucursalCola() { return idSucursalCola; }
-    public void setIdSucursalCola(Long idSucursalCola) { this.idSucursalCola = idSucursalCola; }
+    public Long getIdDetalle() {
+        return idDetalle;
+    }
 
-    public String getUserCreacion() { return userCreacion; }
-    public void setUserCreacion(String userCreacion) { this.userCreacion = userCreacion; }
+    public Long getIdSucursalCola() {
+        return idSucursalCola;
+    }
 
-    public LocalDateTime getFechaCreacion() { return fechaCreacion; }
-    public void setFechaCreacion(LocalDateTime fechaCreacion) { this.fechaCreacion = fechaCreacion; }
+    public Auditoria getAuditoria() {
+        return auditoria;
+    }
 
-    public String getNombreCola() { return nombreCola; }
-    public void setNombreCola(String nombreCola) { this.nombreCola = nombreCola; }
+    public String getNombreCola() {
+        return nombreCola;
+    }
 
-    public String getNombreDetalle() { return nombreDetalle; }
-    public void setNombreDetalle(String nombreDetalle) { this.nombreDetalle = nombreDetalle; }
+    public String getNombreDetalle() {
+        return nombreDetalle;
+    }
 }
