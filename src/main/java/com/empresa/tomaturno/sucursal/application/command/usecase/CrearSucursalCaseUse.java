@@ -1,7 +1,5 @@
 package com.empresa.tomaturno.sucursal.application.command.usecase;
 
-import java.time.LocalDateTime;
-
 import com.empresa.tomaturno.sucursal.application.command.port.output.SucursalCommandRepository;
 import com.empresa.tomaturno.sucursal.application.command.port.output.SucursalEventPublisher;
 import com.empresa.tomaturno.sucursal.dominio.entity.Sucursal;

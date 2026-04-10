@@ -1,7 +1,5 @@
 package com.empresa.tomaturno.puesto.application.command.usecase;
 
-import java.time.LocalDateTime;
-
 import com.empresa.tomaturno.puesto.application.command.port.output.PuestoCommandRepository;
 import com.empresa.tomaturno.puesto.application.query.port.output.PuestoQueryRepository;
 import com.empresa.tomaturno.puesto.dominio.entity.Puesto;
