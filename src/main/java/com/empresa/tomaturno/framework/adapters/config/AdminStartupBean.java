@@ -14,6 +14,8 @@ import com.empresa.tomaturno.sucursal.dominio.vo.Contacto;
 import com.empresa.tomaturno.shared.clases.Estado;
 import com.empresa.tomaturno.usuario.application.command.port.input.UsuarioCommandInputPort;
 import com.empresa.tomaturno.usuario.dominio.entity.Usuario;
+import com.empresa.tomaturno.usuario.dominio.vo.ConfiguracionOperador;
+import com.empresa.tomaturno.usuario.dominio.vo.DatosPersonales;
 
 @ApplicationScoped
 public class AdminStartupBean {
@@ -47,8 +49,8 @@ public class AdminStartupBean {
             return sucursalJpaRepository.listAll().get(0).getId();
         }
 
-          Sucursal sucursal = Sucursal.inicializar( "Administracion Central",  Contacto.crear("00000000", "admin@sistema.com", "Sin direccion"), Estado.ACTIVO);
-          sucursal.crear(USUARIO_SISTEMA);
+        Sucursal sucursal = Sucursal.inicializar("Administracion Central", Contacto.crear("00000000", "admin@sistema.com", "Sin direccion"), Estado.ACTIVO);
+        sucursal.crear(USUARIO_SISTEMA);
         Sucursal nueva = sucursalCommandInputPort.crear(sucursal, USUARIO_SISTEMA);
         return nueva.getIdentificador();
     }
@@ -56,14 +58,9 @@ public class AdminStartupBean {
     private void crearAdminSiNoExiste(Long idSucursal) {
         if (usuarioJpaRepository.count("upper(codigoUsuario) = 'ADMIN'") > 0) return;
 
-        Usuario admin = new Usuario();
-        admin.setIdSucursal(idSucursal);
-        admin.setCodigoUsuario("admin");
-        admin.setContrasena("admin");
-        admin.setPerfil("ADMIN");
-        admin.setNombres("Administrador");
-        admin.setApellidos("Sistema");
-        admin.setEstado(com.empresa.tomaturno.usuario.dominio.vo.Estado.ACTIVO);
+        DatosPersonales datos = DatosPersonales.crear("Administrador", "Sistema", null, null);
+        ConfiguracionOperador config = ConfiguracionOperador.crear("ADMIN", null, null, null);
+        Usuario admin = Usuario.inicializar(idSucursal, null, "admin", "admin", Estado.ACTIVO, datos, config);
         usuarioCommandInputPort.crear(admin, USUARIO_SISTEMA);
     }
 }

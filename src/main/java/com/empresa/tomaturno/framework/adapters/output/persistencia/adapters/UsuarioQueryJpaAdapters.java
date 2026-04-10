@@ -99,9 +99,9 @@ public class UsuarioQueryJpaAdapters implements UsuarioQueryRepository {
                         (a, b) -> a));
 
         usuarios.forEach(u -> {
-            u.setNombreSucursal(nombresSucursales.getOrDefault(u.getIdSucursal(), ""));
+            u.enriquecerNombreSucursal(nombresSucursales.getOrDefault(u.getIdSucursal(), ""));
             if (u.getIdPuesto() != null) {
-                u.setNombrePuesto(nombresPuestos.getOrDefault(
+                u.enriquecerNombrePuesto(nombresPuestos.getOrDefault(
                         u.getIdPuesto() * 10000L + u.getIdSucursal(), ""));
             }
         });

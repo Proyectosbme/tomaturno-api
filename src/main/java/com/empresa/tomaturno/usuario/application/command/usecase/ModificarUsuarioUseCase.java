@@ -1,7 +1,5 @@
 package com.empresa.tomaturno.usuario.application.command.usecase;
 
-import java.time.LocalDateTime;
-
 import com.empresa.tomaturno.usuario.application.command.port.output.UsuarioCommandRepository;
 import com.empresa.tomaturno.usuario.application.query.port.output.UsuarioQueryRepository;
 import com.empresa.tomaturno.usuario.dominio.entity.Usuario;
@@ -20,7 +18,7 @@ public class ModificarUsuarioUseCase {
         this.queryRepository = queryRepository;
     }
 
-    public Usuario ejecutar(Long idUsuario, Long idSucursal, Usuario datosNuevos,String user) {
+    public Usuario ejecutar(Long idUsuario, Long idSucursal, Usuario datosNuevos, String user) {
         Usuario usuario = queryRepository.buscarPorIdUsuarioYSucursal(idUsuario, idSucursal);
         if (usuario == null) {
             throw new UsuarioNotFoundException(idUsuario,
@@ -32,13 +30,9 @@ public class ModificarUsuarioUseCase {
             nuevaContrasena = BCrypt.withDefaults().hashToString(12, nuevaContrasena.toCharArray());
         }
 
-        usuario.modificar(datosNuevos.getCodigoUsuario(), nuevaContrasena, datosNuevos.getIdPuesto(),
-                datosNuevos.getNombres(), datosNuevos.getApellidos(), datosNuevos.getDui(),
-                datosNuevos.getEstado(), datosNuevos.getTelefono(), datosNuevos.getIp(),
-                datosNuevos.getPerfil(), datosNuevos.getCorrelativo(), datosNuevos.getAtenderCasosEspeciales());
-
-        usuario.auditoriaModificacion(user, LocalDateTime.now());
-        usuario.validarModificacion();
+        usuario.modificar(datosNuevos.getIdPuesto(), datosNuevos.getCodigoUsuario(), nuevaContrasena,
+                datosNuevos.getEstado(), datosNuevos.getDatosPersonales(),
+                datosNuevos.getConfiguracion(), user);
         return commandRepository.modificar(usuario);
     }
 }
