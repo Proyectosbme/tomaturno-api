@@ -9,6 +9,7 @@ import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.Confi
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.ConfiguracionJpaEntityPK;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.ConfiguracionJpaRepository;
 import org.hibernate.exception.ConstraintViolationException;
+import com.empresa.tomaturno.shared.clases.ConfiguracionClave;
 
 @ApplicationScoped
 public class ConfiguracionDefaultBean {
@@ -22,12 +23,12 @@ public class ConfiguracionDefaultBean {
     }
 
     public void crearConfiguracionesParaSucursal(Long idSucursal) {
-        intentarCrear(idSucursal, "VALIDAR_IP",                 1, "Valida la IP del usuario al iniciar sesión,0=desactivado, 1=activado");
-        intentarCrear(idSucursal, "REINICIAR_NUMERACION",       1, "Reinicia la numeración de turnos diariamente,0=desactivado, 1=activado");
-        intentarCrear(idSucursal, "NUMERACION_POR_COLA_DETALLE",1, "Numeración independiente por cola-detalle,0=desactivado, 1=activado");
-        intentarCrear(idSucursal, "LLAMAR_CON_ACTIVO",          0, "Permite al operador llamar otro turno teniendo uno activo. 0=no permite, 1=permite");
-        intentarCrear(idSucursal, "ESCANEAR_DUI",               0, "Activa el lector de código de barras 2D para DUI. 0=desactivado, 1=activado");
-        intentarCrear(idSucursal, "CASOS_ESPECIALES",           0, "Activa selección de casos especiales en kiosco. 0=desactivado, 1=activado");
+        intentarCrear(idSucursal, ConfiguracionClave.VALIDAR_IP.clave(),                 1, "Valida la IP del usuario al iniciar sesión,0=desactivado, 1=activado");
+        intentarCrear(idSucursal, ConfiguracionClave.REINICIAR_NUMERACION.clave(),       1, "Reinicia la numeración de turnos diariamente,0=desactivado, 1=activado");
+        intentarCrear(idSucursal, ConfiguracionClave.NUMERACION_POR_COLA_DETALLE.clave(),1, "Numeración independiente por cola-detalle,0=desactivado, 1=activado");
+        intentarCrear(idSucursal, ConfiguracionClave.LLAMAR_CON_ACTIVO.clave(),          0, "Permite al operador llamar otro turno teniendo uno activo. 0=no permite, 1=permite");
+        intentarCrear(idSucursal, ConfiguracionClave.ESCANEAR_DUI.clave(),               0, "Activa el lector de código de barras 2D para DUI. 0=desactivado, 1=activado");
+        intentarCrear(idSucursal, ConfiguracionClave.CASOS_ESPECIALES.clave(),           0, "Activa selección de casos especiales en kiosco. 0=desactivado, 1=activado");
     }
 
     private void intentarCrear(Long idSucursal, String nombre, Integer parametro, String descripcion) {

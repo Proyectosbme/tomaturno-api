@@ -25,6 +25,14 @@ public class PuestoJpaRepository implements PanacheRepositoryBase<PuestoJpaEntit
         return find("idpk.id = ?1 and idpk.idSucursal = ?2", idPuesto, idSucursal).firstResult();
     }
 
+    public String obtenerNombreLlamada(Long idPuesto, Long idSucursal) {
+        PuestoJpaEntity puesto = buscarPorIdPuestoYSucursal(idPuesto, idSucursal);
+        if (puesto == null) return null;
+        return (puesto.getNombreLlamada() != null && !puesto.getNombreLlamada().isBlank())
+                ? puesto.getNombreLlamada()
+                : puesto.getNombre();
+    }
+
     public boolean existeNombreEnSucursal(Long idSucursal, String nombre) {
         return count("idpk.idSucursal = ?1 and upper(nombre) = upper(?2)", idSucursal, nombre) > 0;
     }

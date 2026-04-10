@@ -25,6 +25,13 @@ public class UsuarioJpaRepository implements PanacheRepositoryBase<UsuarioJpaEnt
         return find("idpk.id = ?1 and idpk.idSucursal = ?2", idUsuario, idSucursal).firstResult();
     }
 
+    public String obtenerCorrelativo(Long idUsuario, Long idSucursal) {
+        UsuarioJpaEntity usuario = buscarPorIdUsuarioYSucursal(idUsuario, idSucursal);
+        return (usuario != null && usuario.getCorrelativo() != null)
+                ? String.valueOf(usuario.getCorrelativo())
+                : null;
+    }
+
     public boolean existeCodigoEnSucursal(Long idSucursal, String codigoUsuario) {
         return count("idpk.idSucursal = ?1 and upper(codigoUsuario) = upper(?2)",
                 idSucursal, codigoUsuario) > 0;

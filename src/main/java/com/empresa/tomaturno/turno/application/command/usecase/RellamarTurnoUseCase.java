@@ -10,6 +10,7 @@ import com.empresa.tomaturno.turno.application.query.port.output.TurnoQueryRepos
 import com.empresa.tomaturno.turno.dominio.entity.Turno;
 import com.empresa.tomaturno.turno.dominio.exceptions.TurnoNotFoundException;
 import com.empresa.tomaturno.turno.dominio.exceptions.TurnoValidationException;
+import com.empresa.tomaturno.shared.clases.ConfiguracionClave;
 
 public class RellamarTurnoUseCase {
 
@@ -34,7 +35,7 @@ public class RellamarTurnoUseCase {
         }
 
         // Si parametro=0, el operador no puede tener otro turno activo (LLAMADO)
-        Configuracion config = configuracionQueryRepository.buscarPorNombreYSucursal(idSucursal, "LLAMAR_CON_ACTIVO");
+        Configuracion config = configuracionQueryRepository.buscarPorNombreYSucursal(idSucursal, ConfiguracionClave.LLAMAR_CON_ACTIVO.clave());
         if (config != null && Integer.valueOf(0).equals(config.getParametro())) {
             boolean tieneActivo = (idUsuario != null)
                     ? turnoQueryRepository.existeTurnoLlamadoPorUsuario(idUsuario, idSucursal, LocalDate.now())
