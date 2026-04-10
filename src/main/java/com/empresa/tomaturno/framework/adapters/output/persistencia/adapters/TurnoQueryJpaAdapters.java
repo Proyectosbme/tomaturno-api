@@ -33,10 +33,12 @@ public class TurnoQueryJpaAdapters implements TurnoQueryRepository {
     }
 
     private void enriquecerNombreLlamada(Turno turno) {
-        if (turno.getIdPuesto() == null || turno.getIdSucursalPuesto() == null) return;
+        if (turno.getIdPuesto() == null || turno.getIdSucursalPuesto() == null)
+            return;
 
         String base = puestoJpaRepository.obtenerNombreLlamada(turno.getIdPuesto(), turno.getIdSucursalPuesto());
-        if (base == null) return;
+        if (base == null)
+            return;
 
         String correlativo = turno.getIdUsuario() != null
                 ? usuarioJpaRepository.obtenerCorrelativo(turno.getIdUsuario(), turno.getIdSucursalPuesto())
@@ -49,7 +51,8 @@ public class TurnoQueryJpaAdapters implements TurnoQueryRepository {
     @Override
     public Turno buscarPorPK(Long idSucursal, LocalDateTime fechaCreacion, String codigoTurno) {
         TurnoJpaEntity entity = turnoJpaRepository.buscarPorPK(idSucursal, fechaCreacion, codigoTurno);
-        if (entity == null) return null;
+        if (entity == null)
+            return null;
         Turno turno = turnoOutputMapper.toDomain(entity);
         enriquecerNombreLlamada(turno);
         return turno;
@@ -58,7 +61,8 @@ public class TurnoQueryJpaAdapters implements TurnoQueryRepository {
     @Override
     public List<Turno> buscarPorFiltro(Long idSucursal, Long idCola, Long idDetalle,
             Integer estado, LocalDate fecha) {
-        List<TurnoJpaEntity> entities = turnoJpaRepository.buscarPorFiltros(idSucursal, idCola, idDetalle, estado, fecha);
+        List<TurnoJpaEntity> entities = turnoJpaRepository.buscarPorFiltros(idSucursal, idCola, idDetalle, estado,
+                fecha);
         List<Turno> turnos = entities.stream().map(turnoOutputMapper::toDomain).toList();
         turnos.forEach(this::enriquecerNombreLlamada);
         return turnos;
