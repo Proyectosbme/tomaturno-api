@@ -3,28 +3,25 @@ package com.empresa.tomaturno.persona.application.command.usecase;
 import com.empresa.tomaturno.persona.application.command.port.output.PersonaCommandRepository;
 import com.empresa.tomaturno.persona.application.query.port.output.PersonaQueryRepository;
 import com.empresa.tomaturno.persona.dominio.entity.Persona;
+import com.empresa.tomaturno.persona.dominio.exceptions.PersonaNotFoundException;
 
-public class CrearOActualizarPersonaUseCase {
+public class AsignarFotoUseCase {
 
     private final PersonaCommandRepository personaCommandRepository;
     private final PersonaQueryRepository personaQueryRepository;
 
-    public CrearOActualizarPersonaUseCase(PersonaCommandRepository personaCommandRepository,
+    public AsignarFotoUseCase(PersonaCommandRepository personaCommandRepository,
             PersonaQueryRepository personaQueryRepository) {
         this.personaCommandRepository = personaCommandRepository;
         this.personaQueryRepository = personaQueryRepository;
     }
 
-    public Persona ejecutar(Persona persona) {
-        Persona existente = personaQueryRepository.buscarPorDui(persona.getDui());
-
-        if (existente != null) {
-            existente.actualizar(persona.getNombres(), persona.getApellidos(),
-                    persona.getFechaNacimiento(), persona.getSexo());
-            return personaCommandRepository.update(existente);
+    public Persona ejecutar(Long id, byte[] foto) {
+        Persona persona = personaQueryRepository.buscarPorId(id);
+        if (persona == null) {
+            throw new PersonaNotFoundException(id);
         }
-
-        persona.crear();
-        return personaCommandRepository.save(persona);
+        persona.asignarFoto(foto);
+        return personaCommandRepository.update(persona);
     }
 }

@@ -4,4 +4,5 @@ import com.empresa.tomaturno.persona.dominio.entity.Persona;
 
 public interface PersonaCommandInputPort {
     Persona crearOActualizar(Persona persona);
+    Persona asignarFoto(Long id, byte[] foto);
 }
