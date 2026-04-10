@@ -19,6 +19,7 @@ public class Usuario {
     private Auditoria auditoria;
     private DatosPersonales datosPersonales;
     private ConfiguracionOperador configuracion;
+    private byte[] foto;
     // Campos enriquecidos (no persistidos)
     private String perfilCreador;
     private String nombreSucursal;
@@ -34,6 +35,7 @@ public class Usuario {
         this.auditoria = builder.auditoria;
         this.datosPersonales = builder.datosPersonales;
         this.configuracion = builder.configuracion;
+        this.foto = builder.foto;
     }
 
     public static Builder builder() {
@@ -90,6 +92,11 @@ public class Usuario {
         if (existeCodigo)
             throw new UsuarioValidationException(
                     "Ya existe un usuario con el código '" + this.codigoUsuario + "' en esta sucursal");
+    }
+
+    public void asignarFoto(byte[] foto) {
+        this.foto = foto;
+        this.auditoria = this.auditoria.conModificacion("SISTEMA", LocalDateTime.now());
     }
 
     /* ── Enriquecimiento ──────────────────────────────────────────────── */
@@ -166,6 +173,10 @@ public class Usuario {
         return configuracion;
     }
 
+    public byte[] getFoto() {
+        return foto;
+    }
+
     public String getPerfilCreador() {
         return perfilCreador;
     }
@@ -225,6 +236,7 @@ public class Usuario {
         private Auditoria auditoria;
         private DatosPersonales datosPersonales;
         private ConfiguracionOperador configuracion;
+        private byte[] foto;
 
         private Builder() {
         }
@@ -271,6 +283,11 @@ public class Usuario {
 
         public Builder configuracion(ConfiguracionOperador configuracion) {
             this.configuracion = configuracion;
+            return this;
+        }
+
+        public Builder foto(byte[] foto) {
+            this.foto = foto;
             return this;
         }
 

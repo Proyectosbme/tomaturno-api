@@ -45,6 +45,10 @@ public class UsuarioJpaRepository implements PanacheRepositoryBase<UsuarioJpaEnt
         return find("upper(codigoUsuario) = upper(?1) and idpk.idSucursal = ?2", codigoUsuario, idSucursal).firstResult();
     }
 
+    public UsuarioJpaEntity buscarPorDui(String dui) {
+        return find("dui", dui).firstResult();
+    }
+
     public List<UsuarioJpaEntity> buscarPorFiltros(Long idSucursal, String codigoUsuario, String nombre) {
         if (idSucursal == null && (codigoUsuario == null || codigoUsuario.isBlank())
                 && (nombre == null || nombre.isBlank())) {
