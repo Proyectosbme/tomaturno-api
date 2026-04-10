@@ -37,8 +37,4 @@ public class PersonaJpaEntity {
 
     @Column(name = "fechamodificacion")
     private LocalDateTime fechaModificacion;
-
-    @Lob
-    @Column(name = "foto")
-    private byte[] foto;
 }
