@@ -18,6 +18,8 @@ public interface ColaQueryRepository {
 
     Detalle obtenerDetalle(Long idCola, Long idSucursal, Long idDetalle);
 
+     List<Cola> buscarColasQueTienenDetalles(Long idSucursal);
+
     /**
      * Validación unicidad cola: ¿ya existe una cola con ese nombre en la sucursal?
      */

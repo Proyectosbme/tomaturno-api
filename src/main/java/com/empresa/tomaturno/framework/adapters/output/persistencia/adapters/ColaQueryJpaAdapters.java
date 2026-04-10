@@ -2,7 +2,9 @@ package com.empresa.tomaturno.framework.adapters.output.persistencia.adapters;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.empresa.tomaturno.cola.application.query.port.output.ColaQueryRepository;
 import com.empresa.tomaturno.cola.dominio.entity.Cola;
@@ -101,5 +103,21 @@ public class ColaQueryJpaAdapters implements ColaQueryRepository {
         DetalleColaJpaEntity entity = colaDetalleRepository.findById(pk);
         if (entity == null) return null;
         return colaOutputMapper.toDomainDetalle(entity);
+    }
+
+    @Override
+    public List<Cola> buscarColasQueTienenDetalles(Long idSucursal) {
+        List<ColaJpaEntity> entities = colaJpaRepository.buscarPorSucursal(idSucursal);
+        if (entities.isEmpty()) return List.of();
+        SucursalJpaEntity sucursal = sucursalJpaRepository.findById(idSucursal);
+        return entities.stream()
+                .flatMap(entity -> {
+                    List<DetalleColaJpaEntity> detalles = colaDetalleRepository.buscarPorFiltro(
+                            idSucursal, entity.getIdpk().getId(), null);
+                    return detalles != null && !detalles.isEmpty()
+                            ? Optional.of(colaOutputMapper.toDomainCompleto(entity, sucursal, detalles)).stream()
+                            : Stream.empty();
+                })
+                .toList();
     }
 }

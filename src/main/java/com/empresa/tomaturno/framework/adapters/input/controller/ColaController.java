@@ -51,6 +51,17 @@ public class ColaController {
         }
         return lstColas.stream().map(colaInputMapper::toResponse).toList();
     }
+       @GET
+    @Path("/buscarConDetalles")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<ColaResponseDTO> buscarColasConDetallePorFiltro(
+            @QueryParam("idSucursal") Long idSucursal) {
+        List<Cola> lstColas = colaQueryInputPort.buscarColasConDetalle(idSucursal);
+        if (turnoWebSocket != null) {
+            turnoWebSocket.enviarTurno("Se ha buscado una cola con filtro: idSucursal=" + idSucursal);
+        }
+        return lstColas.stream().map(colaInputMapper::toResponse).toList();
+    }
 
     @GET
     @Path("/{idCola}/sucursal/{idSucursal}")
