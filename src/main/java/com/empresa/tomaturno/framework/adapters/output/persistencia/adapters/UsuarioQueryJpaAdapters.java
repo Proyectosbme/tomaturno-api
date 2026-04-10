@@ -79,6 +79,15 @@ public class UsuarioQueryJpaAdapters implements UsuarioQueryRepository {
         return usuario;
     }
 
+    @Override
+    public Usuario buscarPorDui(String dui) {
+        UsuarioJpaEntity entity = usuarioJpaRepository.buscarPorDui(dui);
+        if (entity == null) return null;
+        Usuario usuario = usuarioOutputMapper.toDomain(entity);
+        enriquecerConNombres(List.of(usuario));
+        return usuario;
+    }
+
     private void enriquecerConNombres(List<Usuario> usuarios) {
         List<Long> idsSucursales = usuarios.stream()
                 .map(Usuario::getIdSucursal).distinct().toList();

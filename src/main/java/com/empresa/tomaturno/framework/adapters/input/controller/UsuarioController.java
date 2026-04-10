@@ -15,6 +15,8 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+import org.jboss.resteasy.reactive.RestForm;
+
 @Path("/usuarios")
 public class UsuarioController {
 
@@ -74,5 +76,17 @@ public class UsuarioController {
         Usuario datosNuevos = mapper.toDomain(dto);
         Usuario actualizado = commandPort.actualizar(idUsuario, idSucursal, datosNuevos, dto.getUsuario());
         return Response.ok(mapper.toResponse(actualizado)).build();
+    }
+
+    @PATCH
+    @Path("/{idUsuario}/sucursal/{idSucursal}/foto")
+    @Transactional
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response asignarFoto(@PathParam("idUsuario") Long idUsuario,
+                                @PathParam("idSucursal") Long idSucursal,
+                                @RestForm("foto") byte[] foto) {
+        Usuario usuario = commandPort.asignarFoto(idUsuario, idSucursal, foto);
+        return Response.ok(mapper.toResponse(usuario)).build();
     }
 }

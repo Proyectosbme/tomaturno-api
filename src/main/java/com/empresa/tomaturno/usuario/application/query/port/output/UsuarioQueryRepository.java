@@ -10,4 +10,5 @@ public interface UsuarioQueryRepository {
     boolean existeCodigoEnSucursal(Long idSucursal, String codigoUsuario);
     Usuario buscarPorCodigo(String codigoUsuario);
     Usuario buscarPorCodigoYSucursal(String codigoUsuario, Long idSucursal);
+    Usuario buscarPorDui(String dui);
 }
