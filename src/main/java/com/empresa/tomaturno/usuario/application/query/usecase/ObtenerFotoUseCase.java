@@ -18,6 +18,11 @@ public class ObtenerFotoUseCase {
             throw new UsuarioNotFoundException(idUsuario,
                     "Usuario (idUsuario=" + idUsuario + ", idSucursal=" + idSucursal + ")");
         }
-        return usuario.getFoto();
+        byte[] foto = usuario.getFoto();
+        if (foto == null || foto.length == 0) {
+            throw new UsuarioNotFoundException(idUsuario,
+                    "Foto no disponible para usuario (idUsuario=" + idUsuario + ", idSucursal=" + idSucursal + ")");
+        }
+        return foto;
     }
 }
