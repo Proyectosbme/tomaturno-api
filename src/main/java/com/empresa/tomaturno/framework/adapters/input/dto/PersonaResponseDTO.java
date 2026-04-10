@@ -15,5 +15,4 @@ public class PersonaResponseDTO {
     private String apellidos;
     private LocalDate fechaNacimiento;
     private String sexo;
-    private byte[] foto;
 }

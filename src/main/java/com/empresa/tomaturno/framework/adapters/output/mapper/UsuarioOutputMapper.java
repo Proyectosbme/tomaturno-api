@@ -24,6 +24,7 @@ public interface UsuarioOutputMapper {
     @Mapping(target = "userModificacion", source = "auditoria.usuarioModificacion")
     @Mapping(target = "fechaModificacion", source = "auditoria.fechaModificacion")
     @Mapping(target = "estado", source = "estado", qualifiedByName = "estadoToCodigo")
+    @Mapping(target = "foto", source = "foto")
     UsuarioJpaEntity toJpaEntity(Usuario usuario);
 
     default Usuario toDomain(UsuarioJpaEntity e) {
@@ -41,6 +42,7 @@ public interface UsuarioOutputMapper {
                 .auditoria(Auditoria.reconstituir(
                         e.getUserCreacion(), e.getFechaCreacion(),
                         e.getUserModificacion(), e.getFechaModificacion()))
+                .foto(e.getFoto())
                 .build();
     }
 
@@ -52,6 +54,7 @@ public interface UsuarioOutputMapper {
     @Mapping(target = "userModificacion", source = "auditoria.usuarioModificacion")
     @Mapping(target = "fechaModificacion", source = "auditoria.fechaModificacion")
     @Mapping(target = "estado", source = "estado", qualifiedByName = "estadoToCodigo")
+    @Mapping(target = "foto", source = "foto")
     void updateEntityFromDomain(Usuario usuario, @MappingTarget UsuarioJpaEntity entity);
 
     @Named("estadoToCodigo")
