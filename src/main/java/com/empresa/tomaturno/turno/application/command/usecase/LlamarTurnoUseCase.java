@@ -53,7 +53,6 @@ public class LlamarTurnoUseCase {
             }
         }
 
-        turno.validarTransicionLlamar(idPuesto, idSucursalPuesto);
         turno.llamar(idPuesto, idSucursalPuesto, idUsuario);
         return turnoCommandRepository.actualizar(turno);
     }

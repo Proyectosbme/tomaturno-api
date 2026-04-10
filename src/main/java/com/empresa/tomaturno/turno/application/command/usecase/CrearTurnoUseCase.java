@@ -1,7 +1,6 @@
 package com.empresa.tomaturno.turno.application.command.usecase;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import com.empresa.tomaturno.cola.application.query.port.output.ColaQueryRepository;
 import com.empresa.tomaturno.cola.dominio.entity.Cola;
@@ -10,7 +9,6 @@ import com.empresa.tomaturno.turno.application.command.port.output.TurnoCommandR
 import com.empresa.tomaturno.turno.application.query.port.output.TurnoQueryRepository;
 import com.empresa.tomaturno.turno.dominio.entity.Turno;
 import com.empresa.tomaturno.turno.dominio.exceptions.TurnoValidationException;
-import com.empresa.tomaturno.turno.dominio.vo.EstadoTurno;
 
 public class CrearTurnoUseCase {
 
@@ -26,56 +24,63 @@ public class CrearTurnoUseCase {
         this.colaQueryRepository = colaQueryRepository;
     }
 
+   
+
     public Turno ejecutar(Long idSucursal, Long idCola, Long idDetalle, Long idPersona, Integer tipoCasoEspecial) {
-        // 1. Obtener cola con detalles
+        Cola cola = obtenerCola(idSucursal, idCola);
+        Detalle detalle = validarYObtenerDetalle(cola, idDetalle);
+        String codigoBase = obtenerCodigoBase(cola, detalle);
+        String codigoTurno = generarCodigoTurno(idSucursal, codigoBase);
+        Turno turno = construirTurno(idSucursal, idCola, detalle, codigoTurno, idPersona, tipoCasoEspecial);
+        return guardarTurno(turno);
+    }
+
+    private Cola obtenerCola(Long idSucursal, Long idCola) {
         Cola cola = colaQueryRepository.buscarConDetallesPorIdYSucursal(idCola, idSucursal);
         if (cola == null) {
-            throw new TurnoValidationException("Cola con idCola=" + idCola + " e idSucursal=" + idSucursal + " no encontrada");
+            throw new TurnoValidationException(
+                    "Cola con idCola=" + idCola + " e idSucursal=" + idSucursal + " no encontrada");
         }
+        return cola;
+    }
 
-        // 2. Determinar codigoBase según regla de negocio
-        boolean colaConDetalles = cola.getDetalles() != null && !cola.getDetalles().isEmpty();
-        String codigoBase;
-        Long idDetalleValido = null;
-
-        if (colaConDetalles) {
-            if (idDetalle == null) {
-                throw new TurnoValidationException("La cola '" + cola.getNombre() + "' tiene detalles, debe seleccionar uno");
-            }
-            Detalle detalle = cola.getDetalles().stream()
-                    .filter(d -> d.getCorrelativo().equals(idDetalle))
-                    .findFirst()
-                    .orElseThrow(() -> new TurnoValidationException("Detalle con id=" + idDetalle + " no encontrado en la cola"));
-            codigoBase = detalle.getCodigo();
-            idDetalleValido = idDetalle;
-        } else {
+    private Detalle validarYObtenerDetalle(Cola cola, Long idDetalle) {
+        if (cola.getDetalles() == null || cola.getDetalles().isEmpty()) {
             if (idDetalle != null) {
-                throw new TurnoValidationException("La cola '" + cola.getNombre() + "' no tiene detalles, no debe enviar idDetalle");
+                throw new TurnoValidationException(
+                        "La cola '" + cola.getNombre() + "' no tiene detalles, no debe enviar idDetalle");
             }
-            codigoBase = cola.getCodigo();
+            return null;
         }
+        if (idDetalle == null) {
+            throw new TurnoValidationException(
+                    "La cola '" + cola.getNombre() + "' tiene detalles, debe seleccionar uno");
+        }
+        return cola.getDetalles().stream()
+                .filter(d -> d.getCorrelativo().equals(idDetalle))
+                .findFirst()
+                .orElseThrow(() -> new TurnoValidationException(
+                        "Detalle con id=" + idDetalle + " no encontrado en la cola"));
+    }
 
-        // 3. Generar codigoTurno
-        LocalDate hoy = LocalDate.now();
-        Long numero = turnoQueryRepository.obtenerSiguienteNumero(idSucursal, hoy, codigoBase);
-        String codigoTurno = codigoBase + "-" + String.format("%03d", numero);
+    private String obtenerCodigoBase(Cola cola, Detalle detalle) {
+        return detalle != null ? detalle.getCodigo() : cola.getCodigo();
+    }
 
-        // 4. Construir entidad
-        Turno turno = new Turno();
-        turno.setIdSucursal(idSucursal);
-        turno.setIdCola(idCola);
-        turno.setIdDetalle(idDetalleValido);
-        turno.setCodigoTurno(codigoTurno);
-        turno.setFechaCreacion(LocalDateTime.now());
-        turno.setEstado(EstadoTurno.CREADO);
-        turno.setIdPersona(idPersona);
-        turno.setTipoCasoEspecial(tipoCasoEspecial);
+    private String generarCodigoTurno(Long idSucursal, String codigoBase) {
+        Long numero = turnoQueryRepository.obtenerSiguienteNumero(idSucursal, LocalDate.now(), codigoBase);
+        return codigoBase + "-" + String.format("%03d", numero);
+    }
 
-        turno.validarCreacion();
+    private Turno construirTurno(Long idSucursal, Long idCola, Detalle detalle,
+            String codigoTurno, Long idPersona, Integer tipoCasoEspecial) {
+        Long idDetalleValido = detalle != null ? detalle.getCorrelativo() : null;
+        Turno turno = Turno.inicializar(idSucursal, idCola, idDetalleValido, codigoTurno, idPersona, tipoCasoEspecial);
+        turno.asignarId(turnoQueryRepository.obtenerSiguienteId());
+        return turno;
+    }
 
-        // 5. Generar id de referencia
-        turno.setId(turnoQueryRepository.obtenerSiguienteId());
-
+    private Turno guardarTurno(Turno turno) {
         return turnoCommandRepository.save(turno);
     }
 }

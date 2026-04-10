@@ -21,11 +21,25 @@ public interface TurnoOutputMapper {
     @Mapping(target = "estado", source = "estado", qualifiedByName = "estadoToCodigo")
     TurnoJpaEntity toJpaEntity(Turno turno);
 
-    @Mapping(target = "idSucursal", source = "idpk.idSucursal")
-    @Mapping(target = "fechaCreacion", source = "idpk.fechaCreacion")
-    @Mapping(target = "codigoTurno", source = "idpk.codigoTurno")
-    @Mapping(target = "estado", source = "estado", qualifiedByName = "integerToEstado")
-    Turno toDomain(TurnoJpaEntity entity);
+    default Turno toDomain(TurnoJpaEntity entity) {
+        return Turno.builder()
+                .id(entity.getId())
+                .idSucursal(entity.getIdpk().getIdSucursal())
+                .fechaCreacion(entity.getIdpk().getFechaCreacion())
+                .codigoTurno(entity.getIdpk().getCodigoTurno())
+                .fechaLlamada(entity.getFechaLlamada())
+                .fechaFinalizacion(entity.getFechaFinalizacion())
+                .idCola(entity.getIdCola())
+                .idDetalle(entity.getIdDetalle())
+                .estado(entity.getEstado() != null ? EstadoTurno.fromCodigo(entity.getEstado()) : null)
+                .idTurnoRelacionado(entity.getIdTurnoRelacionado())
+                .idPuesto(entity.getIdPuesto())
+                .idSucursalPuesto(entity.getIdSucursalPuesto())
+                .idUsuario(entity.getIdUsuario())
+                .idPersona(entity.getIdPersona())
+                .tipoCasoEspecial(entity.getTipoCasoEspecial())
+                .build();
+    }
 
     @Mapping(target = "idpk", ignore = true)
     @Mapping(target = "idSucursal", ignore = true)
@@ -33,11 +47,6 @@ public interface TurnoOutputMapper {
     @Mapping(target = "codigoTurno", ignore = true)
     @Mapping(target = "estado", source = "estado", qualifiedByName = "estadoToCodigo")
     void updateEntityFromDomain(Turno turno, @MappingTarget TurnoJpaEntity entity);
-
-    @Named("integerToEstado")
-    static EstadoTurno integerToEstado(Integer codigo) {
-        return codigo == null ? null : EstadoTurno.fromCodigo(codigo);
-    }
 
     @Named("estadoToCodigo")
     static Integer estadoToCodigo(EstadoTurno estado) {

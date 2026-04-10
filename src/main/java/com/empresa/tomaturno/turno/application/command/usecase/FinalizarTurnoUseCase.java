@@ -23,7 +23,6 @@ public class FinalizarTurnoUseCase {
         if (turno == null) {
             throw new TurnoNotFoundException("Turno no encontrado: " + codigoTurno + " sucursal=" + idSucursal);
         }
-        turno.validarTransicionFinalizar();
         turno.finalizar();
         return turnoCommandRepository.actualizar(turno);
     }

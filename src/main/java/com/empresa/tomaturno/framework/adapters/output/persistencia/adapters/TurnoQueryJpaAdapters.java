@@ -54,7 +54,7 @@ public class TurnoQueryJpaAdapters implements TurnoQueryRepository {
                 if (sufijo.isBlank() && puesto.getId() != null) {
                     sufijo = " " + puesto.getId();
                 }
-                turno.setNombreLlamada(base != null ? base + sufijo : null);
+                turno.enriquecerNombreLlamada(base != null ? base + sufijo : null);
             }
         }
     }

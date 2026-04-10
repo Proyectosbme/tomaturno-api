@@ -9,7 +9,6 @@ import com.empresa.tomaturno.turno.application.query.port.output.TurnoQueryRepos
 import com.empresa.tomaturno.turno.dominio.entity.Turno;
 import com.empresa.tomaturno.turno.dominio.exceptions.TurnoNotFoundException;
 import com.empresa.tomaturno.turno.dominio.exceptions.TurnoValidationException;
-import com.empresa.tomaturno.turno.dominio.vo.EstadoTurno;
 
 public class ReasignarTurnoUseCase {
 
@@ -32,7 +31,6 @@ public class ReasignarTurnoUseCase {
         if (original == null) {
             throw new TurnoNotFoundException("Turno no encontrado: " + codigoTurno);
         }
-        original.validarTransicionReasignar();
 
         // 2. Validar cola destino y determinar idDetalle válido
         Cola cola = colaQueryRepository.buscarConDetallesPorIdYSucursal(idColaDestino, idSucursalDestino);
@@ -53,22 +51,10 @@ public class ReasignarTurnoUseCase {
             idDetalleValido = idDetalleDestino;
         }
 
-        // 3. El turno reasignado conserva el mismo codigoTurno del original
-        String nuevoCodigoTurno = original.getCodigoTurno();
-
-        // 4. Construir nuevo turno
-        Turno nuevo = new Turno();
-        nuevo.setId(turnoQueryRepository.obtenerSiguienteId());
-        nuevo.setIdSucursal(idSucursalDestino);
-        nuevo.setIdCola(idColaDestino);
-        nuevo.setIdDetalle(idDetalleValido);
-        nuevo.setCodigoTurno(nuevoCodigoTurno);
-        nuevo.setFechaCreacion(LocalDateTime.now());
-        nuevo.setEstado(EstadoTurno.CREADO);
-        nuevo.setIdTurnoRelacionado(original.getId());
-
-        // 5. Marcar original como TRASLADO
-        original.marcarTraslado();
+        // 3. Reasignar: valida transición, marca original como TRASLADO y construye el nuevo turno
+        Turno nuevo = original.reasignarA(
+                turnoQueryRepository.obtenerSiguienteId(),
+                idSucursalDestino, idColaDestino, idDetalleValido);
 
         return turnoCommandRepository.reasignar(original, nuevo);
     }
