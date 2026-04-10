@@ -9,4 +9,5 @@ public interface UsuarioQueryInputPort {
     Usuario buscarPorId(Long idUsuario, Long idSucursal);
     Usuario buscarPorCodigo(String codigoUsuario);
     Usuario buscarPorCodigoYSucursal(String codigoUsuario, Long idSucursal);
+    byte[] obtenerFoto(Long idUsuario, Long idSucursal);
 }

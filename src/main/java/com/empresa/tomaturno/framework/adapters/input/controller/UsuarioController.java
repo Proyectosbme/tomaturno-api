@@ -89,4 +89,18 @@ public class UsuarioController {
         Usuario usuario = commandPort.asignarFoto(idUsuario, idSucursal, foto);
         return Response.ok(mapper.toResponse(usuario)).build();
     }
+
+    @GET
+    @Path("/{idUsuario}/sucursal/{idSucursal}/foto")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response obtenerFoto(@PathParam("idUsuario") Long idUsuario,
+                                @PathParam("idSucursal") Long idSucursal) {
+        byte[] foto = queryPort.obtenerFoto(idUsuario, idSucursal);
+        if (foto == null || foto.length == 0) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        return Response.ok(foto)
+                .header("Content-Disposition", "attachment; filename=foto_" + idUsuario + ".jpg")
+                .build();
+    }
 }
