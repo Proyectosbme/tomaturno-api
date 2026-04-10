@@ -40,6 +40,11 @@ public class UsuarioJpaEntity {
     private Integer estado;
     private String telefono;
     private String ip;
+
+    @Lob
+    @Column(name = "foto")
+    private byte[] foto;
+
     private LocalDateTime fechaCreacion;
     private String userCreacion;
     private String userModificacion;
