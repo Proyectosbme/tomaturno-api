@@ -21,7 +21,6 @@ public interface PersonaMapper {
                 .apellidos(e.getApellidos())
                 .fechaNacimiento(e.getFechaNacimiento())
                 .sexo(e.getSexo())
-                .foto(e.getFoto())
                 .fechaCreacion(e.getFechaCreacion())
                 .fechaModificacion(e.getFechaModificacion())
                 .build();

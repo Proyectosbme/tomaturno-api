@@ -13,7 +13,6 @@ public class Persona {
     private String apellidos;
     private LocalDate fechaNacimiento;
     private String sexo;
-    private byte[] foto;
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaModificacion;
 
@@ -24,7 +23,6 @@ public class Persona {
         this.apellidos = builder.apellidos;
         this.fechaNacimiento = builder.fechaNacimiento;
         this.sexo = builder.sexo;
-        this.foto = builder.foto;
         this.fechaCreacion = builder.fechaCreacion;
         this.fechaModificacion = builder.fechaModificacion;
     }
@@ -61,11 +59,6 @@ public class Persona {
         this.fechaModificacion = LocalDateTime.now();
     }
 
-    public void asignarFoto(byte[] foto) {
-        this.foto = foto;
-        this.fechaModificacion = LocalDateTime.now();
-    }
-
     /* ── Validaciones privadas ────────────────────────────────────────── */
 
     private void validarCreacion() {
@@ -99,10 +92,6 @@ public class Persona {
         return sexo;
     }
 
-    public byte[] getFoto() {
-        return foto;
-    }
-
     public LocalDateTime getFechaCreacion() {
         return fechaCreacion;
     }
@@ -121,7 +110,6 @@ public class Persona {
         private String apellidos;
         private LocalDate fechaNacimiento;
         private String sexo;
-        private byte[] foto;
         private LocalDateTime fechaCreacion;
         private LocalDateTime fechaModificacion;
 
@@ -155,11 +143,6 @@ public class Persona {
 
         public Builder sexo(String sexo) {
             this.sexo = sexo;
-            return this;
-        }
-
-        public Builder foto(byte[] foto) {
-            this.foto = foto;
             return this;
         }
 
