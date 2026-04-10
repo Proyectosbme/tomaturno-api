@@ -123,6 +123,24 @@ public class Cola {
         this.detalles.add(detalle);
     }
 
+    public String resolverCodigoBase(Detalle detalle) {
+        return detalle != null ? detalle.getCodigo() : this.codigo;
+    }
+
+    public Long resolverDetalleReasignacion(Long idDetalleDestino) {
+        if (detalles == null || detalles.isEmpty()) {
+            return null;
+        }
+        if (idDetalleDestino == null) {
+            throw new ColaValidationException("La cola destino tiene detalles, debe seleccionar uno");
+        }
+        detalles.stream()
+                .filter(d -> d.getCorrelativo().equals(idDetalleDestino))
+                .findFirst()
+                .orElseThrow(() -> new ColaValidationException("Detalle destino no encontrado en la cola"));
+        return idDetalleDestino;
+    }
+
     public void validarNombreUnico(boolean existeNombreEnSucursal) {
         if (existeNombreEnSucursal) {
             throw new ColaValidationException(

@@ -5,9 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.empresa.tomaturno.framework.adapters.output.mapper.TurnoOutputMapper;
-import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.PuestoJpaEntity;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.TurnoJpaEntity;
-import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.UsuarioJpaEntity;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.PuestoJpaRepository;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.TurnoJpaRepository;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.UsuarioJpaRepository;
@@ -35,28 +33,17 @@ public class TurnoQueryJpaAdapters implements TurnoQueryRepository {
     }
 
     private void enriquecerNombreLlamada(Turno turno) {
-        if (turno.getIdPuesto() != null && turno.getIdSucursalPuesto() != null) {
-            PuestoJpaEntity puesto = puestoJpaRepository.buscarPorIdPuestoYSucursal(
-                    turno.getIdPuesto(), turno.getIdSucursalPuesto());
-            if (puesto != null) {
-                String base = (puesto.getNombreLlamada() != null && !puesto.getNombreLlamada().isBlank())
-                        ? puesto.getNombreLlamada()
-                        : puesto.getNombre();
-                // Usar correlativo del usuario que llamó el turno; si no, fallback al ID del puesto
-                String sufijo = "";
-                if (turno.getIdUsuario() != null) {
-                    UsuarioJpaEntity usuario = usuarioJpaRepository.buscarPorIdUsuarioYSucursal(
-                            turno.getIdUsuario(), turno.getIdSucursalPuesto());
-                    if (usuario != null && usuario.getCorrelativo() != null) {
-                        sufijo = " " + usuario.getCorrelativo();
-                    }
-                }
-                if (sufijo.isBlank() && puesto.getId() != null) {
-                    sufijo = " " + puesto.getId();
-                }
-                turno.enriquecerNombreLlamada(base != null ? base + sufijo : null);
-            }
-        }
+        if (turno.getIdPuesto() == null || turno.getIdSucursalPuesto() == null) return;
+
+        String base = puestoJpaRepository.obtenerNombreLlamada(turno.getIdPuesto(), turno.getIdSucursalPuesto());
+        if (base == null) return;
+
+        String correlativo = turno.getIdUsuario() != null
+                ? usuarioJpaRepository.obtenerCorrelativo(turno.getIdUsuario(), turno.getIdSucursalPuesto())
+                : null;
+        String sufijo = correlativo != null ? " " + correlativo : " " + turno.getIdPuesto();
+
+        turno.enriquecerNombreLlamada(base + sufijo);
     }
 
     @Override
