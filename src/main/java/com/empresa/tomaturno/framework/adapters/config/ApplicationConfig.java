@@ -200,7 +200,10 @@ public class ApplicationConfig {
     @Produces
     @ApplicationScoped
     public SucursalCommandInputPort sucursalCommandService(SucursalEventPublisher sucursalEventPublisher) {
-        return new SucursalCommandService(sucursalCommandRepository, sucursalQueryRepository, sucursalEventPublisher);
+        return new SucursalCommandService(
+            sucursalCommandRepository,
+             sucursalQueryRepository, 
+             sucursalEventPublisher);
     }
 
     @Produces
