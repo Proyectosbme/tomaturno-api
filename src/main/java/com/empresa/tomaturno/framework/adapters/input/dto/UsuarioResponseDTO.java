@@ -32,4 +32,5 @@ public class UsuarioResponseDTO {
     private LocalDateTime fechaCreacion;
     private String usuarioModificacion;
     private LocalDateTime fechaModificacion;
+     private byte[] foto;
 }

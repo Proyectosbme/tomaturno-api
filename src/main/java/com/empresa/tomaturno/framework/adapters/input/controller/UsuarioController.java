@@ -16,6 +16,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import org.jboss.resteasy.reactive.RestForm;
+import org.jboss.resteasy.reactive.multipart.FileUpload;
 
 @Path("/usuarios")
 public class UsuarioController {
@@ -85,8 +86,9 @@ public class UsuarioController {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response asignarFoto(@PathParam("idUsuario") Long idUsuario,
                                 @PathParam("idSucursal") Long idSucursal,
-                                @RestForm("foto") byte[] foto) {
-        Usuario usuario = commandPort.asignarFoto(idUsuario, idSucursal, foto);
+                                @RestForm("foto") FileUpload foto) throws java.io.IOException {
+        byte[] fotoBytes = java.nio.file.Files.readAllBytes(foto.uploadedFile());
+        Usuario usuario = commandPort.asignarFoto(idUsuario, idSucursal, fotoBytes);
         return Response.ok(mapper.toResponse(usuario)).build();
     }
 

@@ -36,6 +36,7 @@ public interface UsuarioInputMapper {
     @Mapping(source = "auditoria.usuarioModificacion", target = "usuarioModificacion")
     @Mapping(source = "auditoria.fechaModificacion", target = "fechaModificacion")
     @Mapping(source = "estado", target = "estado", qualifiedByName = "estadoToCodigo")
+    @Mapping(source = "foto", target = "foto")
     UsuarioResponseDTO toResponse(Usuario usuario);
 
     @Named("estadoToCodigo")
