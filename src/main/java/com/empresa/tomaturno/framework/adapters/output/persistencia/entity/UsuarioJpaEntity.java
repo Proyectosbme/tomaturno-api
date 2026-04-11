@@ -41,7 +41,6 @@ public class UsuarioJpaEntity {
     private String telefono;
     private String ip;
 
-    @Lob
     @Column(name = "foto")
     private byte[] foto;
 

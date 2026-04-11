@@ -41,6 +41,8 @@ public class UsuarioCommandJpaAdapters implements UsuarioCommandRepository {
         }
 
         usuarioOutputMapper.updateEntityFromDomain(usuario, existente);
+        usuarioJpaRepository.getEntityManager().merge(existente);
+
         return usuarioOutputMapper.toDomain(existente);
     }
 }
