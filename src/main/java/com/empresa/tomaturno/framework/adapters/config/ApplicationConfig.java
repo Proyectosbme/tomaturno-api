@@ -1,5 +1,11 @@
 package com.empresa.tomaturno.framework.adapters.config;
 
+import com.empresa.tomaturno.empresa.application.command.port.input.EmpresaCommandInputPort;
+import com.empresa.tomaturno.empresa.application.command.port.output.EmpresaCommandRepository;
+import com.empresa.tomaturno.empresa.application.command.service.EmpresaCommandService;
+import com.empresa.tomaturno.empresa.application.query.port.input.EmpresaQueryInputPort;
+import com.empresa.tomaturno.empresa.application.query.port.output.EmpresaQueryRepository;
+import com.empresa.tomaturno.empresa.application.query.service.EmpresaQueryService;
 import com.empresa.tomaturno.cola.application.command.port.input.ColaCommandInputPort;
 import com.empresa.tomaturno.cola.application.command.port.output.ColaCommandRepository;
 import com.empresa.tomaturno.cola.application.command.service.ColaCommandService;
@@ -70,6 +76,8 @@ public class ApplicationConfig {
     private final TurnoQueryRepository turnoQueryRepository;
     private final PersonaCommandRepository personaCommandRepository;
     private final PersonaQueryRepository personaQueryRepository;
+    private final EmpresaCommandRepository empresaCommandRepository;
+    private final EmpresaQueryRepository empresaQueryRepository;
 
     public ApplicationConfig(SucursalQueryRepository sucursalQueryRepository,
                              SucursalCommandRepository sucursalCommandRepository,
@@ -86,7 +94,9 @@ public class ApplicationConfig {
                              TurnoCommandRepository turnoCommandRepository,
                              TurnoQueryRepository turnoQueryRepository,
                              PersonaCommandRepository personaCommandRepository,
-                             PersonaQueryRepository personaQueryRepository) {
+                             PersonaQueryRepository personaQueryRepository,
+                             EmpresaCommandRepository empresaCommandRepository,
+                             EmpresaQueryRepository empresaQueryRepository) {
         this.sucursalQueryRepository = sucursalQueryRepository;
         this.sucursalCommandRepository = sucursalCommandRepository;
         this.colaCommandRepository = colaCommandRepository;
@@ -103,6 +113,8 @@ public class ApplicationConfig {
         this.turnoQueryRepository = turnoQueryRepository;
         this.personaCommandRepository = personaCommandRepository;
         this.personaQueryRepository = personaQueryRepository;
+        this.empresaCommandRepository = empresaCommandRepository;
+        this.empresaQueryRepository = empresaQueryRepository;
     }
 
 
@@ -195,5 +207,17 @@ public class ApplicationConfig {
     @ApplicationScoped
     public SucursalQueryInputPort sucursalQueryService() {
         return new SucursalQueryService(sucursalQueryRepository);
+    }
+
+    @Produces
+    @ApplicationScoped
+    public EmpresaCommandInputPort empresaCommandService() {
+        return new EmpresaCommandService(empresaCommandRepository, empresaQueryRepository);
+    }
+
+    @Produces
+    @ApplicationScoped
+    public EmpresaQueryInputPort empresaQueryService() {
+        return new EmpresaQueryService(empresaQueryRepository);
     }
 }

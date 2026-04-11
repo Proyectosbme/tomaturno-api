@@ -6,6 +6,8 @@ import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.EmpresaJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.EmpresaJpaRepository;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.SucursalJpaRepository;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.UsuarioJpaRepository;
 import com.empresa.tomaturno.sucursal.application.command.port.input.SucursalCommandInputPort;
@@ -26,22 +28,26 @@ public class AdminStartupBean {
     private final UsuarioJpaRepository usuarioJpaRepository;
     private final SucursalCommandInputPort sucursalCommandInputPort;
     private final UsuarioCommandInputPort usuarioCommandInputPort;
+    private final EmpresaJpaRepository empresaJpaRepository;
 
     @Inject
     public AdminStartupBean(SucursalJpaRepository sucursalJpaRepository,
                             UsuarioJpaRepository usuarioJpaRepository,
                             SucursalCommandInputPort sucursalCommandInputPort,
-                            UsuarioCommandInputPort usuarioCommandInputPort) {
+                            UsuarioCommandInputPort usuarioCommandInputPort,
+                            EmpresaJpaRepository empresaJpaRepository) {
         this.sucursalJpaRepository = sucursalJpaRepository;
         this.usuarioJpaRepository = usuarioJpaRepository;
         this.sucursalCommandInputPort = sucursalCommandInputPort;
         this.usuarioCommandInputPort = usuarioCommandInputPort;
+        this.empresaJpaRepository = empresaJpaRepository;
     }
 
     @Transactional
     void onStart(@Observes StartupEvent event) {
         Long idSucursal = obtenerOCrearSucursalDefault();
         crearAdminSiNoExiste(idSucursal);
+        crearEmpresaSiNoExiste();
     }
 
     private Long obtenerOCrearSucursalDefault() {
@@ -62,5 +68,16 @@ public class AdminStartupBean {
         ConfiguracionOperador config = ConfiguracionOperador.crear("ADMIN", null, null, null);
         Usuario admin = Usuario.inicializar(idSucursal, null, "admin", "admin", Estado.ACTIVO, datos, config);
         usuarioCommandInputPort.crear(admin, USUARIO_SISTEMA);
+    }
+
+    private void crearEmpresaSiNoExiste() {
+        if (empresaJpaRepository.findById(1L) != null) return;
+
+        EmpresaJpaEntity empresa = new EmpresaJpaEntity();
+        empresa.setId(1L);
+        empresa.setNombre("Mi Empresa");
+        empresa.setBanner(null);
+        empresa.setLogo(null);
+        empresaJpaRepository.persist(empresa);
     }
 }

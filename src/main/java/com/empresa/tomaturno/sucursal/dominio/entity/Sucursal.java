@@ -20,6 +20,7 @@ public class Sucursal {
         this.contacto = contacto;
         this.estado = estado;
         this.auditoria = auditoria;
+        
     }
 
     public static Sucursal inicializar(String nombre, Contacto contacto, Estado estado) {
