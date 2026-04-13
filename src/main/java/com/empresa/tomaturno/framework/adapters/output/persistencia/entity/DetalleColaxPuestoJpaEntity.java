@@ -23,6 +23,7 @@ public class DetalleColaxPuestoJpaEntity {
     @EmbeddedId
     private DetalleColaxPuestoPK id;
 
+    private Integer prioridad;
     private String userCreacion;
     private LocalDateTime fechaCreacion;
 }

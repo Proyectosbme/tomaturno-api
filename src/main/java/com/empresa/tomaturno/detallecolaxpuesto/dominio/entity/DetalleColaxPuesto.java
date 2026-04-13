@@ -12,32 +12,34 @@ public class DetalleColaxPuesto {
     private final Long idCola;
     private final Long idDetalle;
     private final Long idSucursalCola;
+    private final Integer prioridad;
     private Auditoria auditoria;
     // Campos enriquecidos (no persistidos)
     private final String nombreCola;
     private final String nombreDetalle;
 
     private DetalleColaxPuesto(Long idPuesto, Long idSucursalPuesto, Long idCola, Long idDetalle,
-            Long idSucursalCola, String nombreCola, String nombreDetalle) {
+            Long idSucursalCola, Integer prioridad, String nombreCola, String nombreDetalle) {
         this.idPuesto = idPuesto;
         this.idSucursalPuesto = idSucursalPuesto;
         this.idCola = idCola;
         this.idDetalle = idDetalle;
         this.idSucursalCola = idSucursalCola;
+        this.prioridad = prioridad;
         this.nombreCola = nombreCola;
         this.nombreDetalle = nombreDetalle;
     }
 
     public static DetalleColaxPuesto inicializar(Long idPuesto, Long idSucursalPuesto, Long idCola,
-            Long idDetalle, Long idSucursalCola) {
+            Long idDetalle, Long idSucursalCola, Integer prioridad) {
         return new DetalleColaxPuesto(idPuesto, idSucursalPuesto, idCola, idDetalle, idSucursalCola,
-                null, null);
+                prioridad, null, null);
     }
 
     public static DetalleColaxPuesto reconstituir(Long idPuesto, Long idSucursalPuesto, Long idCola,
-            Long idDetalle, Long idSucursalCola, Auditoria auditoria) {
+            Long idDetalle, Long idSucursalCola, Integer prioridad, Auditoria auditoria) {
         DetalleColaxPuesto d = new DetalleColaxPuesto(idPuesto, idSucursalPuesto, idCola, idDetalle,
-                idSucursalCola, null, null);
+                idSucursalCola, prioridad, null, null);
         d.auditoria = auditoria;
         return d;
     }
@@ -63,11 +65,14 @@ public class DetalleColaxPuesto {
         if (this.idSucursalCola == null) {
             throw new DetalleColaxPuestoValidationException("El id de la sucursal de la cola es obligatorio");
         }
+        if (this.prioridad == null || this.prioridad < 1 || this.prioridad > 50) {
+            throw new DetalleColaxPuestoValidationException("La prioridad debe ser un número entre 1 y 50");
+        }
     }
 
     public DetalleColaxPuesto conNombres(String nombreCola, String nombreDetalle) {
         DetalleColaxPuesto enriquecido = new DetalleColaxPuesto(this.idPuesto, this.idSucursalPuesto,
-                this.idCola, this.idDetalle, this.idSucursalCola, nombreCola, nombreDetalle);
+                this.idCola, this.idDetalle, this.idSucursalCola, this.prioridad, nombreCola, nombreDetalle);
         enriquecido.auditoria = this.auditoria;
         return enriquecido;
     }
@@ -90,6 +95,10 @@ public class DetalleColaxPuesto {
 
     public Long getIdSucursalCola() {
         return idSucursalCola;
+    }
+
+    public Integer getPrioridad() {
+        return prioridad;
     }
 
     public Auditoria getAuditoria() {
