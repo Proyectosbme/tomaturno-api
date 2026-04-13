@@ -8,5 +8,6 @@ import com.empresa.tomaturno.turno.dominio.entity.Turno;
 
 public interface TurnoQueryInputPort {
     Turno buscarPorPK(Long idSucursal, LocalDateTime fechaCreacion, String codigoTurno);
-    List<Turno> buscarPorFiltro(Long idSucursal, Long idCola, Long idDetalle, Integer estado, LocalDate fecha);
+    List<Turno> buscarPorFiltro(Long idSucursal, Long idCola, Long idDetalle, Integer estado, LocalDate fecha,
+            Long idPuesto, Long idSucursalPuesto);
 }

@@ -26,7 +26,9 @@ public class TurnoQueryService implements TurnoQueryInputPort {
     }
 
     @Override
-    public List<Turno> buscarPorFiltro(Long idSucursal, Long idCola, Long idDetalle, Integer estado, LocalDate fecha) {
-        return buscarTurnosPorFiltrosUseCase.ejecutar(idSucursal, idCola, idDetalle, estado, fecha);
+    public List<Turno> buscarPorFiltro(Long idSucursal, Long idCola, Long idDetalle, Integer estado, LocalDate fecha,
+            Long idPuesto, Long idSucursalPuesto) {
+        return buscarTurnosPorFiltrosUseCase.ejecutar(idSucursal, idCola, idDetalle, estado, fecha,
+                idPuesto, idSucursalPuesto);
     }
 }

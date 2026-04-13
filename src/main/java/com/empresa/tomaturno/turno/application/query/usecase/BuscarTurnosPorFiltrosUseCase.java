@@ -14,7 +14,9 @@ public class BuscarTurnosPorFiltrosUseCase {
         this.turnoQueryRepository = turnoQueryRepository;
     }
 
-    public List<Turno> ejecutar(Long idSucursal, Long idCola, Long idDetalle, Integer estado, LocalDate fecha) {
-        return turnoQueryRepository.buscarPorFiltro(idSucursal, idCola, idDetalle, estado, fecha);
+    public List<Turno> ejecutar(Long idSucursal, Long idCola, Long idDetalle, Integer estado, LocalDate fecha,
+            Long idPuesto, Long idSucursalPuesto) {
+        return turnoQueryRepository.buscarPorFiltro(idSucursal, idCola, idDetalle, estado, fecha,
+                idPuesto, idSucursalPuesto);
     }
 }
