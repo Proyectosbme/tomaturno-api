@@ -5,7 +5,8 @@ public enum EstadoTurno {
     CREADO(1, "CREADO"),
     LLAMADO(2, "LLAMADO"),
     TRASLADO(3, "TRASLADO"),
-    FINALIZADO(4, "FINALIZADO");
+    FINALIZADO(4, "FINALIZADO"),
+    SIN_ATENDER(5, "SIN_ATENDER");
 
     private final Integer codigo;
     private final String descripcion;

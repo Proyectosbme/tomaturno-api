@@ -113,6 +113,13 @@ public class Turno {
         this.estado = EstadoTurno.LLAMADO;
     }
 
+    public void sinAtender() {
+        if (estado != EstadoTurno.LLAMADO)
+            throw new TurnoValidationException(
+                    "Solo se puede marcar sin atender un turno en estado LLAMADO. Estado actual: " + estado);
+        this.estado = EstadoTurno.SIN_ATENDER;
+    }
+
     public void finalizar() {
         validarTransicionFinalizar();
         this.fechaFinalizacion = LocalDateTime.now();
