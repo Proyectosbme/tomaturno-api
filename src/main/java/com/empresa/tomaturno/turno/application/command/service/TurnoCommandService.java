@@ -10,6 +10,7 @@ import com.empresa.tomaturno.turno.application.command.usecase.CrearTurnoUseCase
 import com.empresa.tomaturno.turno.application.command.usecase.FinalizarTurnoUseCase;
 import com.empresa.tomaturno.turno.application.command.usecase.LlamarTurnoUseCase;
 import com.empresa.tomaturno.turno.application.command.usecase.ReasignarTurnoUseCase;
+import com.empresa.tomaturno.turno.application.command.usecase.LlamarSiguienteTurnoUseCase;
 import com.empresa.tomaturno.turno.application.command.usecase.RellamarTurnoUseCase;
 import com.empresa.tomaturno.turno.application.query.port.output.TurnoQueryRepository;
 import com.empresa.tomaturno.turno.dominio.entity.Turno;
@@ -18,6 +19,7 @@ public class TurnoCommandService implements TurnoCommandInputPort {
 
     private final CrearTurnoUseCase crearTurnoUseCase;
     private final LlamarTurnoUseCase llamarTurnoUseCase;
+    private final LlamarSiguienteTurnoUseCase llamarSiguienteTurnoUseCase;
     private final ReasignarTurnoUseCase reasignarTurnoUseCase;
     private final FinalizarTurnoUseCase finalizarTurnoUseCase;
     private final RellamarTurnoUseCase rellamarTurnoUseCase;
@@ -28,6 +30,7 @@ public class TurnoCommandService implements TurnoCommandInputPort {
             ConfiguracionQueryRepository configuracionQueryRepository) {
         this.crearTurnoUseCase = new CrearTurnoUseCase(turnoCommandRepository, turnoQueryRepository, colaQueryRepository);
         this.llamarTurnoUseCase = new LlamarTurnoUseCase(turnoCommandRepository, turnoQueryRepository, configuracionQueryRepository);
+        this.llamarSiguienteTurnoUseCase = new LlamarSiguienteTurnoUseCase(turnoQueryRepository, llamarTurnoUseCase);
         this.reasignarTurnoUseCase = new ReasignarTurnoUseCase(turnoCommandRepository, turnoQueryRepository, colaQueryRepository);
         this.finalizarTurnoUseCase = new FinalizarTurnoUseCase(turnoCommandRepository, turnoQueryRepository);
         this.rellamarTurnoUseCase = new RellamarTurnoUseCase(turnoCommandRepository, turnoQueryRepository, configuracionQueryRepository);
@@ -52,6 +55,11 @@ public class TurnoCommandService implements TurnoCommandInputPort {
     @Override
     public Turno finalizar(Long idSucursal, LocalDateTime fechaCreacion, String codigoTurno) {
         return finalizarTurnoUseCase.ejecutar(idSucursal, fechaCreacion, codigoTurno);
+    }
+
+    @Override
+    public Turno llamarSiguiente(Long idSucursal, Long idPuesto, Long idSucursalPuesto, Long idUsuario) {
+        return llamarSiguienteTurnoUseCase.ejecutar(idSucursal, idPuesto, idSucursalPuesto, idUsuario);
     }
 
     @Override

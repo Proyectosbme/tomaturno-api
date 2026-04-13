@@ -2,10 +2,10 @@ package com.empresa.tomaturno.framework.adapters.output.persistencia.repository;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.persistence.TypedQuery;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.TurnoJpaEntity;
@@ -53,37 +53,51 @@ public class TurnoJpaRepository implements PanacheRepositoryBase<TurnoJpaEntity,
     }
 
     public List<TurnoJpaEntity> buscarPorFiltros(Long idSucursal, Long idCola, Long idDetalle,
-            Integer estado, LocalDate fecha) {
+            Integer estado, LocalDate fecha, Long idPuesto, Long idSucursalPuesto) {
         if (idSucursal == null && idCola == null && estado == null && fecha == null) {
             return List.of();
         }
 
-        StringBuilder query = new StringBuilder("1=1");
-        int p = 1;
-        List<Object> params = new ArrayList<>();
+        boolean conPrioridad = idPuesto != null && idSucursalPuesto != null;
 
-        if (idSucursal != null) {
-            query.append(" and idpk.idSucursal = ?").append(p++);
-            params.add(idSucursal);
+        StringBuilder jpql = new StringBuilder("SELECT t FROM TurnoJpaEntity t ");
+        if (conPrioridad) {
+            jpql.append("LEFT JOIN DetalleColaxPuestoJpaEntity d ")
+                .append("ON t.idCola = d.id.idCola ")
+                .append("AND t.idDetalle = d.id.idDetalle ")
+                .append("AND t.idpk.idSucursal = d.id.idSucursalCola ")
+                .append("AND d.id.idPuesto = :idPuesto ")
+                .append("AND d.id.idSucursalPuesto = :idSucursalPuesto ");
         }
-        if (idCola != null) {
-            query.append(" and idCola = ?").append(p++);
-            params.add(idCola);
+        jpql.append("WHERE 1=1 ");
+
+        if (idSucursal != null) jpql.append("AND t.idpk.idSucursal = :idSucursal ");
+        if (idCola != null)     jpql.append("AND t.idCola = :idCola ");
+        if (idDetalle != null)  jpql.append("AND t.idDetalle = :idDetalle ");
+        if (estado != null)     jpql.append("AND t.estado = :estado ");
+        if (fecha != null)      jpql.append("AND t.idpk.fechaCreacion >= :fechaInicio AND t.idpk.fechaCreacion < :fechaFin ");
+
+        if (conPrioridad) {
+            jpql.append("ORDER BY COALESCE(d.prioridad, 9999) ASC, t.idpk.fechaCreacion ASC");
+        } else {
+            jpql.append("ORDER BY t.idpk.fechaCreacion ASC");
         }
-        if (idDetalle != null) {
-            query.append(" and idDetalle = ?").append(p++);
-            params.add(idDetalle);
+
+        TypedQuery<TurnoJpaEntity> query = getEntityManager().createQuery(jpql.toString(), TurnoJpaEntity.class);
+
+        if (conPrioridad) {
+            query.setParameter("idPuesto", idPuesto);
+            query.setParameter("idSucursalPuesto", idSucursalPuesto);
         }
-        if (estado != null) {
-            query.append(" and estado = ?").append(p++);
-            params.add(estado);
-        }
+        if (idSucursal != null) query.setParameter("idSucursal", idSucursal);
+        if (idCola != null)     query.setParameter("idCola", idCola);
+        if (idDetalle != null)  query.setParameter("idDetalle", idDetalle);
+        if (estado != null)     query.setParameter("estado", estado);
         if (fecha != null) {
-            query.append(" and idpk.fechaCreacion >= ?").append(p++).append(" and idpk.fechaCreacion < ?").append(p++);
-            params.add(fecha.atStartOfDay());
-            params.add(fecha.plusDays(1).atStartOfDay());
+            query.setParameter("fechaInicio", fecha.atStartOfDay());
+            query.setParameter("fechaFin", fecha.plusDays(1).atStartOfDay());
         }
 
-        return list(query.toString(), params.toArray());
+        return query.getResultList();
     }
 }

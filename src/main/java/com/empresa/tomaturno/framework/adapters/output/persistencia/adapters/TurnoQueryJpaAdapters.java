@@ -60,9 +60,9 @@ public class TurnoQueryJpaAdapters implements TurnoQueryRepository {
 
     @Override
     public List<Turno> buscarPorFiltro(Long idSucursal, Long idCola, Long idDetalle,
-            Integer estado, LocalDate fecha) {
+            Integer estado, LocalDate fecha, Long idPuesto, Long idSucursalPuesto) {
         List<TurnoJpaEntity> entities = turnoJpaRepository.buscarPorFiltros(idSucursal, idCola, idDetalle, estado,
-                fecha);
+                fecha, idPuesto, idSucursalPuesto);
         List<Turno> turnos = entities.stream().map(turnoOutputMapper::toDomain).toList();
         turnos.forEach(this::enriquecerNombreLlamada);
         return turnos;

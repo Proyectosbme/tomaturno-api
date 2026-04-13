@@ -8,7 +8,8 @@ import com.empresa.tomaturno.turno.dominio.entity.Turno;
 
 public interface TurnoQueryRepository {
     Turno buscarPorPK(Long idSucursal, LocalDateTime fechaCreacion, String codigoTurno);
-    List<Turno> buscarPorFiltro(Long idSucursal, Long idCola, Long idDetalle, Integer estado, LocalDate fecha);
+    List<Turno> buscarPorFiltro(Long idSucursal, Long idCola, Long idDetalle, Integer estado, LocalDate fecha,
+            Long idPuesto, Long idSucursalPuesto);
     /** Siguiente número correlativo para sucursal+fecha+codigoBase (reinicia cada día) */
     Long obtenerSiguienteNumero(Long idSucursal, LocalDate fecha, String codigoBase);
     /** Siguiente id global (para idTurnoRelacionado) */

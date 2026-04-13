@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.empresa.tomaturno.framework.adapters.input.dto.CrearTurnoRequestDTO;
+import com.empresa.tomaturno.framework.adapters.input.dto.LlamarSiguienteTurnoRequestDTO;
 import com.empresa.tomaturno.framework.adapters.input.dto.LlamarTurnoRequestDTO;
 import com.empresa.tomaturno.framework.adapters.input.dto.ReasignarTurnoRequestDTO;
 import com.empresa.tomaturno.framework.adapters.input.dto.TurnoResponseDTO;
@@ -45,9 +46,12 @@ public class TurnoController {
             @QueryParam("idCola") Long idCola,
             @QueryParam("idDetalle") Long idDetalle,
             @QueryParam("estado") Integer estado,
-            @QueryParam("fecha") String fecha) {
+            @QueryParam("fecha") String fecha,
+            @QueryParam("idPuesto") Long idPuesto,
+            @QueryParam("idSucursalPuesto") Long idSucursalPuesto) {
         LocalDate localDate = fecha != null ? LocalDate.parse(fecha) : null;
-        List<Turno> turnos = turnoQueryInputPort.buscarPorFiltro(idSucursal, idCola, idDetalle, estado, localDate);
+        List<Turno> turnos = turnoQueryInputPort.buscarPorFiltro(idSucursal, idCola, idDetalle, estado, localDate,
+                idPuesto, idSucursalPuesto);
         return turnos.stream().map(turnoInputMapper::toResponse).toList();
     }
 
@@ -61,6 +65,18 @@ public class TurnoController {
         turnoWebSocket.enviarTurno("{\"event\":\"TURNO_CREADO\",\"idSucursal\":" + dto.getIdSucursal() + "}");
         return Response.status(Response.Status.CREATED)
                 .entity(turnoInputMapper.toResponse(turno)).build();
+    }
+
+    @PUT
+    @Path("/llamar-siguiente")
+    @Transactional
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response llamarSiguiente(@Valid LlamarSiguienteTurnoRequestDTO dto) {
+        Turno turno = turnoCommandInputPort.llamarSiguiente(
+                dto.getIdSucursal(), dto.getIdPuesto(), dto.getIdSucursalPuesto(), dto.getIdUsuario());
+        turnoWebSocket.enviarTurno("{\"event\":\"TURNO_LLAMADO\",\"idSucursal\":" + dto.getIdSucursal() + "}");
+        return Response.ok(turnoInputMapper.toResponse(turno)).build();
     }
 
     @PUT
