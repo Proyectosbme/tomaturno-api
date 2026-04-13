@@ -16,7 +16,8 @@ public interface DetalleColaxPuestoInputMapper {
                 dto.getIdSucursalPuesto(),
                 dto.getIdCola(),
                 dto.getIdDetalle(),
-                dto.getIdSucursalCola());
+                dto.getIdSucursalCola(),
+                dto.getPrioridad());
     }
 
     @Mapping(target = "userCreacion", source = "auditoria.usuarioCreacion")

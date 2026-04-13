@@ -15,6 +15,7 @@ public interface DetalleColaxPuestoOutputMapper {
     @Mapping(target = "id.idCola", source = "idCola")
     @Mapping(target = "id.idDetalle", source = "idDetalle")
     @Mapping(target = "id.idSucursalCola", source = "idSucursalCola")
+    @Mapping(target = "prioridad", source = "prioridad")
     @Mapping(target = "userCreacion", source = "auditoria.usuarioCreacion")
     @Mapping(target = "fechaCreacion", source = "auditoria.fechaCreacion")
     DetalleColaxPuestoJpaEntity toJpaEntity(DetalleColaxPuesto domain);
@@ -28,6 +29,7 @@ public interface DetalleColaxPuestoOutputMapper {
                 entity.getId().getIdCola(),
                 entity.getId().getIdDetalle(),
                 entity.getId().getIdSucursalCola(),
+                entity.getPrioridad(),
                 auditoria);
     }
 }

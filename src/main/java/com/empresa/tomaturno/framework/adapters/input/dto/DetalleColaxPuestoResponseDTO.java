@@ -18,6 +18,7 @@ public class DetalleColaxPuestoResponseDTO {
     private Long idCola;
     private Long idDetalle;
     private Long idSucursalCola;
+    private Integer prioridad;
     private String nombreCola;
     private String nombreDetalle;
     private String userCreacion;
