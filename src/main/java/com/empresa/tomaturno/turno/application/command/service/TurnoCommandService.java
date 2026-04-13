@@ -11,6 +11,7 @@ import com.empresa.tomaturno.turno.application.command.usecase.FinalizarTurnoUse
 import com.empresa.tomaturno.turno.application.command.usecase.LlamarTurnoUseCase;
 import com.empresa.tomaturno.turno.application.command.usecase.ReasignarTurnoUseCase;
 import com.empresa.tomaturno.turno.application.command.usecase.LlamarSiguienteTurnoUseCase;
+import com.empresa.tomaturno.turno.application.command.usecase.MarcarSinAtenderUseCase;
 import com.empresa.tomaturno.turno.application.command.usecase.RellamarTurnoUseCase;
 import com.empresa.tomaturno.turno.application.query.port.output.TurnoQueryRepository;
 import com.empresa.tomaturno.turno.dominio.entity.Turno;
@@ -20,6 +21,7 @@ public class TurnoCommandService implements TurnoCommandInputPort {
     private final CrearTurnoUseCase crearTurnoUseCase;
     private final LlamarTurnoUseCase llamarTurnoUseCase;
     private final LlamarSiguienteTurnoUseCase llamarSiguienteTurnoUseCase;
+    private final MarcarSinAtenderUseCase marcarSinAtenderUseCase;
     private final ReasignarTurnoUseCase reasignarTurnoUseCase;
     private final FinalizarTurnoUseCase finalizarTurnoUseCase;
     private final RellamarTurnoUseCase rellamarTurnoUseCase;
@@ -31,6 +33,7 @@ public class TurnoCommandService implements TurnoCommandInputPort {
         this.crearTurnoUseCase = new CrearTurnoUseCase(turnoCommandRepository, turnoQueryRepository, colaQueryRepository);
         this.llamarTurnoUseCase = new LlamarTurnoUseCase(turnoCommandRepository, turnoQueryRepository, configuracionQueryRepository);
         this.llamarSiguienteTurnoUseCase = new LlamarSiguienteTurnoUseCase(turnoQueryRepository, llamarTurnoUseCase);
+        this.marcarSinAtenderUseCase = new MarcarSinAtenderUseCase(turnoCommandRepository, turnoQueryRepository);
         this.reasignarTurnoUseCase = new ReasignarTurnoUseCase(turnoCommandRepository, turnoQueryRepository, colaQueryRepository);
         this.finalizarTurnoUseCase = new FinalizarTurnoUseCase(turnoCommandRepository, turnoQueryRepository);
         this.rellamarTurnoUseCase = new RellamarTurnoUseCase(turnoCommandRepository, turnoQueryRepository, configuracionQueryRepository);
@@ -50,6 +53,11 @@ public class TurnoCommandService implements TurnoCommandInputPort {
     public Turno reasignar(Long idSucursal, LocalDateTime fechaCreacion, String codigoTurno,
             Long idSucursalDestino, Long idColaDestino, Long idDetalleDestino) {
         return reasignarTurnoUseCase.ejecutar(idSucursal, fechaCreacion, codigoTurno, idSucursalDestino, idColaDestino, idDetalleDestino);
+    }
+
+    @Override
+    public Turno sinAtender(Long idSucursal, LocalDateTime fechaCreacion, String codigoTurno) {
+        return marcarSinAtenderUseCase.ejecutar(idSucursal, fechaCreacion, codigoTurno);
     }
 
     @Override

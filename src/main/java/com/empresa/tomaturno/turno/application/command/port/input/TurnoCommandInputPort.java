@@ -9,6 +9,7 @@ public interface TurnoCommandInputPort {
     Turno llamar(Long idSucursal, LocalDateTime fechaCreacion, String codigoTurno, Long idPuesto, Long idSucursalPuesto, Long idUsuario);
     Turno llamarSiguiente(Long idSucursal, Long idPuesto, Long idSucursalPuesto, Long idUsuario);
     Turno reasignar(Long idSucursal, LocalDateTime fechaCreacion, String codigoTurno, Long idSucursalDestino, Long idColaDestino, Long idDetalleDestino);
+    Turno sinAtender(Long idSucursal, LocalDateTime fechaCreacion, String codigoTurno);
     Turno finalizar(Long idSucursal, LocalDateTime fechaCreacion, String codigoTurno);
     Turno rellamar(Long idSucursal, LocalDateTime fechaCreacion, String codigoTurno, Long idPuesto, Long idSucursalPuesto, Long idUsuario);
 }

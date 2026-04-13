@@ -114,6 +114,20 @@ public class TurnoController {
     }
 
     @PUT
+    @Path("/{idSucursal}/{codigoTurno}/sin-atender")
+    @Transactional
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response sinAtender(
+            @PathParam("idSucursal") Long idSucursal,
+            @PathParam("codigoTurno") String codigoTurno,
+            @QueryParam("fechaCreacion") String fechaCreacionStr) {
+        LocalDateTime fechaCreacion = LocalDateTime.parse(fechaCreacionStr);
+        Turno turno = turnoCommandInputPort.sinAtender(idSucursal, fechaCreacion, codigoTurno);
+        turnoWebSocket.enviarTurno("{\"event\":\"TURNO_SIN_ATENDER\",\"idSucursal\":" + idSucursal + "}");
+        return Response.ok(turnoInputMapper.toResponse(turno)).build();
+    }
+
+    @PUT
     @Path("/{idSucursal}/{codigoTurno}/finalizar")
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
