@@ -1,11 +1,10 @@
 package com.empresa.tomaturno.usuario.application.command.usecase;
 
+import com.empresa.tomaturno.usuario.application.command.port.output.EncriptadoPort;
 import com.empresa.tomaturno.usuario.application.command.port.output.UsuarioCommandRepository;
 import com.empresa.tomaturno.usuario.application.query.port.output.UsuarioQueryRepository;
 import com.empresa.tomaturno.usuario.dominio.entity.Usuario;
 import com.empresa.tomaturno.usuario.dominio.exceptions.UsuarioValidationException;
-
-import at.favre.lib.crypto.bcrypt.BCrypt;
 
 public class CrearUsuarioUseCase {
 
@@ -14,11 +13,13 @@ public class CrearUsuarioUseCase {
 
     private final UsuarioCommandRepository commandRepository;
     private final UsuarioQueryRepository queryRepository;
+    private final EncriptadoPort encriptado;
 
     public CrearUsuarioUseCase(UsuarioCommandRepository commandRepository,
-                                UsuarioQueryRepository queryRepository) {
+            UsuarioQueryRepository queryRepository, EncriptadoPort encriptado) {
         this.commandRepository = commandRepository;
         this.queryRepository = queryRepository;
+        this.encriptado = encriptado;
     }
 
     public Usuario ejecutar(Usuario usuario, String usuarioCreador) {
@@ -32,13 +33,14 @@ public class CrearUsuarioUseCase {
             throw new UsuarioValidationException("Solo un usuario ADMIN puede crear usuarios con perfil ADMIN");
         }
 
-        boolean existeCodigo = queryRepository.existeCodigoEnSucursal(
+        if(usuario.getCodigoUsuario() == null || usuario.getCodigoUsuario().isBlank()) {
+            usuario.crearCodigoUsuario();
+        }
+
+        usuario.crearContrasenaTemporal(encriptado.encriptar(usuario.getContrasena()));
+        String codigo = queryRepository.existeCodigoEnSucursal(
                 usuario.getIdSucursal(), usuario.getCodigoUsuario());
-        usuario.validarCodigoUnico(existeCodigo);
-
-        String hash = BCrypt.withDefaults().hashToString(12, usuario.getContrasena().toCharArray());
-        usuario.asignarContrasenaHasheada(hash);
-
+        usuario.asignarCodigoUsuario(codigo);
         usuario.crear(usuarioCreador);
         return commandRepository.save(usuario);
     }
