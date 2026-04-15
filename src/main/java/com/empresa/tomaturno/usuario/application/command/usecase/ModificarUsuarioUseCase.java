@@ -5,8 +5,6 @@ import com.empresa.tomaturno.usuario.application.query.port.output.UsuarioQueryR
 import com.empresa.tomaturno.usuario.dominio.entity.Usuario;
 import com.empresa.tomaturno.usuario.dominio.exceptions.UsuarioNotFoundException;
 
-import at.favre.lib.crypto.bcrypt.BCrypt;
-
 public class ModificarUsuarioUseCase {
 
     private final UsuarioCommandRepository commandRepository;
@@ -25,12 +23,7 @@ public class ModificarUsuarioUseCase {
                     "Usuario (idUsuario=" + idUsuario + ", idSucursal=" + idSucursal + ")");
         }
 
-        String nuevaContrasena = datosNuevos.getContrasena();
-        if (nuevaContrasena != null && !nuevaContrasena.isBlank()) {
-            nuevaContrasena = BCrypt.withDefaults().hashToString(12, nuevaContrasena.toCharArray());
-        }
-
-        usuario.modificar(datosNuevos.getIdPuesto(), datosNuevos.getCodigoUsuario(), nuevaContrasena,
+        usuario.modificar(datosNuevos.getIdPuesto(),
                 datosNuevos.getEstado(), datosNuevos.getDatosPersonales(),
                 datosNuevos.getConfiguracion(), user);
         return commandRepository.modificar(usuario);

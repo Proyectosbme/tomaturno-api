@@ -25,9 +25,9 @@ public class UsuarioQueryJpaAdapters implements UsuarioQueryRepository {
     private final PuestoJpaRepository puestoJpaRepository;
 
     public UsuarioQueryJpaAdapters(UsuarioJpaRepository usuarioJpaRepository,
-                                    UsuarioOutputMapper usuarioOutputMapper,
-                                    SucursalJpaRepository sucursalJpaRepository,
-                                    PuestoJpaRepository puestoJpaRepository) {
+            UsuarioOutputMapper usuarioOutputMapper,
+            SucursalJpaRepository sucursalJpaRepository,
+            PuestoJpaRepository puestoJpaRepository) {
         this.usuarioJpaRepository = usuarioJpaRepository;
         this.usuarioOutputMapper = usuarioOutputMapper;
         this.sucursalJpaRepository = sucursalJpaRepository;
@@ -37,7 +37,8 @@ public class UsuarioQueryJpaAdapters implements UsuarioQueryRepository {
     @Override
     public Usuario buscarPorIdUsuarioYSucursal(Long idUsuario, Long idSucursal) {
         UsuarioJpaEntity entity = usuarioJpaRepository.buscarPorIdUsuarioYSucursal(idUsuario, idSucursal);
-        if (entity == null) return null;
+        if (entity == null)
+            return null;
         Usuario usuario = usuarioOutputMapper.toDomain(entity);
         enriquecerConNombres(List.of(usuario));
         return usuario;
@@ -46,7 +47,8 @@ public class UsuarioQueryJpaAdapters implements UsuarioQueryRepository {
     @Override
     public List<Usuario> buscarPorFiltro(Long idSucursal, String codigoUsuario, String nombre) {
         List<UsuarioJpaEntity> entities = usuarioJpaRepository.buscarPorFiltros(idSucursal, codigoUsuario, nombre);
-        if (entities.isEmpty()) return List.of();
+        if (entities.isEmpty())
+            return List.of();
 
         List<Usuario> usuarios = entities.stream()
                 .map(usuarioOutputMapper::toDomain)
@@ -57,14 +59,27 @@ public class UsuarioQueryJpaAdapters implements UsuarioQueryRepository {
     }
 
     @Override
-    public boolean existeCodigoEnSucursal(Long idSucursal, String codigoUsuario) {
-        return usuarioJpaRepository.existeCodigoEnSucursal(idSucursal, codigoUsuario);
+    public String existeCodigoEnSucursal(Long idSucursal, String codigoUsuario) {
+        return generarCodigoDisponible(idSucursal, codigoUsuario, 1);
+    }
+
+    private String generarCodigoDisponible(Long idSucursal, String codigoBase, int intento) {
+        String codigoPropuesto = intento == 1 ? codigoBase : codigoBase + intento;
+
+        if (usuarioJpaRepository.existeCodigoEnSucursal(idSucursal, codigoPropuesto)) {
+            // Si ya existe, probar con el siguiente número
+            return generarCodigoDisponible(idSucursal, codigoBase, intento + 1);
+        }
+
+        // Si no existe, devolver el código válido
+        return codigoPropuesto;
     }
 
     @Override
     public Usuario buscarPorCodigo(String codigoUsuario) {
         UsuarioJpaEntity entity = usuarioJpaRepository.buscarPorCodigo(codigoUsuario);
-        if (entity == null) return null;
+        if (entity == null)
+            return null;
         Usuario usuario = usuarioOutputMapper.toDomain(entity);
         enriquecerConNombres(List.of(usuario));
         return usuario;
@@ -73,7 +88,8 @@ public class UsuarioQueryJpaAdapters implements UsuarioQueryRepository {
     @Override
     public Usuario buscarPorCodigoYSucursal(String codigoUsuario, Long idSucursal) {
         UsuarioJpaEntity entity = usuarioJpaRepository.buscarPorCodigoYSucursal(codigoUsuario, idSucursal);
-        if (entity == null) return null;
+        if (entity == null)
+            return null;
         Usuario usuario = usuarioOutputMapper.toDomain(entity);
         enriquecerConNombres(List.of(usuario));
         return usuario;
@@ -82,7 +98,8 @@ public class UsuarioQueryJpaAdapters implements UsuarioQueryRepository {
     @Override
     public Usuario buscarPorDui(String dui) {
         UsuarioJpaEntity entity = usuarioJpaRepository.buscarPorDui(dui);
-        if (entity == null) return null;
+        if (entity == null)
+            return null;
         Usuario usuario = usuarioOutputMapper.toDomain(entity);
         enriquecerConNombres(List.of(usuario));
         return usuario;

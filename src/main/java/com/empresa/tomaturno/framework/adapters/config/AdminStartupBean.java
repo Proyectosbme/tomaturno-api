@@ -67,6 +67,7 @@ public class AdminStartupBean {
         DatosPersonales datos = DatosPersonales.crear("Administrador", "Sistema", null, null);
         ConfiguracionOperador config = ConfiguracionOperador.crear("ADMIN", null, null, null);
         Usuario admin = Usuario.inicializar(idSucursal, null, "admin", "admin", Estado.ACTIVO, datos, config);
+        admin.asignarPerfilCreador("ADMIN");
         usuarioCommandInputPort.crear(admin, USUARIO_SISTEMA);
     }
 

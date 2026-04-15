@@ -20,8 +20,8 @@ public interface UsuarioInputMapper {
         ConfiguracionOperador config = ConfiguracionOperador.crear(
                 dto.getPerfil(), dto.getIp(), dto.getCorrelativo(), dto.getAtenderCasosEspeciales());
         Usuario usuario = Usuario.inicializar(
-                dto.getIdSucursal(), dto.getIdPuesto(), dto.getCodigoUsuario(),
-                dto.getContrasena(), dto.getEstado() != null ? Estado.fromCodigo(dto.getEstado()) : null,
+                dto.getIdSucursal(), dto.getIdPuesto(), null,
+                null, dto.getEstado() != null ? Estado.fromCodigo(dto.getEstado()) : null,
                 datos, config);
         if (dto.getPerfilCreador() != null)
             usuario.asignarPerfilCreador(dto.getPerfilCreador());
