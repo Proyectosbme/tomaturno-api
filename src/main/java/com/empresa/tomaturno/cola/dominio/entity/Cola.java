@@ -81,7 +81,7 @@ public class Cola {
         /** Para colas nuevas: sin identificador ni auditoría. */
         public Cola inicializar() {
             Cola c = new Cola();
-            c.nombre = this.nombre;
+            c.nombre = this.nombre != null ? this.nombre.trim().toUpperCase() : null;
             c.codigo = this.codigo;
             c.prioridad = this.prioridad;
             c.estado = this.estado;
@@ -111,11 +111,21 @@ public class Cola {
     }
 
     public void modificar(String nombre, String codigo, Long prioridad, Estado estado, String usuario) {
-        this.nombre = nombre;
-        this.codigo = codigo;
-        this.prioridad = prioridad;
-        this.estado = estado;
-        this.auditoria = this.auditoria.conModificacion(usuario, LocalDateTime.now());
+        if(nombre != null) {
+            this.nombre = nombre.trim().toUpperCase();
+        }
+        if(codigo != null) {
+            this.codigo = codigo;
+        }
+        if(prioridad != null) {
+            this.prioridad = prioridad;
+        }
+        if(estado != null) {
+            this.estado = estado;
+        }
+        if(usuario != null) {
+            this.auditoria = this.auditoria.conModificacion(usuario, LocalDateTime.now());
+        }
         validarModificacion();
     }
 
