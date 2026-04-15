@@ -7,7 +7,10 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Getter 
+@Setter 
+@NoArgsConstructor 
+@AllArgsConstructor
 public class PersonaResponseDTO {
     private Long id;
     private String dui;

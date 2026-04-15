@@ -12,7 +12,8 @@ public class BuscarUsuarioPorCodigoUseCase {
     }
 
     public Usuario ejecutar(String codigoUsuario) {
-        return queryRepository.buscarPorCodigo(codigoUsuario);
+        Usuario user = queryRepository.buscarPorCodigo(codigoUsuario);
+        return user;
     }
 
     public Usuario ejecutar(String codigoUsuario, Long idSucursal) {

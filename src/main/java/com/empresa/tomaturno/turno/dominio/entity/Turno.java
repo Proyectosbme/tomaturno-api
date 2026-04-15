@@ -144,7 +144,7 @@ public class Turno {
     }
 
     private void validarTransicionLlamar(Long idPuesto, Long idSucursalPuesto) {
-        if (estado != EstadoTurno.CREADO)
+        if (estado != EstadoTurno.CREADO && estado != EstadoTurno.SIN_ATENDER)
             throw new TurnoValidationException(
                     "Solo se puede llamar un turno en estado CREADO. Estado actual: " + estado);
         if (idPuesto == null)

@@ -19,8 +19,8 @@ public class Detalle {
 
     public static Detalle inicializar(String nombre, String codigo, Estado estado) {
         Detalle d = new Detalle();
-        d.nombre = nombre;
-        d.codigo = codigo;
+        d.nombre = nombre != null ? nombre.trim().toUpperCase() : null;
+        d.codigo = codigo != null ? codigo.trim().toUpperCase() : null;
         d.estado = estado;
         return d;
     }
@@ -42,10 +42,18 @@ public class Detalle {
     }
 
     public void modificar(String nombre, String codigo, Estado estado, String usuario) {
-        this.nombre = nombre;
-        this.codigo = codigo;
-        this.estado = estado;
-        this.auditoria = this.auditoria.conModificacion(usuario, LocalDateTime.now());
+        if(nombre != null) {
+            this.nombre = nombre.trim().toUpperCase();
+        }
+        if(codigo != null) {
+            this.codigo = codigo.trim().toUpperCase();
+        }   
+        if(estado != null) {
+            this.estado = estado;
+        }
+        if(this.auditoria != null) {
+            this.auditoria = this.auditoria.conModificacion(usuario, LocalDateTime.now());
+        } 
         validarModificacion();
     }
 

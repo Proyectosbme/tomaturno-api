@@ -20,12 +20,13 @@ public class Sucursal {
         this.contacto = contacto;
         this.estado = estado;
         this.auditoria = auditoria;
-        
+
     }
 
     public static Sucursal inicializar(String nombre, Contacto contacto, Estado estado) {
 
-        return new Sucursal(null, nombre, contacto, estado, null);
+        String nombreNormalizado = nombre != null ? nombre.trim().toUpperCase() : null;
+        return new Sucursal(null, nombreNormalizado, contacto, estado, null);
     }
 
     public static Sucursal reconstituir(Long id, String nombre, Contacto contacto, Estado estado, Auditoria auditoria) {
@@ -61,10 +62,18 @@ public class Sucursal {
     }
 
     private void asignadatosModificacion(String nombre, Contacto contacto, Estado estado, String usuario) {
-        this.nombre = nombre;
-        this.contacto = contacto;
-        this.estado = estado;
-        this.auditoria = this.auditoria.conModificacion(usuario, LocalDateTime.now());
+        if (nombre != null) {
+            this.nombre = nombre.trim().toUpperCase();
+        }
+        if (contacto != null) {
+            this.contacto = contacto;
+        }
+        if (estado != null) {
+            this.estado = estado;
+        }
+        if (usuario != null) {
+            this.auditoria = this.auditoria.conModificacion(usuario, LocalDateTime.now());
+        }
     }
 
     private void validarModificacion() {

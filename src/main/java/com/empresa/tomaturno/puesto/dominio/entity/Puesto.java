@@ -22,9 +22,11 @@ public class Puesto {
     // ─── Factory methods ──────────────────────────────────────────────────
 
     public static Puesto inicializar(String nombre, String nombreLlamada, Estado estado, Sucursal sucursal) {
+        String nombreNormalizado = nombre != null ? nombre.trim().toUpperCase() : null;
+        String nombreLlamadaNormalizado = nombreLlamada != null ? nombreLlamada.trim().toUpperCase() : null;
         Puesto p = new Puesto();
-        p.nombre = nombre;
-        p.nombreLlamada = nombreLlamada;
+        p.nombre = nombreNormalizado;
+        p.nombreLlamada = nombreLlamadaNormalizado;
         p.estado = estado;
         p.sucursal = sucursal;
         return p;
@@ -50,10 +52,18 @@ public class Puesto {
     }
 
     public void modificar(String nombre, String nombreLlamada, Estado estado, String usuario) {
-        this.nombre = nombre;
-        this.nombreLlamada = nombreLlamada;
-        this.estado = estado;
-        this.auditoria = this.auditoria.conModificacion(usuario, LocalDateTime.now());
+        if(nombre != null) {
+            this.nombre = nombre.trim().toUpperCase();
+        }
+        if(nombreLlamada != null) {
+            this.nombreLlamada = nombreLlamada.trim().toUpperCase();
+        }   
+        if(estado != null) {    
+                    this.estado = estado;
+        }
+        if(usuario != null) {
+            this.auditoria = this.auditoria.conModificacion(usuario, LocalDateTime.now());
+        }
         validarModificacion();
     }
 

@@ -22,13 +22,6 @@ public class UsuarioRequestDTO extends AuditRequestDTO {
     private Integer atenderCasosEspeciales;
 
     @NotBlank
-    @Size(min = 2, max = 50)
-    private String codigoUsuario;
-
-    @Size(max = 100)
-    private String contrasena;
-
-    @NotBlank
     @Size(max = 100)
     private String nombres;
 
