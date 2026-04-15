@@ -65,18 +65,28 @@ public class Usuario {
         validarCreacion();
     }
 
-    public void modificar(Long idPuesto, String codigoUsuario, String contrasena,
+    public void modificar(Long idPuesto,
             Estado estado, DatosPersonales datosPersonales,
             ConfiguracionOperador configuracion, String usuarioModificador) {
-        this.idPuesto = idPuesto;
-        this.codigoUsuario = codigoUsuario;
-        if (contrasena != null && !contrasena.isBlank()) {
-            this.contrasena = contrasena;
+
+        if (idPuesto != null) {
+            this.idPuesto = idPuesto;
         }
-        this.estado = estado;
-        this.datosPersonales = datosPersonales;
-        this.configuracion = configuracion;
-        this.auditoria = this.auditoria.conModificacion(usuarioModificador, LocalDateTime.now());
+        if (estado != null) {
+            this.estado = estado;
+        }
+
+        if (datosPersonales != null) {
+            this.datosPersonales = datosPersonales;
+        }
+
+        if (configuracion != null) {
+            this.configuracion = configuracion;
+        }
+
+        if (usuarioModificador != null) {
+            this.auditoria = this.auditoria.conModificacion(usuarioModificador, LocalDateTime.now());
+        }
         validarModificacion();
     }
 
@@ -84,14 +94,35 @@ public class Usuario {
         this.identificador = identificador;
     }
 
-    public void asignarContrasenaHasheada(String hash) {
+    private void asignarContrasenaHasheada(String hash) {
         this.contrasena = hash;
     }
 
-    public void validarCodigoUnico(boolean existeCodigo) {
-        if (existeCodigo)
+    public void crearCodigoUsuario() {
+        if (this.datosPersonales == null
+                || this.datosPersonales.getNombres() == null
+                || this.datosPersonales.getApellidos() == null) {
             throw new UsuarioValidationException(
-                    "Ya existe un usuario con el código '" + this.codigoUsuario + "' en esta sucursal");
+                    "Los datos personales con nombres y apellidos son necesarios para crear el código de usuario");
+        }
+        // Quitar espacios al inicio y fin
+        String nombres = this.datosPersonales.getNombres().trim();
+        String apellidos = this.datosPersonales.getApellidos().trim();
+        // Primera letra del nombre (en minúscula)
+        String primeraLetraNombre = nombres.substring(0, 1).toLowerCase();
+        // Solo el primer apellido (antes del primer espacio)
+        String primerApellido = apellidos.split("\\s+")[0].toLowerCase();
+        // Construir el código
+        String codigo = primeraLetraNombre + primerApellido;
+        this.codigoUsuario = codigo;
+    }
+
+    public void asignarCodigoUsuario(String codigoUsuario) {
+        this.codigoUsuario = codigoUsuario;
+    }
+
+    public void crearContrasenaTemporal(String hash) {
+        asignarContrasenaHasheada(hash);
     }
 
     public void asignarFoto(byte[] foto) {
@@ -113,7 +144,8 @@ public class Usuario {
         this.nombrePuesto = nombrePuesto;
     }
 
-    /* ── Validaciones privadas ────────────────────────────────────────── */
+
+/* ── Validaciones privadas ────────────────────────────────────────── */
 
     private void validarCreacion() {
         if (this.codigoUsuario == null || this.codigoUsuario.isBlank())

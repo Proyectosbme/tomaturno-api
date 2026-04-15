@@ -48,6 +48,7 @@ import com.empresa.tomaturno.turno.application.query.port.input.TurnoQueryInputP
 import com.empresa.tomaturno.turno.application.query.port.output.TurnoQueryRepository;
 import com.empresa.tomaturno.turno.application.query.service.TurnoQueryService;
 import com.empresa.tomaturno.usuario.application.command.port.input.UsuarioCommandInputPort;
+import com.empresa.tomaturno.usuario.application.command.port.output.EncriptadoPort;
 import com.empresa.tomaturno.usuario.application.command.port.output.UsuarioCommandRepository;
 import com.empresa.tomaturno.usuario.application.command.service.UsuarioCommandService;
 import com.empresa.tomaturno.usuario.application.query.port.input.UsuarioQueryInputPort;
@@ -78,6 +79,7 @@ public class ApplicationConfig {
     private final PersonaQueryRepository personaQueryRepository;
     private final EmpresaCommandRepository empresaCommandRepository;
     private final EmpresaQueryRepository empresaQueryRepository;
+    private final EncriptadoPort encriptadoPort;
 
     public ApplicationConfig(SucursalQueryRepository sucursalQueryRepository,
                              SucursalCommandRepository sucursalCommandRepository,
@@ -96,7 +98,8 @@ public class ApplicationConfig {
                              PersonaCommandRepository personaCommandRepository,
                              PersonaQueryRepository personaQueryRepository,
                              EmpresaCommandRepository empresaCommandRepository,
-                             EmpresaQueryRepository empresaQueryRepository) {
+                             EmpresaQueryRepository empresaQueryRepository,
+                             EncriptadoPort encriptadoPort) {
         this.sucursalQueryRepository = sucursalQueryRepository;
         this.sucursalCommandRepository = sucursalCommandRepository;
         this.colaCommandRepository = colaCommandRepository;
@@ -115,6 +118,7 @@ public class ApplicationConfig {
         this.personaQueryRepository = personaQueryRepository;
         this.empresaCommandRepository = empresaCommandRepository;
         this.empresaQueryRepository = empresaQueryRepository;
+        this.encriptadoPort = encriptadoPort;
     }
 
 
@@ -163,7 +167,7 @@ public class ApplicationConfig {
     @Produces
     @ApplicationScoped
     public UsuarioCommandInputPort usuarioCommandService() {
-        return new UsuarioCommandService(usuarioCommandRepository, usuarioQueryRepository);
+        return new UsuarioCommandService(usuarioCommandRepository, usuarioQueryRepository, encriptadoPort);
     }
 
     @Produces
