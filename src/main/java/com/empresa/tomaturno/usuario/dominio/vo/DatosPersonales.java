@@ -21,7 +21,11 @@ public class DatosPersonales {
             throw new UsuarioValidationException("Los nombres son obligatorios");
         if (apellidos == null || apellidos.isBlank())
             throw new UsuarioValidationException("Los apellidos son obligatorios");
-        return new DatosPersonales(nombres, apellidos, dui, telefono);
+        return new DatosPersonales(
+                nombres.trim().toUpperCase(),
+                apellidos.trim().toUpperCase(),
+                dui != null ? dui.trim().toUpperCase() : null,
+                telefono != null ? telefono.trim().toUpperCase() : null);
     }
 
     public static DatosPersonales reconstituir(String nombres, String apellidos, String dui, String telefono) {
