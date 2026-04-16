@@ -3,8 +3,10 @@ package com.empresa.tomaturno.framework.adapters.input.controller;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 
 import java.util.List;
 
@@ -22,10 +24,15 @@ import com.empresa.tomaturno.framework.adapters.input.mapper.ColaInputMapper;
 @Path("/colas")
 public class ColaController {
 
+    private static final String USUARIO_DEFAULT = "sistema";
+
     private final ColaCommandInputPort colaCommandInputPort;
     private final ColaQueryInputPort colaQueryInputPort;
     private final ColaInputMapper colaInputMapper;
     private final TurnoWebSocket turnoWebSocket;
+
+    @Context
+    SecurityContext securityContext;
 
     public ColaController(ColaCommandInputPort colaCommandInputPort,
             ColaQueryInputPort colaQueryInputPort,
@@ -35,6 +42,12 @@ public class ColaController {
         this.colaQueryInputPort = colaQueryInputPort;
         this.colaInputMapper = colaInputMapper;
         this.turnoWebSocket = turnoWebSocket;
+    }
+
+    private String usuarioActual() {
+        return securityContext != null && securityContext.getUserPrincipal() != null
+                ? securityContext.getUserPrincipal().getName()
+                : USUARIO_DEFAULT;
     }
 
     @GET
@@ -51,7 +64,8 @@ public class ColaController {
         }
         return lstColas.stream().map(colaInputMapper::toResponse).toList();
     }
-       @GET
+
+    @GET
     @Path("/buscarConDetalles")
     @Produces(MediaType.APPLICATION_JSON)
     public List<ColaResponseDTO> buscarColasConDetallePorFiltro(
@@ -80,7 +94,7 @@ public class ColaController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response crearCola(@Valid ColaRequestDTO colaRequestDTO) {
         Cola cola = colaInputMapper.toDomain(colaRequestDTO);
-        cola = colaCommandInputPort.crear(cola , colaRequestDTO.getUsuario());
+        cola = colaCommandInputPort.crear(cola, usuarioActual());
         return Response.status(Response.Status.CREATED)
                 .entity(colaInputMapper.toResponse(cola)).build();
     }
@@ -95,7 +109,7 @@ public class ColaController {
             @PathParam("idSucursal") Long idSucursal,
             @Valid ColaRequestDTO colaRequestDTO) {
         Cola colaDatosNuevos = colaInputMapper.toDomain(colaRequestDTO);
-        Cola colaModificada = colaCommandInputPort.actualizar(idCola, idSucursal, colaDatosNuevos, colaRequestDTO.getUsuario());
+        Cola colaModificada = colaCommandInputPort.actualizar(idCola, idSucursal, colaDatosNuevos, usuarioActual());
         return Response.ok(colaInputMapper.toResponse(colaModificada)).build();
     }
 
@@ -109,7 +123,7 @@ public class ColaController {
             @PathParam("idSucursal") Long idSucursal,
             @Valid DetalleRequestDTO request) {
         Detalle detalle = colaInputMapper.toDetalleDomain(request);
-        Cola cola = colaCommandInputPort.crearDetalle(idCola, idSucursal, detalle, request.getUsuario());
+        Cola cola = colaCommandInputPort.crearDetalle(idCola, idSucursal, detalle, usuarioActual());
         return Response.status(Response.Status.CREATED)
                 .entity(colaInputMapper.toResponse(cola)).build();
     }

@@ -12,15 +12,22 @@ import com.empresa.tomaturno.puesto.dominio.entity.Puesto;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 
 @Path("/puestos")
 public class PuestoController {
 
+    private static final String USUARIO_DEFAULT = "sistema";
+
     private final PuestoCommandInputPort puestoCommandInputPort;
     private final PuestoQueryInputPort puestoQueryInputPort;
     private final PuestoInputMapper puestoInputMapper;
+
+    @Context
+    SecurityContext securityContext;
 
     public PuestoController(PuestoCommandInputPort puestoCommandInputPort,
             PuestoQueryInputPort puestoQueryInputPort,
@@ -28,6 +35,12 @@ public class PuestoController {
         this.puestoCommandInputPort = puestoCommandInputPort;
         this.puestoQueryInputPort = puestoQueryInputPort;
         this.puestoInputMapper = puestoInputMapper;
+    }
+
+    private String usuarioActual() {
+        return securityContext != null && securityContext.getUserPrincipal() != null
+                ? securityContext.getUserPrincipal().getName()
+                : USUARIO_DEFAULT;
     }
 
     @GET
@@ -57,7 +70,7 @@ public class PuestoController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response crearPuesto(@Valid PuestoRequestDTO dto) {
         Puesto puesto = puestoInputMapper.toDomain(dto);
-        puesto = puestoCommandInputPort.crear(puesto, dto.getUsuario());
+        puesto = puestoCommandInputPort.crear(puesto, usuarioActual());
         return Response.status(Response.Status.CREATED)
                 .entity(puestoInputMapper.toResponse(puesto)).build();
     }
@@ -72,7 +85,7 @@ public class PuestoController {
             @PathParam("idSucursal") Long idSucursal,
             @Valid PuestoRequestDTO dto) {
         Puesto datosNuevos = puestoInputMapper.toDomain(dto);
-        Puesto puestoModificado = puestoCommandInputPort.actualizar(idPuesto, idSucursal, datosNuevos, dto.getUsuario());
+        Puesto puestoModificado = puestoCommandInputPort.actualizar(idPuesto, idSucursal, datosNuevos, usuarioActual());
         return Response.ok(puestoInputMapper.toResponse(puestoModificado)).build();
     }
 }
