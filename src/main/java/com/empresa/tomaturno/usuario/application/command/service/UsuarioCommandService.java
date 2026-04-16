@@ -1,7 +1,7 @@
 package com.empresa.tomaturno.usuario.application.command.service;
 
 import com.empresa.tomaturno.usuario.application.command.port.input.UsuarioCommandInputPort;
-import com.empresa.tomaturno.usuario.application.command.port.output.EncriptadoPort;
+import com.empresa.tomaturno.usuario.application.command.port.output.KeycloakAdminPort;
 import com.empresa.tomaturno.usuario.application.command.port.output.UsuarioCommandRepository;
 import com.empresa.tomaturno.usuario.application.command.usecase.AsignarFotoUseCase;
 import com.empresa.tomaturno.usuario.application.command.usecase.CrearUsuarioUseCase;
@@ -16,8 +16,8 @@ public class UsuarioCommandService implements UsuarioCommandInputPort {
     private final AsignarFotoUseCase asignarFotoUseCase;
 
     public UsuarioCommandService(UsuarioCommandRepository commandRepository,
-                                  UsuarioQueryRepository queryRepository, EncriptadoPort encriptado) {
-        this.crearUseCase = new CrearUsuarioUseCase(commandRepository, queryRepository, encriptado);
+                                  UsuarioQueryRepository queryRepository, KeycloakAdminPort keycloakAdmin) {
+        this.crearUseCase = new CrearUsuarioUseCase(commandRepository, queryRepository, keycloakAdmin);
         this.modificarUseCase = new ModificarUsuarioUseCase(commandRepository, queryRepository);
         this.asignarFotoUseCase = new AsignarFotoUseCase(commandRepository, queryRepository);
     }

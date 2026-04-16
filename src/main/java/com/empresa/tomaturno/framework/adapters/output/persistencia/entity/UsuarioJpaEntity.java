@@ -32,13 +32,9 @@ public class UsuarioJpaEntity {
 
     private Long idPuesto;
     private String codigoUsuario;
-    private String contrasena;
-    private String perfil;
-    private String nombres;
-    private String apellidos;
+    private String keycloakId;
     private String dui;
     private Integer estado;
-    private String telefono;
     private String ip;
 
     @Column(name = "foto")
