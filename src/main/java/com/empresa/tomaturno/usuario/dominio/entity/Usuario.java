@@ -14,13 +14,13 @@ public class Usuario {
     private Long idSucursal;
     private Long idPuesto;
     private String codigoUsuario;
-    private String contrasena;
+    private String contrasena;   
+    private String keycloakId;
     private Estado estado;
     private Auditoria auditoria;
     private DatosPersonales datosPersonales;
     private ConfiguracionOperador configuracion;
     private byte[] foto;
-    // Campos enriquecidos (no persistidos)
     private String perfilCreador;
     private String nombreSucursal;
     private String nombrePuesto;
@@ -31,11 +31,25 @@ public class Usuario {
         this.idPuesto = builder.idPuesto;
         this.codigoUsuario = builder.codigoUsuario;
         this.contrasena = builder.contrasena;
+        this.keycloakId = builder.keycloakId;
         this.estado = builder.estado;
         this.auditoria = builder.auditoria;
         this.datosPersonales = builder.datosPersonales;
         this.configuracion = builder.configuracion;
         this.foto = builder.foto;
+    }
+
+
+      public void asignarDatosKeycloak(String codigoUsuario,
+            DatosPersonales datosPersonales, String perfil) {
+        this.codigoUsuario = codigoUsuario;
+        this.datosPersonales = datosPersonales;
+        this.configuracion.asignarPerfil(perfil);
+    }
+
+    public void asignarNombresKeycloak(String codigoUsuario, DatosPersonales datosPersonales) {
+        this.codigoUsuario = codigoUsuario;
+        this.datosPersonales = datosPersonales;
     }
 
     public static Builder builder() {
@@ -65,6 +79,8 @@ public class Usuario {
         validarCreacion();
     }
 
+
+  
     public void modificar(Long idPuesto,
             Estado estado, DatosPersonales datosPersonales,
             ConfiguracionOperador configuracion, String usuarioModificador) {
@@ -92,6 +108,10 @@ public class Usuario {
 
     public void asignarIdentificador(Long identificador) {
         this.identificador = identificador;
+    }
+
+    public void asignarKeycloakId(String keycloakId) {
+        this.keycloakId = keycloakId;
     }
 
     private void asignarContrasenaHasheada(String hash) {
@@ -150,8 +170,6 @@ public class Usuario {
     private void validarCreacion() {
         if (this.codigoUsuario == null || this.codigoUsuario.isBlank())
             throw new UsuarioValidationException("El código de usuario es obligatorio");
-        if (this.contrasena == null || this.contrasena.isBlank())
-            throw new UsuarioValidationException("La contraseña es obligatoria");
         if (this.idSucursal == null)
             throw new UsuarioValidationException("La sucursal es obligatoria");
         if (this.estado == null)
@@ -187,6 +205,10 @@ public class Usuario {
 
     public String getContrasena() {
         return contrasena;
+    }
+
+    public String getKeycloakId() {
+        return keycloakId;
     }
 
     public Estado getEstado() {
@@ -264,6 +286,7 @@ public class Usuario {
         private Long idPuesto;
         private String codigoUsuario;
         private String contrasena;
+        private String keycloakId;
         private Estado estado;
         private Auditoria auditoria;
         private DatosPersonales datosPersonales;
@@ -295,6 +318,11 @@ public class Usuario {
 
         public Builder contrasena(String contrasena) {
             this.contrasena = contrasena;
+            return this;
+        }
+
+        public Builder keycloakId(String keycloakId) {
+            this.keycloakId = keycloakId;
             return this;
         }
 

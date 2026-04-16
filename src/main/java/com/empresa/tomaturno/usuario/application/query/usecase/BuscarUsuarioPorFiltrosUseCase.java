@@ -13,7 +13,7 @@ public class BuscarUsuarioPorFiltrosUseCase {
         this.queryRepository = queryRepository;
     }
 
-    public List<Usuario> ejecutar(Long idSucursal, String codigoUsuario, String nombre) {
-        return queryRepository.buscarPorFiltro(idSucursal, codigoUsuario, nombre);
+    public List<Usuario> ejecutar(Long idSucursal, String codigoUsuario) {
+        return queryRepository.buscarPorFiltro(idSucursal, codigoUsuario);
     }
 }

@@ -21,9 +21,9 @@ public interface UsuarioInputMapper {
                 dto.getPerfil(), dto.getIp(), dto.getCorrelativo(), dto.getAtenderCasosEspeciales());
         Usuario usuario = Usuario.inicializar(
                 dto.getIdSucursal(), dto.getIdPuesto(), null,
-                null, dto.getEstado() != null ? Estado.fromCodigo(dto.getEstado()) : null,
+                dto.getContrasena(), dto.getEstado() != null ? Estado.fromCodigo(dto.getEstado()) : null,
                 datos, config);
-        if (dto.getPerfilCreador() != null)
+        if (dto.getPerfilCreador() != null && !dto.getPerfilCreador().isBlank())
             usuario.asignarPerfilCreador(dto.getPerfilCreador());
         return usuario;
     }
