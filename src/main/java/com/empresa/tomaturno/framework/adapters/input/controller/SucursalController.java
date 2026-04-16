@@ -18,12 +18,16 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 
 @Path("/sucursal")
 @Tag(name = "Sucursal", description = "Operaciones para la gestión de sucursales")
 public class SucursalController {
+
+    private static final String USUARIO_DEFAULT = "sistema";
 
     private final SucursalCommandInputPort sucursalCommandInputPort;
     private final SucursalInputMapper sucursalInputMapper;
@@ -31,16 +35,25 @@ public class SucursalController {
     private final SucursalQueryInputPort sucursalQueryInputPort;
     private final ConfiguracionDefaultBean configuracionDefaultBean;
 
+    @Context
+    SecurityContext securityContext;
+
     public SucursalController(SucursalCommandInputPort sucursalCommandInputPort,
-                                     SucursalInputMapper sucursalInputMapper,
-                                     TurnoWebSocket turnoWebSocket,
-                                     SucursalQueryInputPort sucursalQueryInputPort,
-                                     ConfiguracionDefaultBean configuracionDefaultBean) {
+            SucursalInputMapper sucursalInputMapper,
+            TurnoWebSocket turnoWebSocket,
+            SucursalQueryInputPort sucursalQueryInputPort,
+            ConfiguracionDefaultBean configuracionDefaultBean) {
         this.sucursalCommandInputPort = sucursalCommandInputPort;
         this.sucursalInputMapper = sucursalInputMapper;
         this.turnoWebSocket = turnoWebSocket;
         this.sucursalQueryInputPort = sucursalQueryInputPort;
         this.configuracionDefaultBean = configuracionDefaultBean;
+    }
+
+    private String usuarioActual() {
+        return securityContext != null && securityContext.getUserPrincipal() != null
+                ? securityContext.getUserPrincipal().getName()
+                : USUARIO_DEFAULT;
     }
 
     @POST
@@ -52,8 +65,9 @@ public class SucursalController {
     @APIResponse(responseCode = "201", description = "Sucursal creada exitosamente")
     @APIResponse(responseCode = "400", description = "Datos de la sucursal inválidos")
     public Response crearSucursal(@Valid SucursalRequestDTO sucursalRequestDTO) {
+        String usuarioActual = usuarioActual();
         Sucursal sucursal = sucursalInputMapper.toSucursal(sucursalRequestDTO);
-        Sucursal sucursalCreada = sucursalCommandInputPort.crear(sucursal, sucursalRequestDTO.getUsuario());
+        Sucursal sucursalCreada = sucursalCommandInputPort.crear(sucursal, usuarioActual);
         configuracionDefaultBean.crearConfiguracionesParaSucursal(sucursalCreada.getIdentificador());
         if (turnoWebSocket != null) {
             turnoWebSocket.enviarTurno("Se ha creado una nueva sucursal");
@@ -71,10 +85,12 @@ public class SucursalController {
     @APIResponse(responseCode = "200", description = "Sucursal modificada exitosamente")
     @APIResponse(responseCode = "400", description = "Datos inválidos")
     @APIResponse(responseCode = "404", description = "Sucursal no encontrada")
-    public Response modificarSucursal(@Parameter(description = "ID de la sucursal a modificar", required = true) @QueryParam("id") Long id,
-                                      @Valid SucursalRequestDTO sucursalRequestDTO) {
+    public Response modificarSucursal(
+            @Parameter(description = "ID de la sucursal a modificar", required = true) @QueryParam("id") Long id,
+            @Valid SucursalRequestDTO sucursalRequestDTO) {
+        String usuarioActual = usuarioActual();
         Sucursal sucursalDatosNuevos = sucursalInputMapper.toSucursal(sucursalRequestDTO);
-        Sucursal sucursalModificada = sucursalCommandInputPort.actualizar(id, sucursalDatosNuevos, sucursalRequestDTO.getUsuario());
+        Sucursal sucursalModificada = sucursalCommandInputPort.actualizar(id, sucursalDatosNuevos, usuarioActual);
         SucursalResponseDTO responseDTO = sucursalInputMapper.toSucursalResponseDTO(sucursalModificada);
         return Response.ok(responseDTO).build();
     }
@@ -96,7 +112,8 @@ public class SucursalController {
     @Operation(summary = "Obtener sucursal por ID", description = "Retorna una sucursal específica por su identificador")
     @APIResponse(responseCode = "200", description = "Sucursal encontrada")
     @APIResponse(responseCode = "404", description = "Sucursal no encontrada")
-    public SucursalResponseDTO obtenerSucursalPorId(@Parameter(description = "ID de la sucursal", required = true) @PathParam("id") Long id) {
+    public SucursalResponseDTO obtenerSucursalPorId(
+            @Parameter(description = "ID de la sucursal", required = true) @PathParam("id") Long id) {
         Sucursal sucursal = sucursalQueryInputPort.buscarPorId(id);
         return sucursalInputMapper.toSucursalResponseDTO(sucursal);
     }
@@ -106,7 +123,8 @@ public class SucursalController {
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Buscar sucursales por nombre", description = "Retorna las sucursales que coincidan con el nombre proporcionado")
     @APIResponse(responseCode = "200", description = "Lista de sucursales encontradas")
-    public List<SucursalResponseDTO> obtenerSucursalesPorNombre(@Parameter(description = "Nombre o parte del nombre de la sucursal") @QueryParam("nombre") String nombre) {
+    public List<SucursalResponseDTO> obtenerSucursalesPorNombre(
+            @Parameter(description = "Nombre o parte del nombre de la sucursal") @QueryParam("nombre") String nombre) {
         List<Sucursal> lstSucursales = sucursalQueryInputPort.buscarPorNombre(nombre);
         return lstSucursales.stream().map(sucursalInputMapper::toSucursalResponseDTO).toList();
     }

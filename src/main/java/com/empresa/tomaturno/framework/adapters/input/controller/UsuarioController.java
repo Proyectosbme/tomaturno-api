@@ -12,8 +12,10 @@ import com.empresa.tomaturno.usuario.dominio.entity.Usuario;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 
 import org.jboss.resteasy.reactive.RestForm;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
@@ -21,9 +23,14 @@ import org.jboss.resteasy.reactive.multipart.FileUpload;
 @Path("/usuarios")
 public class UsuarioController {
 
+    private static final String USUARIO_DEFAULT = "sistema";
+
     private final UsuarioCommandInputPort commandPort;
     private final UsuarioQueryInputPort queryPort;
     private final UsuarioInputMapper mapper;
+
+    @Context
+    SecurityContext securityContext;
 
     public UsuarioController(UsuarioCommandInputPort commandPort,
                               UsuarioQueryInputPort queryPort,
@@ -33,14 +40,19 @@ public class UsuarioController {
         this.mapper = mapper;
     }
 
+    private String usuarioActual() {
+        return securityContext != null && securityContext.getUserPrincipal() != null
+                ? securityContext.getUserPrincipal().getName()
+                : USUARIO_DEFAULT;
+    }
+
     @GET
     @Path("/buscar")
     @Produces(MediaType.APPLICATION_JSON)
     public List<UsuarioResponseDTO> buscar(
             @QueryParam("idSucursal") Long idSucursal,
-            @QueryParam("codigoUsuario") String codigoUsuario,
-            @QueryParam("nombre") String nombre) {
-        List<Usuario> usuarios = queryPort.buscarPorFiltro(idSucursal, codigoUsuario, nombre);
+            @QueryParam("codigoUsuario") String codigoUsuario) {
+        List<Usuario> usuarios = queryPort.buscarPorFiltro(idSucursal, codigoUsuario);
         return usuarios.stream().map(mapper::toResponse).toList();
     }
 
@@ -61,7 +73,7 @@ public class UsuarioController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response crear(@Valid UsuarioRequestDTO dto) {
         Usuario usuario = mapper.toDomain(dto);
-        usuario = commandPort.crear(usuario, dto.getUsuario());
+        usuario = commandPort.crear(usuario, usuarioActual());
         return Response.status(Response.Status.CREATED).entity(mapper.toResponse(usuario)).build();
     }
 
@@ -75,7 +87,7 @@ public class UsuarioController {
             @PathParam("idSucursal") Long idSucursal,
             @Valid UsuarioRequestDTO dto) {
         Usuario datosNuevos = mapper.toDomain(dto);
-        Usuario actualizado = commandPort.actualizar(idUsuario, idSucursal, datosNuevos, dto.getUsuario());
+        Usuario actualizado = commandPort.actualizar(idUsuario, idSucursal, datosNuevos, usuarioActual());
         return Response.ok(mapper.toResponse(actualizado)).build();
     }
 

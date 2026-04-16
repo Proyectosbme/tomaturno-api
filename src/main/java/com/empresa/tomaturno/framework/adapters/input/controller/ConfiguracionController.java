@@ -12,15 +12,22 @@ import com.empresa.tomaturno.framework.adapters.input.mapper.ConfiguracionInputM
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 
 @Path("/configuraciones")
 public class ConfiguracionController {
 
+    private static final String USUARIO_DEFAULT = "sistema";
+
     private final ConfiguracionCommandInputPort commandPort;
     private final ConfiguracionQueryInputPort queryPort;
     private final ConfiguracionInputMapper mapper;
+
+    @Context
+    SecurityContext securityContext;
 
     public ConfiguracionController(ConfiguracionCommandInputPort commandPort,
                                    ConfiguracionQueryInputPort queryPort,
@@ -28,6 +35,12 @@ public class ConfiguracionController {
         this.commandPort = commandPort;
         this.queryPort = queryPort;
         this.mapper = mapper;
+    }
+
+    private String usuarioActual() {
+        return securityContext != null && securityContext.getUserPrincipal() != null
+                ? securityContext.getUserPrincipal().getName()
+                : USUARIO_DEFAULT;
     }
 
     @GET
@@ -55,7 +68,7 @@ public class ConfiguracionController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response crear(@Valid ConfiguracionRequestDTO dto) {
         Configuracion configuracion = mapper.toDomain(dto);
-        configuracion = commandPort.crear(configuracion, dto.getUsuario());
+        configuracion = commandPort.crear(configuracion, usuarioActual());
         return Response.status(Response.Status.CREATED).entity(mapper.toResponse(configuracion)).build();
     }
 
@@ -69,7 +82,7 @@ public class ConfiguracionController {
             @PathParam("idSucursal") Long idSucursal,
             @Valid ConfiguracionRequestDTO dto) {
         Configuracion datosNuevos = mapper.toDomain(dto);
-        Configuracion actualizado = commandPort.actualizar(idConfiguracion, idSucursal, datosNuevos, dto.getUsuario());
+        Configuracion actualizado = commandPort.actualizar(idConfiguracion, idSucursal, datosNuevos, usuarioActual());
         return Response.ok(mapper.toResponse(actualizado)).build();
     }
 }

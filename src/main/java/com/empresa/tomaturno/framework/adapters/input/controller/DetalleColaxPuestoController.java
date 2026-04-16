@@ -12,15 +12,22 @@ import com.empresa.tomaturno.framework.adapters.input.mapper.DetalleColaxPuestoI
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 
 @Path("/detallecolaxpuesto")
 public class DetalleColaxPuestoController {
 
+    private static final String USUARIO_DEFAULT = "sistema";
+
     private final DetalleColaxPuestoCommandInputPort commandPort;
     private final DetalleColaxPuestoQueryInputPort queryPort;
     private final DetalleColaxPuestoInputMapper mapper;
+
+    @Context
+    SecurityContext securityContext;
 
     public DetalleColaxPuestoController(DetalleColaxPuestoCommandInputPort commandPort,
                                          DetalleColaxPuestoQueryInputPort queryPort,
@@ -28,6 +35,12 @@ public class DetalleColaxPuestoController {
         this.commandPort = commandPort;
         this.queryPort = queryPort;
         this.mapper = mapper;
+    }
+
+    private String usuarioActual() {
+        return securityContext != null && securityContext.getUserPrincipal() != null
+                ? securityContext.getUserPrincipal().getName()
+                : USUARIO_DEFAULT;
     }
 
     @GET
@@ -46,7 +59,7 @@ public class DetalleColaxPuestoController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response asignar(@Valid DetalleColaxPuestoRequestDTO dto) {
         DetalleColaxPuesto domain = mapper.toDomain(dto);
-        DetalleColaxPuesto resultado = commandPort.asignar(domain, dto.getUsuario());
+        DetalleColaxPuesto resultado = commandPort.asignar(domain, usuarioActual());
         return Response.status(Response.Status.CREATED).entity(mapper.toResponse(resultado)).build();
     }
 
