@@ -49,9 +49,8 @@ public class UsuarioJpaRepository implements PanacheRepositoryBase<UsuarioJpaEnt
         return find("dui", dui).firstResult();
     }
 
-    public List<UsuarioJpaEntity> buscarPorFiltros(Long idSucursal, String codigoUsuario, String nombre) {
-        if (idSucursal == null && (codigoUsuario == null || codigoUsuario.isBlank())
-                && (nombre == null || nombre.isBlank())) {
+    public List<UsuarioJpaEntity> buscarPorFiltros(Long idSucursal, String codigoUsuario) {
+        if (idSucursal == null && (codigoUsuario == null || codigoUsuario.isBlank())) {
             return List.of();
         }
 
@@ -64,14 +63,8 @@ public class UsuarioJpaRepository implements PanacheRepositoryBase<UsuarioJpaEnt
             params.add(idSucursal);
         }
         if (codigoUsuario != null && !codigoUsuario.isBlank()) {
-            query.append(" and upper(codigoUsuario) like ?").append(paramIndex++);
+            query.append(" and upper(codigoUsuario) like ?").append(paramIndex);
             params.add("%" + codigoUsuario.toUpperCase() + "%");
-        }
-        if (nombre != null && !nombre.isBlank()) {
-            query.append(" and (upper(nombres) like ?").append(paramIndex)
-                    .append(" or upper(apellidos) like ?").append(paramIndex).append(")");
-            params.add("%" + nombre.toUpperCase() + "%");
-            paramIndex++;
         }
 
         return list(query.toString(), params.toArray());

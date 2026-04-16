@@ -47,4 +47,7 @@ public class UsuarioRequestDTO extends AuditRequestDTO {
 
     @Size(max = 20)
     private String perfilCreador;
+
+    @Size(max = 100)
+    private String contrasena;
 }

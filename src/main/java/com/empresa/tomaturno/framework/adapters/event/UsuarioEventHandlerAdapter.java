@@ -27,15 +27,17 @@ public class UsuarioEventHandlerAdapter {
     @ConsumeEvent("sucursal.creada")
     public void onSucursalCreada(SucursalCreadaEvent event) {
         Long idSucursal = event.getSucursalId();
-        crearUsuario(idSucursal, "publico", "publico", "PUBLICO", "Usuario", "Publico");
-        crearUsuario(idSucursal, "monitor", "monitor", "MONITOR", "Usuario", "Monitor");
+        crearUsuario(idSucursal, "publico", "PUBLICO", "Usuario", "Publico");
+        crearUsuario(idSucursal, "monitor", "MONITOR", "Usuario", "Monitor");
+        crearUsuario(idSucursal, "admin", "ADMIN", "Usuario", "Admin");
     }
 
-    private void crearUsuario(Long idSucursal, String codigo, String contrasena,
-                              String perfil, String nombres, String apellidos) {
+    private void crearUsuario(Long idSucursal, String codigoBase, String perfil,
+            String nombres, String apellidos) {
+        String codigo =  codigoBase+"-"+idSucursal;
         DatosPersonales datos = DatosPersonales.crear(nombres, apellidos, null, null);
         ConfiguracionOperador config = ConfiguracionOperador.crear(perfil, null, null, null);
-        Usuario usuario = Usuario.inicializar(idSucursal, null, codigo, contrasena, Estado.ACTIVO, datos, config);
+        Usuario usuario = Usuario.inicializar(idSucursal, null, codigo, codigo, Estado.ACTIVO, datos, config);
         usuario.asignarPerfilCreador("ADMIN");
         usuarioCommandInputPort.crear(usuario, "sistema");
     }
