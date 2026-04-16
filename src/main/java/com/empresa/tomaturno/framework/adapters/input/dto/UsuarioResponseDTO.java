@@ -15,6 +15,7 @@ public class UsuarioResponseDTO {
 
     private Long id;
     private Long idSucursal;
+    private String keycloakId;
     private Integer correlativo;
     private Integer atenderCasosEspeciales;
     private String nombreSucursal;

@@ -25,8 +25,8 @@ public class UsuarioQueryService implements UsuarioQueryInputPort {
     }
 
     @Override
-    public List<Usuario> buscarPorFiltro(Long idSucursal, String codigoUsuario, String nombre) {
-        return buscarPorFiltrosUseCase.ejecutar(idSucursal, codigoUsuario, nombre);
+    public List<Usuario> buscarPorFiltro(Long idSucursal, String codigoUsuario) {
+        return buscarPorFiltrosUseCase.ejecutar(idSucursal, codigoUsuario);
     }
 
     @Override

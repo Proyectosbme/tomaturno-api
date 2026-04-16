@@ -11,6 +11,7 @@ import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.Usuar
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.PuestoJpaRepository;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.SucursalJpaRepository;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.UsuarioJpaRepository;
+import com.empresa.tomaturno.usuario.application.command.port.output.KeycloakAdminPort;
 import com.empresa.tomaturno.usuario.application.query.port.output.UsuarioQueryRepository;
 import com.empresa.tomaturno.usuario.dominio.entity.Usuario;
 
@@ -23,15 +24,18 @@ public class UsuarioQueryJpaAdapters implements UsuarioQueryRepository {
     private final UsuarioOutputMapper usuarioOutputMapper;
     private final SucursalJpaRepository sucursalJpaRepository;
     private final PuestoJpaRepository puestoJpaRepository;
+    private final KeycloakAdminPort keycloakAdminPort;
 
     public UsuarioQueryJpaAdapters(UsuarioJpaRepository usuarioJpaRepository,
             UsuarioOutputMapper usuarioOutputMapper,
             SucursalJpaRepository sucursalJpaRepository,
-            PuestoJpaRepository puestoJpaRepository) {
+            PuestoJpaRepository puestoJpaRepository,
+            KeycloakAdminPort keycloakAdminPort) {
         this.usuarioJpaRepository = usuarioJpaRepository;
         this.usuarioOutputMapper = usuarioOutputMapper;
         this.sucursalJpaRepository = sucursalJpaRepository;
         this.puestoJpaRepository = puestoJpaRepository;
+        this.keycloakAdminPort = keycloakAdminPort;
     }
 
     @Override
@@ -45,8 +49,8 @@ public class UsuarioQueryJpaAdapters implements UsuarioQueryRepository {
     }
 
     @Override
-    public List<Usuario> buscarPorFiltro(Long idSucursal, String codigoUsuario, String nombre) {
-        List<UsuarioJpaEntity> entities = usuarioJpaRepository.buscarPorFiltros(idSucursal, codigoUsuario, nombre);
+    public List<Usuario> buscarPorFiltro(Long idSucursal, String codigoUsuario) {
+        List<UsuarioJpaEntity> entities = usuarioJpaRepository.buscarPorFiltros(idSucursal, codigoUsuario);
         if (entities.isEmpty())
             return List.of();
 
@@ -58,6 +62,7 @@ public class UsuarioQueryJpaAdapters implements UsuarioQueryRepository {
         return usuarios;
     }
 
+    
     @Override
     public String existeCodigoEnSucursal(Long idSucursal, String codigoUsuario) {
         return generarCodigoDisponible(idSucursal, codigoUsuario, 1);
@@ -131,5 +136,7 @@ public class UsuarioQueryJpaAdapters implements UsuarioQueryRepository {
                         u.getIdPuesto() * 10000L + u.getIdSucursal(), ""));
             }
         });
+
+         keycloakAdminPort.enriquecerUsuarios(usuarios);
     }
 }

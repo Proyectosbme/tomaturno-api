@@ -33,12 +33,11 @@ public interface UsuarioOutputMapper {
                 .idSucursal(e.getIdpk().getIdSucursal())
                 .idPuesto(e.getIdPuesto())
                 .codigoUsuario(e.getCodigoUsuario())
-                .contrasena(e.getContrasena())
+                .keycloakId(e.getKeycloakId())
                 .estado(Estado.fromCodigo(e.getEstado()))
-                .datosPersonales(DatosPersonales.reconstituir(
-                        e.getNombres(), e.getApellidos(), e.getDui(), e.getTelefono()))
+                .datosPersonales(DatosPersonales.reconstituir(null, null, e.getDui(), null))
                 .configuracion(ConfiguracionOperador.reconstituir(
-                        e.getPerfil(), e.getIp(), e.getCorrelativo(), e.getAtenderCasosEspeciales()))
+                        null, e.getIp(), e.getCorrelativo(), e.getAtenderCasosEspeciales()))
                 .auditoria(Auditoria.reconstituir(
                         e.getUserCreacion(), e.getFechaCreacion(),
                         e.getUserModificacion(), e.getFechaModificacion()))

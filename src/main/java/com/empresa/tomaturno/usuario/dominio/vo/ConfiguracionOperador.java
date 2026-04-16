@@ -4,7 +4,7 @@ import com.empresa.tomaturno.usuario.dominio.exceptions.UsuarioValidationExcepti
 
 public class ConfiguracionOperador {
 
-    private final String perfil;
+    private  String perfil;
     private final String ip;
     private final Integer correlativo;
     private final Integer atenderCasosEspeciales;
@@ -30,6 +30,11 @@ public class ConfiguracionOperador {
         return new ConfiguracionOperador(perfil, ip, correlativo, atenderCasosEspeciales);
     }
 
+    public void asignarPerfil(String perfil) {
+        if (perfil == null || perfil.isBlank())
+            throw new UsuarioValidationException("El perfil es obligatorio");
+        this.perfil = perfil;
+    }
     public String getPerfil() {
         return perfil;
     }
