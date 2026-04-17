@@ -75,6 +75,7 @@ public class UsuarioController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+      @RolesAllowed({"ADMIN"})
     public Response crear(@Valid UsuarioRequestDTO dto) {
         Usuario usuario = mapper.toDomain(dto);
         usuario = commandPort.crear(usuario, usuarioActual());
@@ -86,6 +87,7 @@ public class UsuarioController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"ADMIN"})
     public Response modificar(
             @PathParam("idUsuario") Long idUsuario,
             @PathParam("idSucursal") Long idSucursal,
