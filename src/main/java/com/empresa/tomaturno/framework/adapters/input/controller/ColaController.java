@@ -1,5 +1,6 @@
 package com.empresa.tomaturno.framework.adapters.input.controller;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -21,7 +22,10 @@ import com.empresa.tomaturno.framework.adapters.input.dto.ColaResponseDTO;
 import com.empresa.tomaturno.framework.adapters.input.dto.DetalleRequestDTO;
 import com.empresa.tomaturno.framework.adapters.input.mapper.ColaInputMapper;
 
+import io.quarkus.security.Authenticated;
+
 @Path("/colas")
+@Authenticated
 public class ColaController {
 
     private static final String USUARIO_DEFAULT = "sistema";
@@ -92,6 +96,7 @@ public class ColaController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"ADMIN"})
     public Response crearCola(@Valid ColaRequestDTO colaRequestDTO) {
         Cola cola = colaInputMapper.toDomain(colaRequestDTO);
         cola = colaCommandInputPort.crear(cola, usuarioActual());
@@ -104,6 +109,7 @@ public class ColaController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"ADMIN"})
     public Response modificarCola(
             @PathParam("idCola") Long idCola,
             @PathParam("idSucursal") Long idSucursal,
@@ -118,6 +124,7 @@ public class ColaController {
     @Transactional
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"ADMIN"})
     public Response crearDetalle(
             @PathParam("idCola") Long idCola,
             @PathParam("idSucursal") Long idSucursal,
@@ -132,6 +139,7 @@ public class ColaController {
     @Path("/replicar")
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"ADMIN"})
     public Response replicarColas(
             @QueryParam("idOrigen") Long idOrigen,
             @QueryParam("idDestino") Long idDestino,

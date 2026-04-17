@@ -9,6 +9,8 @@ import com.empresa.tomaturno.framework.adapters.input.dto.ConfiguracionRequestDT
 import com.empresa.tomaturno.framework.adapters.input.dto.ConfiguracionResponseDTO;
 import com.empresa.tomaturno.framework.adapters.input.mapper.ConfiguracionInputMapper;
 
+import io.quarkus.security.Authenticated;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -18,6 +20,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 
 @Path("/configuraciones")
+@Authenticated
 public class ConfiguracionController {
 
     private static final String USUARIO_DEFAULT = "sistema";
@@ -66,6 +69,7 @@ public class ConfiguracionController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"ADMIN"})
     public Response crear(@Valid ConfiguracionRequestDTO dto) {
         Configuracion configuracion = mapper.toDomain(dto);
         configuracion = commandPort.crear(configuracion, usuarioActual());
@@ -77,6 +81,7 @@ public class ConfiguracionController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"ADMIN"})
     public Response modificar(
             @PathParam("idConfiguracion") Long idConfiguracion,
             @PathParam("idSucursal") Long idSucursal,

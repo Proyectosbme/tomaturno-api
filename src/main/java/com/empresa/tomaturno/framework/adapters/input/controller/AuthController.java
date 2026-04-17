@@ -5,6 +5,7 @@ import com.empresa.tomaturno.framework.adapters.input.mapper.UsuarioInputMapper;
 import com.empresa.tomaturno.usuario.application.query.port.input.UsuarioQueryInputPort;
 import com.empresa.tomaturno.usuario.dominio.entity.Usuario;
 
+import io.quarkus.security.Authenticated;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -34,6 +35,7 @@ public class AuthController {
     @GET
     @Path("/perfil")
     @Produces(MediaType.APPLICATION_JSON)
+    @Authenticated
     public Response perfil() {
         if (securityContext.getUserPrincipal() == null) {
             return Response.status(Response.Status.UNAUTHORIZED).build();

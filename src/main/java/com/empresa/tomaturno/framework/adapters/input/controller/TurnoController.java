@@ -14,6 +14,7 @@ import com.empresa.tomaturno.turno.application.command.port.input.TurnoCommandIn
 import com.empresa.tomaturno.turno.application.query.port.input.TurnoQueryInputPort;
 import com.empresa.tomaturno.turno.dominio.entity.Turno;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -41,6 +42,7 @@ public class TurnoController {
     @GET
     @Path("/buscar")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"OPERADOR", "ADMIN"})
     public List<TurnoResponseDTO> buscar(
             @QueryParam("idSucursal") Long idSucursal,
             @QueryParam("idCola") Long idCola,
@@ -60,6 +62,7 @@ public class TurnoController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"PUBLICO", "ADMIN"})
     public Response crear(@Valid CrearTurnoRequestDTO dto) {
         Turno turno = turnoCommandInputPort.crear(dto.getIdSucursal(), dto.getIdCola(), dto.getIdDetalle(), dto.getIdPersona(), dto.getTipoCasoEspecial());
         turnoWebSocket.enviarTurno("{\"event\":\"TURNO_CREADO\",\"idSucursal\":" + dto.getIdSucursal() + "}");
@@ -72,6 +75,7 @@ public class TurnoController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"OPERADOR", "ADMIN"})
     public Response llamarSiguiente(@Valid LlamarSiguienteTurnoRequestDTO dto) {
         Turno turno = turnoCommandInputPort.llamarSiguiente(
                 dto.getIdSucursal(), dto.getIdPuesto(), dto.getIdSucursalPuesto(), dto.getIdUsuario());
@@ -84,6 +88,7 @@ public class TurnoController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"OPERADOR", "ADMIN"})
     public Response llamar(
             @PathParam("idSucursal") Long idSucursal,
             @PathParam("codigoTurno") String codigoTurno,
@@ -101,6 +106,7 @@ public class TurnoController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"OPERADOR", "ADMIN"})
     public Response reasignar(
             @PathParam("idSucursal") Long idSucursal,
             @PathParam("codigoTurno") String codigoTurno,
@@ -117,6 +123,7 @@ public class TurnoController {
     @Path("/{idSucursal}/{codigoTurno}/sin-atender")
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"OPERADOR", "ADMIN"})
     public Response sinAtender(
             @PathParam("idSucursal") Long idSucursal,
             @PathParam("codigoTurno") String codigoTurno,
@@ -131,6 +138,7 @@ public class TurnoController {
     @Path("/{idSucursal}/{codigoTurno}/finalizar")
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"OPERADOR", "ADMIN"})
     public Response finalizar(
             @PathParam("idSucursal") Long idSucursal,
             @PathParam("codigoTurno") String codigoTurno,
@@ -146,6 +154,7 @@ public class TurnoController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"OPERADOR", "ADMIN"})
     public Response rellamar(
             @PathParam("idSucursal") Long idSucursal,
             @PathParam("codigoTurno") String codigoTurno,

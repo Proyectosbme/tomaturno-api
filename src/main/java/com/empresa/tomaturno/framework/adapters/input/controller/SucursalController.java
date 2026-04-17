@@ -10,11 +10,14 @@ import com.empresa.tomaturno.sucursal.application.command.port.input.SucursalCom
 import com.empresa.tomaturno.sucursal.application.query.port.input.SucursalQueryInputPort;
 import com.empresa.tomaturno.sucursal.dominio.entity.Sucursal;
 
+import io.quarkus.security.Authenticated;
+
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -64,6 +67,7 @@ public class SucursalController {
     @Operation(summary = "Crear sucursal", description = "Registra una nueva sucursal en el sistema y crea su configuración por defecto")
     @APIResponse(responseCode = "201", description = "Sucursal creada exitosamente")
     @APIResponse(responseCode = "400", description = "Datos de la sucursal inválidos")
+    @RolesAllowed({"ADMIN"})
     public Response crearSucursal(@Valid SucursalRequestDTO sucursalRequestDTO) {
         String usuarioActual = usuarioActual();
         Sucursal sucursal = sucursalInputMapper.toSucursal(sucursalRequestDTO);
@@ -85,6 +89,7 @@ public class SucursalController {
     @APIResponse(responseCode = "200", description = "Sucursal modificada exitosamente")
     @APIResponse(responseCode = "400", description = "Datos inválidos")
     @APIResponse(responseCode = "404", description = "Sucursal no encontrada")
+    @RolesAllowed({"ADMIN"})
     public Response modificarSucursal(
             @Parameter(description = "ID de la sucursal a modificar", required = true) @QueryParam("id") Long id,
             @Valid SucursalRequestDTO sucursalRequestDTO) {
@@ -112,6 +117,7 @@ public class SucursalController {
     @Operation(summary = "Obtener sucursal por ID", description = "Retorna una sucursal específica por su identificador")
     @APIResponse(responseCode = "200", description = "Sucursal encontrada")
     @APIResponse(responseCode = "404", description = "Sucursal no encontrada")
+    @Authenticated
     public SucursalResponseDTO obtenerSucursalPorId(
             @Parameter(description = "ID de la sucursal", required = true) @PathParam("id") Long id) {
         Sucursal sucursal = sucursalQueryInputPort.buscarPorId(id);
@@ -123,6 +129,7 @@ public class SucursalController {
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Buscar sucursales por nombre", description = "Retorna las sucursales que coincidan con el nombre proporcionado")
     @APIResponse(responseCode = "200", description = "Lista de sucursales encontradas")
+    @Authenticated
     public List<SucursalResponseDTO> obtenerSucursalesPorNombre(
             @Parameter(description = "Nombre o parte del nombre de la sucursal") @QueryParam("nombre") String nombre) {
         List<Sucursal> lstSucursales = sucursalQueryInputPort.buscarPorNombre(nombre);
