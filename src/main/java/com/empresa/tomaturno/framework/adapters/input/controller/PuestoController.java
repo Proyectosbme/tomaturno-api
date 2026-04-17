@@ -9,6 +9,8 @@ import com.empresa.tomaturno.puesto.application.command.port.input.PuestoCommand
 import com.empresa.tomaturno.puesto.application.query.port.input.PuestoQueryInputPort;
 import com.empresa.tomaturno.puesto.dominio.entity.Puesto;
 
+import io.quarkus.security.Authenticated;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -56,6 +58,7 @@ public class PuestoController {
     @GET
     @Path("/{idPuesto}/sucursal/{idSucursal}")
     @Produces(MediaType.APPLICATION_JSON)
+    @Authenticated
     public Response buscarPorId(
             @PathParam("idPuesto") Long idPuesto,
             @PathParam("idSucursal") Long idSucursal) {
@@ -68,6 +71,7 @@ public class PuestoController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({ "ADMIN"})
     public Response crearPuesto(@Valid PuestoRequestDTO dto) {
         Puesto puesto = puestoInputMapper.toDomain(dto);
         puesto = puestoCommandInputPort.crear(puesto, usuarioActual());
@@ -80,6 +84,7 @@ public class PuestoController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({ "ADMIN"})
     public Response modificarPuesto(
             @PathParam("idPuesto") Long idPuesto,
             @PathParam("idSucursal") Long idSucursal,

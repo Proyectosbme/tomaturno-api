@@ -6,6 +6,7 @@ import com.empresa.tomaturno.empresa.dominio.entity.Empresa;
 import com.empresa.tomaturno.framework.adapters.input.dto.EmpresaNombreRequestDTO;
 import com.empresa.tomaturno.framework.adapters.input.mapper.EmpresaInputMapper;
 
+import io.quarkus.security.Authenticated;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -16,6 +17,7 @@ import org.jboss.resteasy.reactive.RestForm;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
 
 @Path("/empresa")
+@Authenticated
 public class EmpresaController {
 
     private final EmpresaCommandInputPort commandPort;

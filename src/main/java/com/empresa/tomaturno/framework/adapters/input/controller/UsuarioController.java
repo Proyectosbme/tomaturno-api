@@ -9,6 +9,8 @@ import com.empresa.tomaturno.usuario.application.command.port.input.UsuarioComma
 import com.empresa.tomaturno.usuario.application.query.port.input.UsuarioQueryInputPort;
 import com.empresa.tomaturno.usuario.dominio.entity.Usuario;
 
+import io.quarkus.security.Authenticated;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -49,6 +51,7 @@ public class UsuarioController {
     @GET
     @Path("/buscar")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"ADMIN"})
     public List<UsuarioResponseDTO> buscar(
             @QueryParam("idSucursal") Long idSucursal,
             @QueryParam("codigoUsuario") String codigoUsuario) {
@@ -59,6 +62,7 @@ public class UsuarioController {
     @GET
     @Path("/{idUsuario}/sucursal/{idSucursal}")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"ADMIN"})
     public Response buscarPorId(
             @PathParam("idUsuario") Long idUsuario,
             @PathParam("idSucursal") Long idSucursal) {
@@ -96,6 +100,7 @@ public class UsuarioController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Authenticated
     public Response asignarFoto(@PathParam("idUsuario") Long idUsuario,
                                 @PathParam("idSucursal") Long idSucursal,
                                 @RestForm("foto") FileUpload foto) throws java.io.IOException {
@@ -107,6 +112,7 @@ public class UsuarioController {
     @GET
     @Path("/{idUsuario}/sucursal/{idSucursal}/foto")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @Authenticated
     public Response obtenerFoto(@PathParam("idUsuario") Long idUsuario,
                                 @PathParam("idSucursal") Long idSucursal) {
         byte[] foto = queryPort.obtenerFoto(idUsuario, idSucursal);
