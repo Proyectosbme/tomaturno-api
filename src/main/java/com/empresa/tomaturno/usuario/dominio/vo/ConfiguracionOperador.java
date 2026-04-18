@@ -13,7 +13,7 @@ public class ConfiguracionOperador {
         this.perfil = perfil;
         this.ip = ip;
         this.correlativo = correlativo;
-        this.atenderCasosEspeciales = atenderCasosEspeciales;
+        this.atenderCasosEspeciales = atenderCasosEspeciales == null ? 0 : atenderCasosEspeciales;
     }
 
     public static ConfiguracionOperador crear(String perfil, String ip, Integer correlativo,

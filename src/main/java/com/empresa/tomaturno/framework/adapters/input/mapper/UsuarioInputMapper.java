@@ -42,15 +42,23 @@ public interface UsuarioInputMapper {
         return usuario;
     }
 
-    @Mapping(source = "identificador", target = "id")
-    @Mapping(source = "nombreSucursal", target = "nombreSucursal")
-    @Mapping(source = "nombrePuesto", target = "nombrePuesto")
-    @Mapping(source = "auditoria.usuarioCreacion", target = "usuarioCreacion")
-    @Mapping(source = "auditoria.fechaCreacion", target = "fechaCreacion")
-    @Mapping(source = "auditoria.usuarioModificacion", target = "usuarioModificacion")
-    @Mapping(source = "auditoria.fechaModificacion", target = "fechaModificacion")
-    @Mapping(source = "estado", target = "estado", qualifiedByName = "estadoToCodigo")
-    @Mapping(source = "foto", target = "foto")
+    @Mapping(source = "identificador",                          target = "id")
+    @Mapping(source = "datosPersonales.nombres",                target = "nombres")
+    @Mapping(source = "datosPersonales.apellidos",              target = "apellidos")
+    @Mapping(source = "datosPersonales.dui",                    target = "dui")
+    @Mapping(source = "datosPersonales.telefono",               target = "telefono")
+    @Mapping(source = "configuracion.perfil",                   target = "perfil")
+    @Mapping(source = "configuracion.ip",                       target = "ip")
+    @Mapping(source = "configuracion.correlativo",              target = "correlativo")
+    @Mapping(source = "configuracion.atenderCasosEspeciales",   target = "atenderCasosEspeciales")
+    @Mapping(source = "nombreSucursal",                         target = "nombreSucursal")
+    @Mapping(source = "nombrePuesto",                           target = "nombrePuesto")
+    @Mapping(source = "auditoria.usuarioCreacion",              target = "usuarioCreacion")
+    @Mapping(source = "auditoria.fechaCreacion",                target = "fechaCreacion")
+    @Mapping(source = "auditoria.usuarioModificacion",          target = "usuarioModificacion")
+    @Mapping(source = "auditoria.fechaModificacion",            target = "fechaModificacion")
+    @Mapping(source = "estado",                                 target = "estado", qualifiedByName = "estadoToCodigo")
+    @Mapping(source = "foto",                                   target = "foto")
     UsuarioResponseDTO toResponse(Usuario usuario);
 
     @Named("estadoToCodigo")
