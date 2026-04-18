@@ -14,6 +14,7 @@ import com.empresa.tomaturno.turno.application.command.port.input.TurnoCommandIn
 import com.empresa.tomaturno.turno.application.query.port.input.TurnoQueryInputPort;
 import com.empresa.tomaturno.turno.dominio.entity.Turno;
 
+import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -42,7 +43,7 @@ public class TurnoController {
     @GET
     @Path("/buscar")
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"OPERADOR", "ADMIN"})
+    @Authenticated
     public List<TurnoResponseDTO> buscar(
             @QueryParam("idSucursal") Long idSucursal,
             @QueryParam("idCola") Long idCola,
