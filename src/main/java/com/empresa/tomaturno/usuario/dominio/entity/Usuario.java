@@ -14,7 +14,7 @@ public class Usuario {
     private Long idSucursal;
     private Long idPuesto;
     private String codigoUsuario;
-    private String contrasena;   
+    private String contrasena;
     private String keycloakId;
     private Estado estado;
     private Auditoria auditoria;
@@ -39,8 +39,7 @@ public class Usuario {
         this.foto = builder.foto;
     }
 
-
-      public void asignarDatosKeycloak(String codigoUsuario,
+    public void asignarDatosKeycloak(String codigoUsuario,
             DatosPersonales datosPersonales, String perfil) {
         this.codigoUsuario = codigoUsuario;
         this.datosPersonales = datosPersonales;
@@ -56,16 +55,25 @@ public class Usuario {
         return new Builder();
     }
 
+    public void completarRegistro() {
+        this.crearCodigoUsuario();
+        this.verificarContrasena();
+    }
+
+    private void verificarContrasena() {
+        this.contrasena = this.getContrasena() != null && !this.getContrasena().isBlank()
+                ? this.getContrasena()
+                : this.getCodigoUsuario();
+    }
     /* ── Factory methods ──────────────────────────────────────────────── */
 
     public static Usuario inicializar(Long idSucursal, Long idPuesto, String codigoUsuario,
-            String contrasena, Estado estado, DatosPersonales datosPersonales,
+            Estado estado, DatosPersonales datosPersonales,
             ConfiguracionOperador configuracion) {
         return builder()
                 .idSucursal(idSucursal)
                 .idPuesto(idPuesto)
                 .codigoUsuario(codigoUsuario)
-                .contrasena(contrasena)
                 .estado(estado)
                 .datosPersonales(datosPersonales)
                 .configuracion(configuracion)
@@ -75,12 +83,12 @@ public class Usuario {
     /* ── Comportamiento ───────────────────────────────────────────────── */
 
     public void crear(String usuarioCreador) {
+        this.crearCodigoUsuario();
+        this.verificarContrasena();
         this.auditoria = Auditoria.deCreacion(usuarioCreador, LocalDateTime.now());
         validarCreacion();
     }
 
-
-  
     public void modificar(Long idPuesto,
             Estado estado, DatosPersonales datosPersonales,
             ConfiguracionOperador configuracion, String usuarioModificador) {
@@ -114,11 +122,7 @@ public class Usuario {
         this.keycloakId = keycloakId;
     }
 
-    private void asignarContrasenaHasheada(String hash) {
-        this.contrasena = hash;
-    }
-
-    public void crearCodigoUsuario() {
+    private void crearCodigoUsuario() {
         if (this.datosPersonales == null
                 || this.datosPersonales.getNombres() == null
                 || this.datosPersonales.getApellidos() == null) {
@@ -139,10 +143,8 @@ public class Usuario {
 
     public void asignarCodigoUsuario(String codigoUsuario) {
         this.codigoUsuario = codigoUsuario;
-    }
-
-    public void crearContrasenaTemporal(String hash) {
-        asignarContrasenaHasheada(hash);
+        if (this.auditoria == null)
+            this.auditoria = Auditoria.deCreacion(this.codigoUsuario, LocalDateTime.now());
     }
 
     public void asignarFoto(byte[] foto) {
@@ -156,16 +158,15 @@ public class Usuario {
         this.perfilCreador = perfilCreador;
     }
 
-    public void enriquecerNombreSucursal(String nombreSucursal) {
+    public void asignarNombreSucursal(String nombreSucursal) {
         this.nombreSucursal = nombreSucursal;
     }
 
-    public void enriquecerNombrePuesto(String nombrePuesto) {
+    public void asignarNombrePuesto(String nombrePuesto) {
         this.nombrePuesto = nombrePuesto;
     }
 
-
-/* ── Validaciones privadas ────────────────────────────────────────── */
+    /* ── Validaciones privadas ────────────────────────────────────────── */
 
     private void validarCreacion() {
         if (this.codigoUsuario == null || this.codigoUsuario.isBlank())
@@ -174,6 +175,13 @@ public class Usuario {
             throw new UsuarioValidationException("La sucursal es obligatoria");
         if (this.estado == null)
             throw new UsuarioValidationException("El estado es obligatorio");
+        if (this.perfilCreador == null || this.perfilCreador.isBlank()) {
+            throw new UsuarioValidationException("El perfil del usuario creador es obligatorio");
+        }
+        boolean creadorAutorizado = this.perfilCreador.equalsIgnoreCase("ADMIN") ;
+        if (!creadorAutorizado) {
+            throw new UsuarioValidationException("Solo usuarios con perfil ADMIN pueden crear usuarios");
+        }
     }
 
     private void validarModificacion() {

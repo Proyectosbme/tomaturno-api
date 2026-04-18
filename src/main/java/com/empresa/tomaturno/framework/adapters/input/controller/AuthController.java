@@ -1,5 +1,6 @@
 package com.empresa.tomaturno.framework.adapters.input.controller;
 
+import com.empresa.tomaturno.framework.adapters.input.dto.UsuarioRegistroRequestDTO;
 import com.empresa.tomaturno.framework.adapters.input.dto.UsuarioRequestDTO;
 import com.empresa.tomaturno.framework.adapters.input.dto.UsuarioResponseDTO;
 import com.empresa.tomaturno.framework.adapters.input.mapper.UsuarioInputMapper;
@@ -63,8 +64,8 @@ public class AuthController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response registro(@Valid UsuarioRequestDTO dto) {
-        Usuario usuario = mapper.toDomain(dto);
+    public Response registro(@Valid UsuarioRegistroRequestDTO dto) {
+        Usuario usuario = mapper.toRegistrarDomain(dto);
         usuario = commandPort.registro(usuario);
         return Response.status(Response.Status.CREATED).entity(mapper.toResponse(usuario)).build();
     }

@@ -4,6 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
+import com.empresa.tomaturno.framework.adapters.input.dto.UsuarioRegistroRequestDTO;
 import com.empresa.tomaturno.framework.adapters.input.dto.UsuarioRequestDTO;
 import com.empresa.tomaturno.framework.adapters.input.dto.UsuarioResponseDTO;
 import com.empresa.tomaturno.shared.clases.Estado;
@@ -21,10 +22,23 @@ public interface UsuarioInputMapper {
                 dto.getPerfil(), dto.getIp(), dto.getCorrelativo(), dto.getAtenderCasosEspeciales());
         Usuario usuario = Usuario.inicializar(
                 dto.getIdSucursal(), dto.getIdPuesto(), null,
-                dto.getContrasena(), dto.getEstado() != null ? Estado.fromCodigo(dto.getEstado()) : null,
+                dto.getEstado() != null ? Estado.fromCodigo(dto.getEstado()) : null,
                 datos, config);
         if (dto.getPerfilCreador() != null && !dto.getPerfilCreador().isBlank())
             usuario.asignarPerfilCreador(dto.getPerfilCreador());
+        return usuario;
+    }
+
+    default Usuario toRegistrarDomain(UsuarioRegistroRequestDTO dto) {
+        DatosPersonales datos = DatosPersonales.crear(
+                dto.getNombres(), dto.getApellidos(), dto.getDui(), dto.getTelefono());
+        ConfiguracionOperador config = ConfiguracionOperador.crear(
+                dto.getPerfil(), null, dto.getCorrelativo(), null);
+        Usuario usuario = Usuario.inicializar(
+                dto.getIdSucursal(), dto.getIdPuesto(), null,
+                Estado.ACTIVO,
+                datos, config);
+        usuario.asignarPerfilCreador(dto.getPerfil());
         return usuario;
     }
 
