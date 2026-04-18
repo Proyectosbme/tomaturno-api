@@ -64,16 +64,16 @@ public class UsuarioQueryJpaAdapters implements UsuarioQueryRepository {
 
     
     @Override
-    public String existeCodigoEnSucursal(Long idSucursal, String codigoUsuario) {
-        return generarCodigoDisponible(idSucursal, codigoUsuario, 1);
+    public String existeCodigo(String codigoUsuario) {
+        return generarCodigoDisponible(codigoUsuario, 1);
     }
 
-    private String generarCodigoDisponible(Long idSucursal, String codigoBase, int intento) {
+    private String generarCodigoDisponible(String codigoBase, int intento) {
         String codigoPropuesto = intento == 1 ? codigoBase : codigoBase + intento;
 
-        if (usuarioJpaRepository.existeCodigoEnSucursal(idSucursal, codigoPropuesto)) {
+        if (usuarioJpaRepository.existeCodigo(codigoPropuesto)) {
             // Si ya existe, probar con el siguiente número
-            return generarCodigoDisponible(idSucursal, codigoBase, intento + 1);
+            return generarCodigoDisponible( codigoBase, intento + 1);
         }
 
         // Si no existe, devolver el código válido
@@ -130,9 +130,9 @@ public class UsuarioQueryJpaAdapters implements UsuarioQueryRepository {
                         (a, b) -> a));
 
         usuarios.forEach(u -> {
-            u.enriquecerNombreSucursal(nombresSucursales.getOrDefault(u.getIdSucursal(), ""));
+            u.asignarNombreSucursal(nombresSucursales.getOrDefault(u.getIdSucursal(), ""));
             if (u.getIdPuesto() != null) {
-                u.enriquecerNombrePuesto(nombresPuestos.getOrDefault(
+                u.asignarNombrePuesto(nombresPuestos.getOrDefault(
                         u.getIdPuesto() * 10000L + u.getIdSucursal(), ""));
             }
         });

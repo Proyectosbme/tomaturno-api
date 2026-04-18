@@ -32,9 +32,9 @@ public class UsuarioJpaRepository implements PanacheRepositoryBase<UsuarioJpaEnt
                 : null;
     }
 
-    public boolean existeCodigoEnSucursal(Long idSucursal, String codigoUsuario) {
-        return count("idpk.idSucursal = ?1 and upper(codigoUsuario) = upper(?2)",
-                idSucursal, codigoUsuario) > 0;
+    public boolean existeCodigo(String codigoUsuario) {
+        return count("upper(codigoUsuario) = upper(?1)",
+                codigoUsuario) > 0;
     }
 
     public UsuarioJpaEntity buscarPorCodigo(String codigoUsuario) {

@@ -37,7 +37,7 @@ public class UsuarioEventHandlerAdapter {
         String codigo =  codigoBase+"-"+idSucursal;
         DatosPersonales datos = DatosPersonales.crear(nombres, apellidos, null, null);
         ConfiguracionOperador config = ConfiguracionOperador.crear(perfil, null, null, null);
-        Usuario usuario = Usuario.inicializar(idSucursal, null, codigo, codigo, Estado.ACTIVO, datos, config);
+        Usuario usuario = Usuario.inicializar(idSucursal, null, codigo, Estado.ACTIVO, datos, config);
         usuario.asignarPerfilCreador("ADMIN");
         usuarioCommandInputPort.crear(usuario, "sistema");
     }

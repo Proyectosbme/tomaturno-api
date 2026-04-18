@@ -21,19 +21,9 @@ public class RegistroUsuarioUseCase {
 
     public Usuario ejecutar(Usuario usuario) {        
 
-        if (usuario.getCodigoUsuario() == null || usuario.getCodigoUsuario().isBlank()) {
-            usuario.crearCodigoUsuario();
-        }
-
-        String codigo = queryRepository.existeCodigoEnSucursal(
-                usuario.getIdSucursal(), usuario.getCodigoUsuario());
-        usuario.asignarCodigoUsuario(codigo);
-
-        // Si no se envió contraseña, usar el código de usuario como contraseña temporal
-        String contrasena = (usuario.getContrasena() != null && !usuario.getContrasena().isBlank())
-                ? usuario.getContrasena()
-                : usuario.getCodigoUsuario();
-        usuario.crear(usuario.getCodigoUsuario());
+        usuario.completarRegistro();
+        String codigo = queryRepository.existeCodigo(usuario.getCodigoUsuario());
+        usuario.asignarCodigoUsuario(codigo);       
 
         // Crear en Keycloak: nombres, apellidos, contraseña temporal, rol e idSucursal
         // Se usa `usuario` (pre-save) para nombres/apellidos/perfil porque save() reconstituye
@@ -42,12 +32,12 @@ public class RegistroUsuarioUseCase {
                 usuario.getCodigoUsuario(),
                 usuario.getNombres(),
                 usuario.getApellidos(),
-                contrasena,
+                usuario.getContrasena(),
                 usuario.getPerfil(),
                 usuario.getIdSucursal()));
         usuario.asignarKeycloakId(keycloakId);
 
         
-        return commandRepository.modificar(usuario);
+        return commandRepository.save(usuario);
     }
 }

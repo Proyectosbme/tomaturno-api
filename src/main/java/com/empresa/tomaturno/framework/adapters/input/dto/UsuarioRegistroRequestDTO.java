@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UsuarioRequestDTO extends AuditRequestDTO {
+public class UsuarioRegistroRequestDTO extends AuditRequestDTO {
 
     @NotNull
     private Long idSucursal;
@@ -18,8 +18,6 @@ public class UsuarioRequestDTO extends AuditRequestDTO {
     private Long idPuesto;
 
     private Integer correlativo;
-
-    private Integer atenderCasosEspeciales;
 
     @NotBlank
     @Size(max = 100)
@@ -32,19 +30,10 @@ public class UsuarioRequestDTO extends AuditRequestDTO {
     @Size(max = 20)
     private String dui;
 
-    @NotNull
-    private Integer estado;
-
     @Size(max = 20)
     private String telefono;
-
-    @Size(max = 50)
-    private String ip;
 
     @NotBlank
     @Size(max = 20)
     private String perfil;
-
-    @Size(max = 20)
-    private String perfilCreador;
 }
