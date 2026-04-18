@@ -96,7 +96,9 @@ public class KeycloakAdminAdapter implements KeycloakAdminPort {
 
                 DatosPersonales datosPersonales = DatosPersonales.reconstituir(
                         kcUser.getFirstName(),
-                        kcUser.getLastName(), null, null);
+                        kcUser.getLastName(),
+                        usuario.getDui(),
+                        usuario.getTelefono());
 
                 List<RoleRepresentation> roles = keycloak.realm(realm)
                         .users()

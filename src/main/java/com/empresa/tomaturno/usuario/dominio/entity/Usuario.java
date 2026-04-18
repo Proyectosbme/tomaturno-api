@@ -86,6 +86,7 @@ public class Usuario {
         this.crearCodigoUsuario();
         this.verificarContrasena();
         this.auditoria = Auditoria.deCreacion(usuarioCreador, LocalDateTime.now());
+        this.
         validarCreacion();
     }
 

@@ -39,7 +39,7 @@ public class UsuarioJpaEntity {
 
     @Column(name = "foto")
     private byte[] foto;
-
+     private String telefono;
     private LocalDateTime fechaCreacion;
     private String userCreacion;
     private String userModificacion;

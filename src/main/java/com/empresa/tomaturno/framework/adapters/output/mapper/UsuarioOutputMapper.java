@@ -35,7 +35,7 @@ public interface UsuarioOutputMapper {
                 .codigoUsuario(e.getCodigoUsuario())
                 .keycloakId(e.getKeycloakId())
                 .estado(Estado.fromCodigo(e.getEstado()))
-                .datosPersonales(DatosPersonales.reconstituir(null, null, e.getDui(), null))
+                .datosPersonales(DatosPersonales.reconstituir(null, null, e.getDui(), e.getTelefono()))
                 .configuracion(ConfiguracionOperador.reconstituir(
                         null, e.getIp(), e.getCorrelativo(), e.getAtenderCasosEspeciales()))
                 .auditoria(Auditoria.reconstituir(
