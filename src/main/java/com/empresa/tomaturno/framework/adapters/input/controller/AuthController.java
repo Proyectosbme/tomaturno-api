@@ -1,7 +1,6 @@
 package com.empresa.tomaturno.framework.adapters.input.controller;
 
 import com.empresa.tomaturno.framework.adapters.input.dto.UsuarioRegistroRequestDTO;
-import com.empresa.tomaturno.framework.adapters.input.dto.UsuarioRequestDTO;
 import com.empresa.tomaturno.framework.adapters.input.dto.UsuarioResponseDTO;
 import com.empresa.tomaturno.framework.adapters.input.mapper.UsuarioInputMapper;
 import com.empresa.tomaturno.usuario.application.command.port.input.UsuarioCommandInputPort;
