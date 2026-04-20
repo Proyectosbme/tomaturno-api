@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "coladetalle", schema = "tomaturno")
+@Table(name = "coladetalle", schema = "proyectos")
 @Getter
 @Setter
 @NoArgsConstructor

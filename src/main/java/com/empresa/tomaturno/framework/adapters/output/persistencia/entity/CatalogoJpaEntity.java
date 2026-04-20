@@ -9,7 +9,7 @@ import lombok.Setter;
 
 
 @Entity
-@Table(name = "catalogo ", schema = "tomaturno")
+@Table(name = "catalogo ", schema = "proyectos")
 @Getter
 @Setter
 @NoArgsConstructor
