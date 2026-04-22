@@ -105,6 +105,7 @@ public class CatalogoJpaAdapters implements CatalogoCommandRepository, CatalogoQ
                 Estado.fromCodigo(entity.getEstado()),
                 auditoria);
         detalle.asignarCorrelativo(entity.getId().getIdDetalle().intValue());
+        detalle.asignarIdCatalogo(entity.getId().getIdCatalogo());
         return detalle;
     }
 }

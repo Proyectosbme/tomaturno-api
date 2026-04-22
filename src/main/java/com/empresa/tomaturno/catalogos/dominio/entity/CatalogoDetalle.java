@@ -8,6 +8,7 @@ import com.empresa.tomaturno.shared.clases.Estado;
 public class CatalogoDetalle {
 
     private Integer correlativo;
+    private Long idCatalogo;
     private String nombre;
     private String descripcion;
     private Estado estado;
@@ -45,6 +46,10 @@ public class CatalogoDetalle {
         this.correlativo = correlativo;
     }
 
+    public void asignarIdCatalogo(Long idCatalogo) {
+        this.idCatalogo = idCatalogo;
+    }
+
     private void validarCreacion() {
         if(this.correlativo == null)
             throw new IllegalArgumentException("El correlativo no puede ser nulo");
@@ -58,6 +63,10 @@ public class CatalogoDetalle {
 
     public Integer getCorrelativo() {
         return correlativo;
+    }
+
+    public Long getIdCatalogo() {
+        return idCatalogo;
     }
 
     public String getNombre() {

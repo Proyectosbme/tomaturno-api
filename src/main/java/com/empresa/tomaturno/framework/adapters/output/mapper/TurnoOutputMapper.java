@@ -19,9 +19,17 @@ public interface TurnoOutputMapper {
     @Mapping(target = "fechaCreacion", ignore = true)
     @Mapping(target = "codigoTurno", ignore = true)
     @Mapping(target = "estado", source = "estado", qualifiedByName = "estadoToCorrelativo")
+    @Mapping(target = "idCatalogoEstado", source = "estado", qualifiedByName = "estadoToIdCatalogo")
     TurnoJpaEntity toJpaEntity(Turno turno);
 
     default Turno toDomain(TurnoJpaEntity entity) {
+        CatalogoDetalle estado = null;
+        if (entity.getEstado() != null) {
+            estado = CatalogoDetalle.conCorrelativo(entity.getEstado());
+            if (entity.getIdCatalogoEstado() != null) {
+                estado.asignarIdCatalogo(entity.getIdCatalogoEstado());
+            }
+        }
         return Turno.builder()
                 .id(entity.getId())
                 .idSucursal(entity.getIdpk().getIdSucursal())
@@ -31,7 +39,7 @@ public interface TurnoOutputMapper {
                 .fechaFinalizacion(entity.getFechaFinalizacion())
                 .idCola(entity.getIdCola())
                 .idDetalle(entity.getIdDetalle())
-                .estado(entity.getEstado() != null ? CatalogoDetalle.conCorrelativo(entity.getEstado()) : null)
+                .estado(estado)
                 .idTurnoRelacionado(entity.getIdTurnoRelacionado())
                 .idPuesto(entity.getIdPuesto())
                 .idSucursalPuesto(entity.getIdSucursalPuesto())
@@ -46,10 +54,16 @@ public interface TurnoOutputMapper {
     @Mapping(target = "fechaCreacion", ignore = true)
     @Mapping(target = "codigoTurno", ignore = true)
     @Mapping(target = "estado", source = "estado", qualifiedByName = "estadoToCorrelativo")
+    @Mapping(target = "idCatalogoEstado", source = "estado", qualifiedByName = "estadoToIdCatalogo")
     void updateEntityFromDomain(Turno turno, @MappingTarget TurnoJpaEntity entity);
 
     @Named("estadoToCorrelativo")
     static Integer estadoToCorrelativo(CatalogoDetalle estado) {
         return estado == null ? null : estado.getCorrelativo();
+    }
+
+    @Named("estadoToIdCatalogo")
+    static Long estadoToIdCatalogo(CatalogoDetalle estado) {
+        return estado == null ? null : estado.getIdCatalogo();
     }
 }
