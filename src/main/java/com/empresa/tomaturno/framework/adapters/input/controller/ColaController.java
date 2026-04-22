@@ -142,8 +142,7 @@ public class ColaController {
     @RolesAllowed({"ADMIN"})
     public Response replicarColas(
             @QueryParam("idOrigen") Long idOrigen,
-            @QueryParam("idDestino") Long idDestino,
-            @QueryParam("usuario") String usuario) {
+            @QueryParam("idDestino") Long idDestino) {
         if (idOrigen == null || idDestino == null) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("Los parámetros idOrigen e idDestino son obligatorios").build();
@@ -153,7 +152,7 @@ public class ColaController {
                     .entity("La sucursal origen y destino no pueden ser la misma").build();
         }
 
-        ResultadoReplicacion resultado = colaCommandInputPort.replicar(idOrigen, idDestino, usuario);
+        ResultadoReplicacion resultado = colaCommandInputPort.replicar(idOrigen, idDestino, usuarioActual());
 
         return Response.ok(colaInputMapper.toReplicarResponse(resultado)).build();
     }
