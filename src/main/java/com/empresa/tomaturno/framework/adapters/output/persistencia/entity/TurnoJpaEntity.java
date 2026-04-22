@@ -9,7 +9,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "turno", schema = "proyectos")
+@Table(name = "turno", schema = "tomaturno")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -44,6 +44,9 @@ public class TurnoJpaEntity {
     private Long idDetalle;
 
     private Integer estado;
+
+    @Column(name = "idcatalogoestado")
+    private Long idCatalogoEstado;
 
     @Column(name = "idturnorelacionado")
     private Long idTurnoRelacionado;

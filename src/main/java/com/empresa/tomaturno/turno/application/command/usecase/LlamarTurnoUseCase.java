@@ -10,7 +10,6 @@ import com.empresa.tomaturno.turno.application.query.port.output.TurnoQueryRepos
 import com.empresa.tomaturno.turno.dominio.entity.Turno;
 import com.empresa.tomaturno.turno.dominio.exceptions.TurnoNotFoundException;
 import com.empresa.tomaturno.turno.dominio.exceptions.TurnoValidationException;
-import com.empresa.tomaturno.turno.dominio.vo.EstadoTurno;
 import com.empresa.tomaturno.shared.clases.ConfiguracionClave;
 
 public class LlamarTurnoUseCase {
@@ -38,7 +37,7 @@ public class LlamarTurnoUseCase {
         // Re-anuncio: el turno ya está LLAMADO por este mismo operador — no bloquear
         boolean mismoOperador = idPuesto.equals(turno.getIdPuesto())
                 && (idUsuario == null || idUsuario.equals(turno.getIdUsuario()));
-        if (EstadoTurno.LLAMADO.equals(turno.getEstado()) && mismoOperador) {
+        if (turno.getEstado() != null && Integer.valueOf(2).equals(turno.getEstado().getCorrelativo()) && mismoOperador) {
             turno.rellamar();
             return turnoCommandRepository.actualizar(turno);
         }

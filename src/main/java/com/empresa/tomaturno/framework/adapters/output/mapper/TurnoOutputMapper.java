@@ -5,9 +5,9 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
+import com.empresa.tomaturno.catalogos.dominio.entity.CatalogoDetalle;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.TurnoJpaEntity;
 import com.empresa.tomaturno.turno.dominio.entity.Turno;
-import com.empresa.tomaturno.turno.dominio.vo.EstadoTurno;
 
 @Mapper(componentModel = "cdi")
 public interface TurnoOutputMapper {
@@ -18,7 +18,7 @@ public interface TurnoOutputMapper {
     @Mapping(target = "idSucursal", ignore = true)
     @Mapping(target = "fechaCreacion", ignore = true)
     @Mapping(target = "codigoTurno", ignore = true)
-    @Mapping(target = "estado", source = "estado", qualifiedByName = "estadoToCodigo")
+    @Mapping(target = "estado", source = "estado", qualifiedByName = "estadoToCorrelativo")
     TurnoJpaEntity toJpaEntity(Turno turno);
 
     default Turno toDomain(TurnoJpaEntity entity) {
@@ -31,7 +31,7 @@ public interface TurnoOutputMapper {
                 .fechaFinalizacion(entity.getFechaFinalizacion())
                 .idCola(entity.getIdCola())
                 .idDetalle(entity.getIdDetalle())
-                .estado(entity.getEstado() != null ? EstadoTurno.fromCodigo(entity.getEstado()) : null)
+                .estado(entity.getEstado() != null ? CatalogoDetalle.conCorrelativo(entity.getEstado()) : null)
                 .idTurnoRelacionado(entity.getIdTurnoRelacionado())
                 .idPuesto(entity.getIdPuesto())
                 .idSucursalPuesto(entity.getIdSucursalPuesto())
@@ -45,11 +45,11 @@ public interface TurnoOutputMapper {
     @Mapping(target = "idSucursal", ignore = true)
     @Mapping(target = "fechaCreacion", ignore = true)
     @Mapping(target = "codigoTurno", ignore = true)
-    @Mapping(target = "estado", source = "estado", qualifiedByName = "estadoToCodigo")
+    @Mapping(target = "estado", source = "estado", qualifiedByName = "estadoToCorrelativo")
     void updateEntityFromDomain(Turno turno, @MappingTarget TurnoJpaEntity entity);
 
-    @Named("estadoToCodigo")
-    static Integer estadoToCodigo(EstadoTurno estado) {
-        return estado == null ? null : estado.getCodigo();
+    @Named("estadoToCorrelativo")
+    static Integer estadoToCorrelativo(CatalogoDetalle estado) {
+        return estado == null ? null : estado.getCorrelativo();
     }
 }

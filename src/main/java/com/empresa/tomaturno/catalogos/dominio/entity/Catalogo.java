@@ -80,4 +80,12 @@ public class Catalogo {
         return detalles;
     }
 
+    public Auditoria getAuditoria() {
+        return auditoria;
+    }
+
+    public Estado getEstado() {
+        return estado;
+    }
+
 }

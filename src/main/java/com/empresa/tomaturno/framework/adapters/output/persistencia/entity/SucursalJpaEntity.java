@@ -10,7 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "sucursal", schema = "proyectos")
+@Table(name = "sucursal", schema = "tomaturno")
 @Getter
 @Setter
 @NoArgsConstructor

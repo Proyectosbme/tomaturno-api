@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "catalogodeta", schema = "proyectos")
+@Table(name = "catalogodeta", schema = "tomaturno")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,7 +20,7 @@ public class CatalogoDetalleJpaEntity implements Serializable {
 
     @EqualsAndHashCode.Include
     @EmbeddedId
-    private CatalogoDetallePKJpaEntity id;
+    private CatalogoDetalleJpaEntityPK id;
 
     @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;

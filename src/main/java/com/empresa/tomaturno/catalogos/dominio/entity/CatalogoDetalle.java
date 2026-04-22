@@ -35,6 +35,12 @@ public class CatalogoDetalle {
         return detalle;
     }
 
+    public static CatalogoDetalle conCorrelativo(Integer correlativo) {
+        CatalogoDetalle d = new CatalogoDetalle(null, null, null);
+        d.correlativo = correlativo;
+        return d;
+    }
+
     public void asignarCorrelativo(Integer correlativo) {
         this.correlativo = correlativo;
     }

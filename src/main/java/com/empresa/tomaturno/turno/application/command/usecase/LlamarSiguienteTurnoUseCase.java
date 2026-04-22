@@ -6,7 +6,6 @@ import java.util.List;
 import com.empresa.tomaturno.turno.application.query.port.output.TurnoQueryRepository;
 import com.empresa.tomaturno.turno.dominio.entity.Turno;
 import com.empresa.tomaturno.turno.dominio.exceptions.TurnoNotFoundException;
-import com.empresa.tomaturno.turno.dominio.vo.EstadoTurno;
 
 public class LlamarSiguienteTurnoUseCase {
 
@@ -22,7 +21,7 @@ public class LlamarSiguienteTurnoUseCase {
     public Turno ejecutar(Long idSucursal, Long idPuesto, Long idSucursalPuesto, Long idUsuario) {
         List<Turno> pendientes = turnoQueryRepository.buscarPorFiltro(
                 idSucursal, null, null,
-                EstadoTurno.CREADO.getCodigo(),
+                1,
                 LocalDate.now(),
                 idPuesto, idSucursalPuesto);
 
