@@ -6,6 +6,7 @@ import com.empresa.tomaturno.cola.application.command.port.output.ColaCommandRep
 import com.empresa.tomaturno.cola.application.command.usecase.CrearColaCaseUse;
 import com.empresa.tomaturno.cola.application.command.usecase.CrearDetalleDeColaUseCase;
 import com.empresa.tomaturno.cola.application.command.usecase.ModificarColaUseCase;
+import com.empresa.tomaturno.cola.application.command.usecase.ModificarDetalleDeColaUseCase;
 import com.empresa.tomaturno.cola.application.command.usecase.ReplicarColasUseCase;
 import com.empresa.tomaturno.cola.application.query.port.output.ColaQueryRepository;
 import com.empresa.tomaturno.cola.dominio.entity.Cola;
@@ -17,6 +18,7 @@ public class ColaCommandService implements ColaCommandInputPort {
     private final ModificarColaUseCase modificarColaUseCase;
     private final CrearDetalleDeColaUseCase crearDetalleDeColaUseCase;
     private final ReplicarColasUseCase replicarColasUseCase;
+    private final ModificarDetalleDeColaUseCase modificarDetalleDeColaUseCase;
 
     public ColaCommandService(ColaCommandRepository colaCommandRepository,
             ColaQueryRepository colaQueryRepository) {
@@ -24,6 +26,7 @@ public class ColaCommandService implements ColaCommandInputPort {
         this.modificarColaUseCase = new ModificarColaUseCase(colaCommandRepository, colaQueryRepository);
         this.crearDetalleDeColaUseCase = new CrearDetalleDeColaUseCase(colaCommandRepository, colaQueryRepository);
         this.replicarColasUseCase = new ReplicarColasUseCase(colaCommandRepository, colaQueryRepository);
+        this.modificarDetalleDeColaUseCase = new ModificarDetalleDeColaUseCase(colaCommandRepository, colaQueryRepository);
     }
 
     @Override
@@ -48,7 +51,6 @@ public class ColaCommandService implements ColaCommandInputPort {
 
     @Override
     public Cola editarDetalleCola(Long idCola, Long idSucursal, Long idDetalle, Detalle detalleActualizado, String usuario) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'editarDetalleCola'");
+       return modificarDetalleDeColaUseCase.ejecutar(idCola, idSucursal, idDetalle, detalleActualizado, usuario);
     }
 }

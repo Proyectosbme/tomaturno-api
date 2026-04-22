@@ -2,7 +2,6 @@ package com.empresa.tomaturno.framework.adapters.input.controller;
 
 import java.util.List;
 
-import com.empresa.tomaturno.framework.adapters.config.ConfiguracionDefaultBean;
 import com.empresa.tomaturno.framework.adapters.input.dto.SucursalRequestDTO;
 import com.empresa.tomaturno.framework.adapters.input.dto.SucursalResponseDTO;
 import com.empresa.tomaturno.framework.adapters.input.mapper.SucursalInputMapper;
@@ -36,7 +35,6 @@ public class SucursalController {
     private final SucursalInputMapper sucursalInputMapper;
     private final TurnoWebSocket turnoWebSocket;
     private final SucursalQueryInputPort sucursalQueryInputPort;
-    private final ConfiguracionDefaultBean configuracionDefaultBean;
 
     @Context
     SecurityContext securityContext;
@@ -44,13 +42,11 @@ public class SucursalController {
     public SucursalController(SucursalCommandInputPort sucursalCommandInputPort,
             SucursalInputMapper sucursalInputMapper,
             TurnoWebSocket turnoWebSocket,
-            SucursalQueryInputPort sucursalQueryInputPort,
-            ConfiguracionDefaultBean configuracionDefaultBean) {
+            SucursalQueryInputPort sucursalQueryInputPort) {
         this.sucursalCommandInputPort = sucursalCommandInputPort;
         this.sucursalInputMapper = sucursalInputMapper;
         this.turnoWebSocket = turnoWebSocket;
         this.sucursalQueryInputPort = sucursalQueryInputPort;
-        this.configuracionDefaultBean = configuracionDefaultBean;
     }
 
     private String usuarioActual() {
@@ -72,7 +68,6 @@ public class SucursalController {
         String usuarioActual = usuarioActual();
         Sucursal sucursal = sucursalInputMapper.toSucursal(sucursalRequestDTO);
         Sucursal sucursalCreada = sucursalCommandInputPort.crear(sucursal, usuarioActual);
-        configuracionDefaultBean.crearConfiguracionesParaSucursal(sucursalCreada.getIdentificador());
         if (turnoWebSocket != null) {
             turnoWebSocket.enviarTurno("Se ha creado una nueva sucursal");
         }
