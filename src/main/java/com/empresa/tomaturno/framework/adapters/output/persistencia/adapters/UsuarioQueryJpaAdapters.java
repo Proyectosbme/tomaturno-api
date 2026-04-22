@@ -69,7 +69,7 @@ public class UsuarioQueryJpaAdapters implements UsuarioQueryRepository {
     }
 
     private String generarCodigoDisponible(String codigoBase, int intento) {
-        String codigoPropuesto = intento == 1 ? codigoBase : codigoBase + intento;
+        String codigoPropuesto = intento == 1 ? codigoBase : codigoBase +"-"+ intento;
 
         if (usuarioJpaRepository.existeCodigo(codigoPropuesto)) {
             // Si ya existe, probar con el siguiente número
