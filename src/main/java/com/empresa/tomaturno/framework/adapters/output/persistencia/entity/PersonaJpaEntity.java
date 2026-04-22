@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "persona", schema = "proyectos")
+@Table(name = "persona", schema = "tomaturno")
 @Getter
 @Setter
 @NoArgsConstructor

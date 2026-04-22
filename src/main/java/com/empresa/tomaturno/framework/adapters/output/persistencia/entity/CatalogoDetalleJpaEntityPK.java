@@ -17,7 +17,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode
 @Embeddable
-public class CatalogoDetallePKJpaEntity implements Serializable {
+public class CatalogoDetalleJpaEntityPK implements Serializable {
 
     private Long idCatalogo;
     private Long idDetalle;
