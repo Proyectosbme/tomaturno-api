@@ -1,6 +1,8 @@
 package com.empresa.tomaturno.framework.adapters.config;
 
+import io.quarkus.arc.Arc;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.persistence.PersistenceException;
 import jakarta.transaction.Transactional;
 
 import java.time.LocalDateTime;
@@ -8,7 +10,6 @@ import java.time.LocalDateTime;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.ConfiguracionJpaEntity;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.ConfiguracionJpaEntityPK;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.ConfiguracionJpaRepository;
-import org.hibernate.exception.ConstraintViolationException;
 import com.empresa.tomaturno.shared.clases.ConfiguracionClave;
 
 @ApplicationScoped
@@ -22,30 +23,30 @@ public class ConfiguracionDefaultBean {
         this.configuracionJpaRepository = configuracionJpaRepository;
     }
 
-    public void crearConfiguracionesParaSucursal(Long idSucursal) {
-        intentarCrear(idSucursal, ConfiguracionClave.VALIDAR_IP.clave(),                 1, "Valida la IP del usuario al iniciar sesión,0=desactivado, 1=activado");
-        intentarCrear(idSucursal, ConfiguracionClave.REINICIAR_NUMERACION.clave(),       1, "Reinicia la numeración de turnos diariamente,0=desactivado, 1=activado");
-        intentarCrear(idSucursal, ConfiguracionClave.NUMERACION_POR_COLA_DETALLE.clave(),1, "Numeración independiente por cola-detalle,0=desactivado, 1=activado");
-        intentarCrear(idSucursal, ConfiguracionClave.LLAMAR_CON_ACTIVO.clave(),          0, "Permite al operador llamar otro turno teniendo uno activo. 0=no permite, 1=permite");
-        intentarCrear(idSucursal, ConfiguracionClave.ESCANEAR_DUI.clave(),               0, "Activa el lector de código de barras 2D para DUI. 0=desactivado, 1=activado");
-        intentarCrear(idSucursal, ConfiguracionClave.CASOS_ESPECIALES.clave(),           0, "Activa selección de casos especiales en kiosco. 0=desactivado, 1=activado");
+    private ConfiguracionDefaultBean self() {
+        return Arc.container().select(ConfiguracionDefaultBean.class).get();
     }
 
-    private void intentarCrear(Long idSucursal, String nombre, Integer parametro, String descripcion) {
+    public void crearConfiguracionesParaSucursal(Long idSucursal) {
+        crearIgnorandoDuplicado(idSucursal, ConfiguracionClave.VALIDAR_IP.clave(),                 1, "Valida la IP del usuario al iniciar sesión,0=desactivado, 1=activado");
+        crearIgnorandoDuplicado(idSucursal, ConfiguracionClave.REINICIAR_NUMERACION.clave(),       1, "Reinicia la numeración de turnos diariamente,0=desactivado, 1=activado");
+        crearIgnorandoDuplicado(idSucursal, ConfiguracionClave.NUMERACION_POR_COLA_DETALLE.clave(),1, "Numeración independiente por cola-detalle,0=desactivado, 1=activado");
+        crearIgnorandoDuplicado(idSucursal, ConfiguracionClave.LLAMAR_CON_ACTIVO.clave(),          0, "Permite al operador llamar otro turno teniendo uno activo. 0=no permite, 1=permite");
+        crearIgnorandoDuplicado(idSucursal, ConfiguracionClave.ESCANEAR_DUI.clave(),               0, "Activa el lector de código de barras 2D para DUI. 0=desactivado, 1=activado");
+        crearIgnorandoDuplicado(idSucursal, ConfiguracionClave.CASOS_ESPECIALES.clave(),           0, "Activa selección de casos especiales en kiosco. 0=desactivado, 1=activado");
+    }
+
+    private void crearIgnorandoDuplicado(Long idSucursal, String nombre, Integer parametro, String descripcion) {
         try {
-            crearSiNoExiste(idSucursal, nombre, parametro, descripcion);
-        } catch (Exception e) {
-            if (!causadaPorDuplicado(e)) {
-                throw e instanceof RuntimeException runtimeException ? runtimeException : new RuntimeException(e);
-            }
-            // Ya existe por otra transacción concurrente, continuar
+            self().crearSiNoExiste(idSucursal, nombre, parametro, descripcion);
+        } catch (PersistenceException ignored) {
+            // ya fue creado por una llamada concurrente — se ignora
         }
     }
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     public void crearSiNoExiste(Long idSucursal, String nombre, Integer parametro, String descripcion) {
-        ConfiguracionJpaEntity existente = configuracionJpaRepository.buscarPorNombreYSucursal(idSucursal, nombre);
-        if (existente != null) return;
+        if (configuracionJpaRepository.buscarPorNombreYSucursal(idSucursal, nombre) != null) return;
 
         Long nextId = configuracionJpaRepository.obtenerSiguienteId(idSucursal);
         ConfiguracionJpaEntityPK pk = new ConfiguracionJpaEntityPK(nextId, idSucursal);
@@ -60,13 +61,5 @@ public class ConfiguracionDefaultBean {
         config.setFechaCreacion(LocalDateTime.now());
         config.setUserCreacion(USUARIO_SISTEMA);
         configuracionJpaRepository.persist(config);
-    }
-
-    private boolean causadaPorDuplicado(Throwable t) {
-        while (t != null) {
-            if (t instanceof ConstraintViolationException) return true;
-            t = t.getCause();
-        }
-        return false;
     }
 }
