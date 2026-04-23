@@ -17,7 +17,6 @@ import org.jboss.resteasy.reactive.RestForm;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
 
 @Path("/empresa")
-@Authenticated
 public class EmpresaController {
 
     private final EmpresaCommandInputPort commandPort;
