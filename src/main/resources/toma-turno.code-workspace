@@ -5,9 +5,9 @@
 		},
 		{
 			"path": "../../.."
-		},
-		{
-			"path": "../../../../../soficoo2/soficoop-web"
 		}
-	]
+	],
+	"settings": {
+		"java.compile.nullAnalysis.mode": "automatic"
+	}
 }

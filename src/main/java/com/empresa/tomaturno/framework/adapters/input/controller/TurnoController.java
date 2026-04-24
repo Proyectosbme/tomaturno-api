@@ -16,6 +16,7 @@ import com.empresa.tomaturno.turno.dominio.entity.Turno;
 
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.json.bind.Jsonb;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -29,15 +30,22 @@ public class TurnoController {
     private final TurnoQueryInputPort turnoQueryInputPort;
     private final TurnoInputMapper turnoInputMapper;
     private final TurnoWebSocket turnoWebSocket;
+    private final Jsonb jsonb;
 
     public TurnoController(TurnoCommandInputPort turnoCommandInputPort,
             TurnoQueryInputPort turnoQueryInputPort,
             TurnoInputMapper turnoInputMapper,
-            TurnoWebSocket turnoWebSocket) {
+            TurnoWebSocket turnoWebSocket,
+            Jsonb jsonb) {
         this.turnoCommandInputPort = turnoCommandInputPort;
         this.turnoQueryInputPort = turnoQueryInputPort;
         this.turnoInputMapper = turnoInputMapper;
         this.turnoWebSocket = turnoWebSocket;
+        this.jsonb = jsonb;
+    }
+
+    private String wsPayload(String event, Long idSucursal, TurnoResponseDTO dto) {
+        return "{\"event\":\"" + event + "\",\"idSucursal\":" + idSucursal + ",\"turno\":" + jsonb.toJson(dto) + "}";
     }
 
     @GET
@@ -80,8 +88,9 @@ public class TurnoController {
     public Response llamarSiguiente(@Valid LlamarSiguienteTurnoRequestDTO dto) {
         Turno turno = turnoCommandInputPort.llamarSiguiente(
                 dto.getIdSucursal(), dto.getIdPuesto(), dto.getIdSucursalPuesto(), dto.getIdUsuario());
-        turnoWebSocket.enviarTurno("{\"event\":\"TURNO_LLAMADO\",\"idSucursal\":" + dto.getIdSucursal() + "}");
-        return Response.ok(turnoInputMapper.toResponse(turno)).build();
+        TurnoResponseDTO responseDTO = turnoInputMapper.toResponse(turno);
+        turnoWebSocket.enviarTurno(wsPayload("TURNO_LLAMADO", dto.getIdSucursal(), responseDTO));
+        return Response.ok(responseDTO).build();
     }
 
     @PUT
@@ -98,8 +107,9 @@ public class TurnoController {
         LocalDateTime fechaCreacion = LocalDateTime.parse(fechaCreacionStr);
         Turno turno = turnoCommandInputPort.llamar(idSucursal, fechaCreacion, codigoTurno,
                 dto.getIdPuesto(), dto.getIdSucursalPuesto(), dto.getIdUsuario());
-        turnoWebSocket.enviarTurno("{\"event\":\"TURNO_LLAMADO\",\"idSucursal\":" + idSucursal + "}");
-        return Response.ok(turnoInputMapper.toResponse(turno)).build();
+        TurnoResponseDTO responseDTO = turnoInputMapper.toResponse(turno);
+        turnoWebSocket.enviarTurno(wsPayload("TURNO_LLAMADO", idSucursal, responseDTO));
+        return Response.ok(responseDTO).build();
     }
 
     @POST
@@ -131,8 +141,9 @@ public class TurnoController {
             @QueryParam("fechaCreacion") String fechaCreacionStr) {
         LocalDateTime fechaCreacion = LocalDateTime.parse(fechaCreacionStr);
         Turno turno = turnoCommandInputPort.sinAtender(idSucursal, fechaCreacion, codigoTurno);
-        turnoWebSocket.enviarTurno("{\"event\":\"TURNO_SIN_ATENDER\",\"idSucursal\":" + idSucursal + "}");
-        return Response.ok(turnoInputMapper.toResponse(turno)).build();
+        TurnoResponseDTO responseDTO = turnoInputMapper.toResponse(turno);
+        turnoWebSocket.enviarTurno(wsPayload("TURNO_SIN_ATENDER", idSucursal, responseDTO));
+        return Response.ok(responseDTO).build();
     }
 
     @PUT
@@ -146,8 +157,9 @@ public class TurnoController {
             @QueryParam("fechaCreacion") String fechaCreacionStr) {
         LocalDateTime fechaCreacion = LocalDateTime.parse(fechaCreacionStr);
         Turno turno = turnoCommandInputPort.finalizar(idSucursal, fechaCreacion, codigoTurno);
-        turnoWebSocket.enviarTurno("{\"event\":\"TURNO_FINALIZADO\",\"idSucursal\":" + idSucursal + "}");
-        return Response.ok(turnoInputMapper.toResponse(turno)).build();
+        TurnoResponseDTO responseDTO = turnoInputMapper.toResponse(turno);
+        turnoWebSocket.enviarTurno(wsPayload("TURNO_FINALIZADO", idSucursal, responseDTO));
+        return Response.ok(responseDTO).build();
     }
 
     @PUT
@@ -164,7 +176,8 @@ public class TurnoController {
         LocalDateTime fechaCreacion = LocalDateTime.parse(fechaCreacionStr);
         Turno turno = turnoCommandInputPort.rellamar(idSucursal, fechaCreacion, codigoTurno,
                 dto.getIdPuesto(), dto.getIdSucursalPuesto(), dto.getIdUsuario());
-        turnoWebSocket.enviarTurno("{\"event\":\"TURNO_LLAMADO\",\"idSucursal\":" + idSucursal + "}");
-        return Response.ok(turnoInputMapper.toResponse(turno)).build();
+        TurnoResponseDTO responseDTO = turnoInputMapper.toResponse(turno);
+        turnoWebSocket.enviarTurno(wsPayload("TURNO_LLAMADO", idSucursal, responseDTO));
+        return Response.ok(responseDTO).build();
     }
 }
