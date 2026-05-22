@@ -3,6 +3,7 @@ package com.empresa.tomaturno.turno.dominio.entity;
 import java.time.LocalDateTime;
 
 import com.empresa.tomaturno.catalogos.dominio.entity.CatalogoDetalle;
+import com.empresa.tomaturno.shared.clases.CatalogoEnum;
 import com.empresa.tomaturno.turno.dominio.exceptions.TurnoValidationException;
 
 public class Turno {
@@ -20,6 +21,7 @@ public class Turno {
     private LocalDateTime fechaLlamada;
     private LocalDateTime fechaFinalizacion;
     private Long idCola;
+    private Long idCatalogo;
     private Long idDetalle;
     private CatalogoDetalle estado;
     private Long idTurnoRelacionado;
@@ -38,6 +40,7 @@ public class Turno {
         this.fechaLlamada = builder.fechaLlamada;
         this.fechaFinalizacion = builder.fechaFinalizacion;
         this.idCola = builder.idCola;
+        this.idCatalogo = builder.idCatalogo;
         this.idDetalle = builder.idDetalle;
         this.estado = builder.estado;
         this.idTurnoRelacionado = builder.idTurnoRelacionado;
@@ -63,6 +66,7 @@ public class Turno {
                 .estado(CatalogoDetalle.conCorrelativo(ESTADO_CREADO))
                 .idPersona(idPersona)
                 .tipoCasoEspecial(tipoCasoEspecial)
+                .idCatalogo(CatalogoEnum.ESTADOS_TURNOS.getCodigo().longValue())
                 .build();
         turno.validarCreacion();
         return turno;
@@ -168,22 +172,74 @@ public class Turno {
 
     /* ── Getters ─────────────────────────────────── */
 
-    public Long getId() { return id; }
-    public Long getIdSucursal() { return idSucursal; }
-    public LocalDateTime getFechaCreacion() { return fechaCreacion; }
-    public String getCodigoTurno() { return codigoTurno; }
-    public LocalDateTime getFechaLlamada() { return fechaLlamada; }
-    public LocalDateTime getFechaFinalizacion() { return fechaFinalizacion; }
-    public Long getIdCola() { return idCola; }
-    public Long getIdDetalle() { return idDetalle; }
-    public CatalogoDetalle getEstado() { return estado; }
-    public Long getIdTurnoRelacionado() { return idTurnoRelacionado; }
-    public Long getIdPuesto() { return idPuesto; }
-    public Long getIdSucursalPuesto() { return idSucursalPuesto; }
-    public Long getIdUsuario() { return idUsuario; }
-    public Long getIdPersona() { return idPersona; }
-    public Integer getTipoCasoEspecial() { return tipoCasoEspecial; }
-    public String getNombreLlamada() { return nombreLlamada; }
+    public Long getId() {
+        return id;
+    }
+
+    public Long getIdSucursal() {
+        return idSucursal;
+    }
+
+    
+    public Long getIdCatalogo() {
+        return idCatalogo;
+    }
+
+    public LocalDateTime getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public String getCodigoTurno() {
+        return codigoTurno;
+    }
+
+    public LocalDateTime getFechaLlamada() {
+        return fechaLlamada;
+    }
+
+    public LocalDateTime getFechaFinalizacion() {
+        return fechaFinalizacion;
+    }
+
+    public Long getIdCola() {
+        return idCola;
+    }
+
+    public Long getIdDetalle() {
+        return idDetalle;
+    }
+
+    public CatalogoDetalle getEstado() {
+        return estado;
+    }
+
+    public Long getIdTurnoRelacionado() {
+        return idTurnoRelacionado;
+    }
+
+    public Long getIdPuesto() {
+        return idPuesto;
+    }
+
+    public Long getIdSucursalPuesto() {
+        return idSucursalPuesto;
+    }
+
+    public Long getIdUsuario() {
+        return idUsuario;
+    }
+
+    public Long getIdPersona() {
+        return idPersona;
+    }
+
+    public Integer getTipoCasoEspecial() {
+        return tipoCasoEspecial;
+    }
+
+    public String getNombreLlamada() {
+        return nombreLlamada;
+    }
 
     /* ── Builder ─────────────────────────────────── */
 
@@ -195,6 +251,7 @@ public class Turno {
         private LocalDateTime fechaLlamada;
         private LocalDateTime fechaFinalizacion;
         private Long idCola;
+        private Long idCatalogo;
         private Long idDetalle;
         private CatalogoDetalle estado;
         private Long idTurnoRelacionado;
@@ -204,24 +261,91 @@ public class Turno {
         private Long idPersona;
         private Integer tipoCasoEspecial;
 
-        private Builder() {}
+        private Builder() {
+        }
 
-        public Builder id(Long id) { this.id = id; return this; }
-        public Builder idSucursal(Long idSucursal) { this.idSucursal = idSucursal; return this; }
-        public Builder fechaCreacion(LocalDateTime fechaCreacion) { this.fechaCreacion = fechaCreacion; return this; }
-        public Builder codigoTurno(String codigoTurno) { this.codigoTurno = codigoTurno; return this; }
-        public Builder fechaLlamada(LocalDateTime fechaLlamada) { this.fechaLlamada = fechaLlamada; return this; }
-        public Builder fechaFinalizacion(LocalDateTime fechaFinalizacion) { this.fechaFinalizacion = fechaFinalizacion; return this; }
-        public Builder idCola(Long idCola) { this.idCola = idCola; return this; }
-        public Builder idDetalle(Long idDetalle) { this.idDetalle = idDetalle; return this; }
-        public Builder estado(CatalogoDetalle estado) { this.estado = estado; return this; }
-        public Builder idTurnoRelacionado(Long idTurnoRelacionado) { this.idTurnoRelacionado = idTurnoRelacionado; return this; }
-        public Builder idPuesto(Long idPuesto) { this.idPuesto = idPuesto; return this; }
-        public Builder idSucursalPuesto(Long idSucursalPuesto) { this.idSucursalPuesto = idSucursalPuesto; return this; }
-        public Builder idUsuario(Long idUsuario) { this.idUsuario = idUsuario; return this; }
-        public Builder idPersona(Long idPersona) { this.idPersona = idPersona; return this; }
-        public Builder tipoCasoEspecial(Integer tipoCasoEspecial) { this.tipoCasoEspecial = tipoCasoEspecial; return this; }
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
 
-        public Turno build() { return new Turno(this); }
+        public Builder idSucursal(Long idSucursal) {
+            this.idSucursal = idSucursal;
+            return this;
+        }
+
+        public Builder fechaCreacion(LocalDateTime fechaCreacion) {
+            this.fechaCreacion = fechaCreacion;
+            return this;
+        }
+
+        public Builder codigoTurno(String codigoTurno) {
+            this.codigoTurno = codigoTurno;
+            return this;
+        }
+
+        public Builder fechaLlamada(LocalDateTime fechaLlamada) {
+            this.fechaLlamada = fechaLlamada;
+            return this;
+        }
+
+        public Builder fechaFinalizacion(LocalDateTime fechaFinalizacion) {
+            this.fechaFinalizacion = fechaFinalizacion;
+            return this;
+        }
+
+        public Builder idCola(Long idCola) {
+            this.idCola = idCola;
+            return this;
+        }
+
+        public Builder idCatalogo(Long idCatalogo){
+            this.idCatalogo = idCatalogo;
+            return this;
+        }
+
+        public Builder idDetalle(Long idDetalle) {
+            this.idDetalle = idDetalle;
+            return this;
+        }
+
+        public Builder estado(CatalogoDetalle estado) {
+            this.estado = estado;
+            return this;
+        }
+
+        public Builder idTurnoRelacionado(Long idTurnoRelacionado) {
+            this.idTurnoRelacionado = idTurnoRelacionado;
+            return this;
+        }
+
+        public Builder idPuesto(Long idPuesto) {
+            this.idPuesto = idPuesto;
+            return this;
+        }
+
+        public Builder idSucursalPuesto(Long idSucursalPuesto) {
+            this.idSucursalPuesto = idSucursalPuesto;
+            return this;
+        }
+
+        public Builder idUsuario(Long idUsuario) {
+            this.idUsuario = idUsuario;
+            return this;
+        }
+
+        public Builder idPersona(Long idPersona) {
+            this.idPersona = idPersona;
+            return this;
+        }
+
+        public Builder tipoCasoEspecial(Integer tipoCasoEspecial) {
+            this.tipoCasoEspecial = tipoCasoEspecial;
+            return this;
+        }
+
+        public Turno build() {
+            return new Turno(this);
+        }
     }
 }

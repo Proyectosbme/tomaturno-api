@@ -38,6 +38,8 @@ nb-configuration.xml
 
 # Local environment
 .env
+.env.prod
+.env.local
 
 # Claude Code
 .claude/
