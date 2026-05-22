@@ -41,6 +41,7 @@ public class CrearTurnoUseCase {
         Turno turno = Turno.inicializar(
                 idSucursal, idCola, detalle != null ? detalle.getCorrelativo() : null,
                 codigoTurno, idPersona, tipoCasoEspecial);
+                
         turno.asignarId(turnoQueryRepository.obtenerSiguienteId());
         return turnoCommandRepository.save(turno);
     }

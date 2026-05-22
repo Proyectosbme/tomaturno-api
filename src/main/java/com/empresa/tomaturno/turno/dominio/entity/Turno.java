@@ -2,17 +2,14 @@ package com.empresa.tomaturno.turno.dominio.entity;
 
 import java.time.LocalDateTime;
 
-import com.empresa.tomaturno.catalogos.dominio.entity.CatalogoDetalle;
+import com.empresa.tomaturno.turno.dominio.vo.CatalogoDetalle;
+import com.empresa.tomaturno.turno.dominio.vo.CatalogoEstado;
+import com.empresa.tomaturno.turno.dominio.vo.DetalleEstado;
 import com.empresa.tomaturno.shared.clases.CatalogoEnum;
 import com.empresa.tomaturno.turno.dominio.exceptions.TurnoValidationException;
 
 public class Turno {
 
-    private static final Integer ESTADO_CREADO = 1;
-    private static final Integer ESTADO_LLAMADO = 2;
-    private static final Integer ESTADO_TRASLADO = 3;
-    private static final Integer ESTADO_FINALIZADO = 4;
-    private static final Integer ESTADO_SIN_ATENDER = 5;
 
     private Long id;
     private Long idSucursal;
@@ -63,7 +60,7 @@ public class Turno {
                 .idDetalle(idDetalle)
                 .codigoTurno(codigoTurno)
                 .fechaCreacion(LocalDateTime.now())
-                .estado(CatalogoDetalle.conCorrelativo(ESTADO_CREADO))
+                .estado(new CatalogoDetalle(CatalogoEstado.ESTADO_TURNO.getValor(), DetalleEstado.CREADO.getValor()))
                 .idPersona(idPersona)
                 .tipoCasoEspecial(tipoCasoEspecial)
                 .idCatalogo(CatalogoEnum.ESTADOS_TURNOS.getCodigo().longValue())
@@ -82,7 +79,7 @@ public class Turno {
         this.idSucursalPuesto = idSucursalPuesto;
         this.idUsuario = idUsuario;
         this.fechaLlamada = LocalDateTime.now();
-        this.estado = CatalogoDetalle.conCorrelativo(ESTADO_LLAMADO);
+        this.estado = new CatalogoDetalle(CatalogoEstado.ESTADO_TURNO.getValor(), DetalleEstado.LLAMADO.getValor());
     }
 
     public void rellamar() {
@@ -91,7 +88,7 @@ public class Turno {
 
     public Turno reasignarA(Long nuevoId, Long idSucursalDestino, Long idColaDestino, Long idDetalleValido) {
         validarTransicionReasignar();
-        this.estado = CatalogoDetalle.conCorrelativo(ESTADO_TRASLADO);
+        this.estado = new CatalogoDetalle(CatalogoEstado.ESTADO_TURNO.getValor(), DetalleEstado.TRASLADO.getValor());
         return Turno.builder()
                 .id(nuevoId)
                 .idSucursal(idSucursalDestino)
@@ -99,35 +96,35 @@ public class Turno {
                 .idDetalle(idDetalleValido)
                 .codigoTurno(this.codigoTurno)
                 .fechaCreacion(LocalDateTime.now())
-                .estado(CatalogoDetalle.conCorrelativo(ESTADO_CREADO))
+                .estado(new CatalogoDetalle(CatalogoEstado.ESTADO_TURNO.getValor(), DetalleEstado.CREADO.getValor()))
                 .idTurnoRelacionado(this.id)
                 .build();
     }
 
     public void rellamarDesdeHistorial(Long idPuesto, Long idSucursalPuesto, Long idUsuario) {
-        Integer correlativo = estado != null ? estado.getCorrelativo() : null;
-        if (!ESTADO_FINALIZADO.equals(correlativo) && !ESTADO_TRASLADO.equals(correlativo))
+        long detalle = estado != null ? estado.detalle() : -1L;
+        if (detalle != DetalleEstado.FINALIZADO.getValor() && detalle != DetalleEstado.TRASLADO.getValor())
             throw new TurnoValidationException(
-                    "Solo se puede re-llamar un turno en estado FINALIZADO o TRASLADO. Estado actual: " + correlativo);
+                    "Solo se puede re-llamar un turno en estado FINALIZADO o TRASLADO. Estado actual: " + detalle);
         this.idPuesto = idPuesto;
         this.idSucursalPuesto = idSucursalPuesto;
         this.idUsuario = idUsuario;
         this.fechaLlamada = LocalDateTime.now();
-        this.estado = CatalogoDetalle.conCorrelativo(ESTADO_LLAMADO);
+        this.estado = new CatalogoDetalle(CatalogoEstado.ESTADO_TURNO.getValor(), DetalleEstado.LLAMADO.getValor());
     }
 
     public void sinAtender() {
-        Integer correlativo = estado != null ? estado.getCorrelativo() : null;
-        if (!ESTADO_LLAMADO.equals(correlativo))
+        long detalle = estado != null ? estado.detalle() : -1L;
+        if (detalle != DetalleEstado.LLAMADO.getValor())
             throw new TurnoValidationException(
-                    "Solo se puede marcar sin atender un turno en estado LLAMADO. Estado actual: " + correlativo);
-        this.estado = CatalogoDetalle.conCorrelativo(ESTADO_SIN_ATENDER);
+                    "Solo se puede marcar sin atender un turno en estado LLAMADO. Estado actual: " + detalle);
+        this.estado = new CatalogoDetalle(CatalogoEstado.ESTADO_TURNO.getValor(), DetalleEstado.SIN_ATENDER.getValor());
     }
 
     public void finalizar() {
         validarTransicionFinalizar();
         this.fechaFinalizacion = LocalDateTime.now();
-        this.estado = CatalogoDetalle.conCorrelativo(ESTADO_FINALIZADO);
+        this.estado = new CatalogoDetalle(CatalogoEstado.ESTADO_TURNO.getValor(), DetalleEstado.FINALIZADO.getValor());
     }
 
     public void enriquecerNombreLlamada(String nombreLlamada) {
@@ -146,10 +143,10 @@ public class Turno {
     }
 
     private void validarTransicionLlamar(Long idPuesto, Long idSucursalPuesto) {
-        Integer correlativo = estado != null ? estado.getCorrelativo() : null;
-        if (!ESTADO_CREADO.equals(correlativo) && !ESTADO_SIN_ATENDER.equals(correlativo))
+        long detalle = estado != null ? estado.detalle() : -1L;
+        if (detalle != DetalleEstado.CREADO.getValor() && detalle != DetalleEstado.SIN_ATENDER.getValor())
             throw new TurnoValidationException(
-                    "Solo se puede llamar un turno en estado CREADO. Estado actual: " + correlativo);
+                    "Solo se puede llamar un turno en estado CREADO. Estado actual: " + detalle);
         if (idPuesto == null)
             throw new TurnoValidationException("idPuesto es obligatorio para llamar un turno");
         if (idSucursalPuesto == null)
@@ -157,17 +154,17 @@ public class Turno {
     }
 
     private void validarTransicionReasignar() {
-        Integer correlativo = estado != null ? estado.getCorrelativo() : null;
-        if (!ESTADO_LLAMADO.equals(correlativo))
+        long detalle = estado != null ? estado.detalle() : -1L;
+        if (detalle != DetalleEstado.LLAMADO.getValor())
             throw new TurnoValidationException(
-                    "Solo se puede reasignar un turno en estado LLAMADO. Estado actual: " + correlativo);
+                    "Solo se puede reasignar un turno en estado LLAMADO. Estado actual: " + detalle);
     }
 
     private void validarTransicionFinalizar() {
-        Integer correlativo = estado != null ? estado.getCorrelativo() : null;
-        if (!ESTADO_LLAMADO.equals(correlativo) && !ESTADO_TRASLADO.equals(correlativo))
+        long detalle = estado != null ? estado.detalle() : -1L;
+        if (detalle != DetalleEstado.LLAMADO.getValor() && detalle != DetalleEstado.TRASLADO.getValor())
             throw new TurnoValidationException(
-                    "Solo se puede finalizar un turno en estado LLAMADO o TRASLADO. Estado actual: " + correlativo);
+                    "Solo se puede finalizar un turno en estado LLAMADO o TRASLADO. Estado actual: " + detalle);
     }
 
     /* ── Getters ─────────────────────────────────── */

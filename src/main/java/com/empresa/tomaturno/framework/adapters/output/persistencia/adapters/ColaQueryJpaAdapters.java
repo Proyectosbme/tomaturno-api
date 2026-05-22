@@ -109,11 +109,15 @@ public class ColaQueryJpaAdapters implements ColaQueryRepository {
     public List<Cola> buscarColasQueTienenDetalles(Long idSucursal) {
         List<ColaJpaEntity> entities = colaJpaRepository.buscarPorSucursal(idSucursal);
         if (entities.isEmpty()) return List.of();
+
         SucursalJpaEntity sucursal = sucursalJpaRepository.findById(idSucursal);
+
         return entities.stream()
                 .flatMap(entity -> {
+                    
                     List<DetalleColaJpaEntity> detalles = colaDetalleRepository.buscarPorFiltro(
                             idSucursal, entity.getIdpk().getId(), null);
+
                     return detalles != null && !detalles.isEmpty()
                             ? Optional.of(colaOutputMapper.toDomainCompleto(entity, sucursal, detalles)).stream()
                             : Stream.empty();

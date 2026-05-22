@@ -6,12 +6,12 @@ import com.empresa.tomaturno.catalogos.application.command.port.output.CatalogoC
 import com.empresa.tomaturno.catalogos.application.query.port.output.CatalogoQueryRepository;
 import com.empresa.tomaturno.catalogos.dominio.entity.Catalogo;
 import com.empresa.tomaturno.catalogos.dominio.entity.CatalogoDetalle;
+import com.empresa.tomaturno.framework.adapters.output.mapper.CatalogoOutputMapper;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.CatalogoDetalleJpaEntity;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.CatalogoDetalleJpaEntityPK;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.CatalogoJpaEntity;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.CatalogoDetalleJpaRepository;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.CatalogoJpaRepository;
-import com.empresa.tomaturno.shared.clases.Auditoria;
 import com.empresa.tomaturno.shared.clases.Estado;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -22,12 +22,15 @@ public class CatalogoJpaAdapters implements CatalogoCommandRepository, CatalogoQ
 
     private final CatalogoJpaRepository catalogoJpaRepository;
     private final CatalogoDetalleJpaRepository catalogoDetalleJpaRepository;
+    private final CatalogoOutputMapper mapper;
 
     @Inject
     public CatalogoJpaAdapters(CatalogoJpaRepository catalogoJpaRepository,
-                               CatalogoDetalleJpaRepository catalogoDetalleJpaRepository) {
+                               CatalogoDetalleJpaRepository catalogoDetalleJpaRepository,
+                               CatalogoOutputMapper mapper) {
         this.catalogoJpaRepository = catalogoJpaRepository;
         this.catalogoDetalleJpaRepository = catalogoDetalleJpaRepository;
+        this.mapper = mapper;
     }
 
     @Override
@@ -35,13 +38,10 @@ public class CatalogoJpaAdapters implements CatalogoCommandRepository, CatalogoQ
         CatalogoJpaEntity entity = catalogoJpaRepository.findById(idCatalogo);
         if (entity == null) return null;
 
-        List<CatalogoDetalleJpaEntity> detallesEntity = catalogoDetalleJpaRepository.buscarPorIdCatalogo(idCatalogo);
+        List<CatalogoDetalle> detalles = catalogoDetalleJpaRepository.buscarPorIdCatalogo(idCatalogo)
+                .stream().map(mapper::toDetalleDomain).toList();
 
-        List<CatalogoDetalle> detalles = detallesEntity.stream()
-                .map(this::toDetalleDomain)
-                .toList();
-
-        return toCatalogoDomain(entity, detalles);
+        return mapper.toDomain(entity, detalles);
     }
 
     @Override
@@ -69,43 +69,14 @@ public class CatalogoJpaAdapters implements CatalogoCommandRepository, CatalogoQ
     }
 
     @Override
-    public Catalogo crearDetalle(long idCatalogo, CatalogoDetalle detalle) {
-        CatalogoDetalleJpaEntity entity = new CatalogoDetalleJpaEntity();
-        entity.setId(new CatalogoDetalleJpaEntityPK(idCatalogo, detalle.getCorrelativo().longValue()));
-        entity.setNombre(detalle.getNombre());
-        entity.setDescripcion(detalle.getDescripcion());
-        entity.setUsuarioCreacion(detalle.getAuditoria().getUsuarioCreacion());
-        entity.setFechaCreacion(detalle.getAuditoria().getFechaCreacion());
-        entity.setEstado(Estado.ACTIVO.getCodigo());
+    public Catalogo crearDetalle(
+        long idCatalogo, 
+        CatalogoDetalle detalle) {
+        Long correlativo = catalogoDetalleJpaRepository.obtenerSiguienteCorrelativo(idCatalogo);
+        CatalogoDetalleJpaEntity entity = mapper.toJpaEntity(idCatalogo, correlativo, detalle);
+        entity.setId(new CatalogoDetalleJpaEntityPK(idCatalogo, correlativo));
         catalogoDetalleJpaRepository.persist(entity);
 
         return obtenerCatalogoConDetallesPorId(idCatalogo);
-    }
-
-    private Catalogo toCatalogoDomain(CatalogoJpaEntity entity, List<CatalogoDetalle> detalles) {
-        Auditoria auditoria = Auditoria.reconstituir(
-                entity.getUsuarioCreacion(), entity.getFechaCreacion(),
-                entity.getUsuarioModificacion(), entity.getFechaModificacion());
-        return Catalogo.reconstruirCatalogo(
-                entity.getId().intValue(),
-                entity.getNombre(),
-                entity.getDescripcion(),
-                Estado.fromCodigo(entity.getEstado()),
-                detalles,
-                auditoria);
-    }
-
-    private CatalogoDetalle toDetalleDomain(CatalogoDetalleJpaEntity entity) {
-        Auditoria auditoria = Auditoria.reconstituir(
-                entity.getUsuarioCreacion(), entity.getFechaCreacion(),
-                entity.getUsuarioModificacion(), entity.getFechaModificacion());
-        CatalogoDetalle detalle = CatalogoDetalle.reconstruirCatalogoDetalle(
-                entity.getNombre(),
-                entity.getDescripcion(),
-                Estado.fromCodigo(entity.getEstado()),
-                auditoria);
-        detalle.asignarCorrelativo(entity.getId().getIdDetalle().intValue());
-        detalle.asignarIdCatalogo(entity.getId().getIdCatalogo());
-        return detalle;
     }
 }

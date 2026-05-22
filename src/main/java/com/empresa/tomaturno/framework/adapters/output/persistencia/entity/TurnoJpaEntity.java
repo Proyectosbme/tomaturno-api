@@ -48,6 +48,9 @@ public class TurnoJpaEntity {
     @Column(name = "idcatalogoestado")
     private Long idCatalogoEstado;
 
+      @Column(name = "idcatalogoestadodetalle")
+    private Long idCatalogoEstadoDetalle;
+
     @Column(name = "idturnorelacionado")
     private Long idTurnoRelacionado;
 

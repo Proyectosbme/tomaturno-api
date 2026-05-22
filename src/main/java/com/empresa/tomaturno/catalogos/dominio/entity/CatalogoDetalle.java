@@ -7,8 +7,6 @@ import com.empresa.tomaturno.shared.clases.Estado;
 
 public class CatalogoDetalle {
 
-    private Integer correlativo;
-    private Long idCatalogo;
     private String nombre;
     private String descripcion;
     private Estado estado;
@@ -36,37 +34,13 @@ public class CatalogoDetalle {
         return detalle;
     }
 
-    public static CatalogoDetalle conCorrelativo(Integer correlativo) {
-        CatalogoDetalle d = new CatalogoDetalle(null, null, null);
-        d.correlativo = correlativo;
-        return d;
-    }
-
-    public void asignarCorrelativo(Integer correlativo) {
-        this.correlativo = correlativo;
-    }
-
-    public void asignarIdCatalogo(Long idCatalogo) {
-        this.idCatalogo = idCatalogo;
-    }
-
     private void validarCreacion() {
-        if(this.correlativo == null)
-            throw new IllegalArgumentException("El correlativo no puede ser nulo");
         if (this.nombre == null || this.nombre.isEmpty())
             throw new IllegalArgumentException("El nombre no puede ser nulo o vacío");
         if (this.auditoria == null)
             throw new IllegalArgumentException("La auditoria no puede ser nula");
         if (estado == null)
             throw new IllegalArgumentException("El estado no puede ser nulo");
-    }
-
-    public Integer getCorrelativo() {
-        return correlativo;
-    }
-
-    public Long getIdCatalogo() {
-        return idCatalogo;
     }
 
     public String getNombre() {

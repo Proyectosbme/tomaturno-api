@@ -86,15 +86,19 @@ public interface ColaOutputMapper {
     /** Cola completa: nombre de sucursal + detalles. */
     default Cola toDomainCompleto(ColaJpaEntity e, SucursalJpaEntity sucursal,
             List<DetalleColaJpaEntity> detalles) {
+
         Sucursal sucursalVo = sucursal != null
                 ? new Sucursal(sucursal.getId(), sucursal.getNombre())
                 : new Sucursal(e.getIdpk().getIdSucursal(), null);
+
         Auditoria auditoria = Auditoria.reconstituir(
                 e.getUserCreacion(), e.getFechaCreacion(),
                 e.getUserModificacion(), e.getFechaModificacion());
+
         List<Detalle> detallesDomain = detalles != null
                 ? detalles.stream().map(this::toDomainDetalle).toList()
                 : null;
+                
         return Cola.builder()
                 .identificador(e.getIdpk().getId())
                 .nombre(e.getNombre())
