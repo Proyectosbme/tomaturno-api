@@ -14,5 +14,7 @@ public interface KeycloakAdminPort {
      */
     String crearUsuario(CrearUsuarioKeycloakCommand command);
 
+    boolean actualizarUsuario(CrearUsuarioKeycloakCommand command);
+
     List<Usuario> enriquecerUsuarios(List<Usuario> usuarios);
 }

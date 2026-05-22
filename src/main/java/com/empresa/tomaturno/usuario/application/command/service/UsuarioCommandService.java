@@ -16,11 +16,13 @@ public class UsuarioCommandService implements UsuarioCommandInputPort {
     private final ModificarUsuarioUseCase modificarUseCase;
     private final AsignarFotoUseCase asignarFotoUseCase;
     private final RegistroUsuarioUseCase registroUsuarioUseCase;
+    
 
     public UsuarioCommandService(UsuarioCommandRepository commandRepository,
-                                  UsuarioQueryRepository queryRepository, KeycloakAdminPort keycloakAdmin) {
+                                  UsuarioQueryRepository queryRepository, 
+                                KeycloakAdminPort keycloakAdmin ) {
         this.crearUseCase = new CrearUsuarioUseCase(commandRepository, queryRepository, keycloakAdmin);
-        this.modificarUseCase = new ModificarUsuarioUseCase(commandRepository, queryRepository);
+        this.modificarUseCase = new ModificarUsuarioUseCase(commandRepository, queryRepository,keycloakAdmin);
         this.asignarFotoUseCase = new AsignarFotoUseCase(commandRepository, queryRepository);
         this.registroUsuarioUseCase = new RegistroUsuarioUseCase(commandRepository, queryRepository, keycloakAdmin);
     }

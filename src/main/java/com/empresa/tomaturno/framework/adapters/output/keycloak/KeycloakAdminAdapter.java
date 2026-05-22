@@ -137,4 +137,50 @@ public class KeycloakAdminAdapter implements KeycloakAdminPort {
         }
         return null;
     }
+
+    @Override
+    public boolean actualizarUsuario(CrearUsuarioKeycloakCommand command) {
+        List<UserRepresentation> encontrados = keycloak.realm(realm).users()
+                .searchByUsername(command.username(), true);
+        if (encontrados.isEmpty()) return false;
+
+        String keycloakId = encontrados.get(0).getId();
+        var resource = keycloak.realm(realm).users().get(keycloakId);
+
+        UserRepresentation user = encontrados.get(0);
+        user.setFirstName(command.nombres());
+        user.setLastName(command.apellidos());
+
+        Map<String, List<String>> attrs = user.getAttributes() != null
+                ? new HashMap<>(user.getAttributes()) : new HashMap<>();
+        if (command.idSucursal() != null)
+            attrs.put("idSucursal", List.of(String.valueOf(command.idSucursal())));
+        user.setAttributes(attrs);
+
+        resource.update(user);
+
+        if (command.contrasena() != null && !command.contrasena().isBlank()) {
+            CredentialRepresentation cred = new CredentialRepresentation();
+            cred.setTemporary(true);
+            cred.setType(CredentialRepresentation.PASSWORD);
+            cred.setValue(command.contrasena());
+            resource.resetPassword(cred);
+        }
+
+        if (command.perfil() != null && !command.perfil().isBlank()) {
+            List<RoleRepresentation> rolesActuales = resource.roles().realmLevel().listAll()
+                    .stream()
+                    .filter(r -> !r.getName().startsWith("default-roles-")
+                            && !r.getName().equals("offline_access")
+                            && !r.getName().equals("uma_authorization"))
+                    .toList();
+            if (!rolesActuales.isEmpty())
+                resource.roles().realmLevel().remove(rolesActuales);
+
+            RoleRepresentation nuevoRol = obtenerOCrearRol(command.perfil());
+            resource.roles().realmLevel().add(List.of(nuevoRol));
+        }
+
+        return true;
+    }
 }
