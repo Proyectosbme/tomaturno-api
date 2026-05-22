@@ -135,6 +135,23 @@ public class ColaController {
                 .entity(colaInputMapper.toResponse(cola)).build();
     }
 
+    @PUT
+    @Path("/{idCola}/sucursal/{idSucursal}/detalles/{idDetalle}")
+    @Transactional
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"ADMIN"})
+    public Response modificarDetalle(
+            @PathParam("idCola") Long idCola,
+            @PathParam("idSucursal") Long idSucursal,
+            @PathParam("idDetalle") Long idDetalle,
+            @Valid DetalleRequestDTO request) {
+        Detalle detalle = colaInputMapper.toDetalleDomain(request);
+        Cola cola = colaCommandInputPort.editarDetalleCola(idCola, idSucursal, idDetalle,detalle, usuarioActual());
+        return Response.status(Response.Status.CREATED)
+                .entity(colaInputMapper.toResponse(cola)).build();
+    }
+
     @POST
     @Path("/replicar")
     @Transactional
