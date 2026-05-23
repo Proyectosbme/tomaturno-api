@@ -17,8 +17,6 @@ public interface TurnoOutputMapper {
     @Mapping(target = "idSucursal",  ignore = true)
     @Mapping(target = "fechaCreacion", ignore = true)
     @Mapping(target = "codigoTurno", ignore = true)
-    @Mapping(target = "estado",
-             expression = "java(turno.getEstado() != null ? (int) turno.getEstado().detalle() : null)")
     @Mapping(target = "idCatalogoEstado",
              expression = "java(turno.getEstado() != null ? turno.getEstado().catalogo() : null)")
     @Mapping(target = "idCatalogoEstadoDetalle",
@@ -29,11 +27,11 @@ public interface TurnoOutputMapper {
         CatalogoDetalle estado = null;
         if (entity.getIdCatalogoEstado() != null && entity.getIdCatalogoEstadoDetalle() != null) {
             estado = new CatalogoDetalle(entity.getIdCatalogoEstado(), entity.getIdCatalogoEstadoDetalle());
-        } else if (entity.getEstado() != null) {
+        } else if (entity.getIdCatalogoEstadoDetalle() != null) {
             // compatibilidad con registros anteriores sin idCatalogoEstadoDetalle
             estado = new CatalogoDetalle(
                 entity.getIdCatalogoEstado() != null ? entity.getIdCatalogoEstado() : 0L,
-                entity.getEstado().longValue());
+                entity.getIdCatalogoEstadoDetalle().longValue());
         }
         return Turno.builder()
                 .id(entity.getId())
@@ -58,8 +56,6 @@ public interface TurnoOutputMapper {
     @Mapping(target = "idSucursal",  ignore = true)
     @Mapping(target = "fechaCreacion", ignore = true)
     @Mapping(target = "codigoTurno", ignore = true)
-    @Mapping(target = "estado",
-             expression = "java(turno.getEstado() != null ? (int) turno.getEstado().detalle() : null)")
     @Mapping(target = "idCatalogoEstado",
              expression = "java(turno.getEstado() != null ? turno.getEstado().catalogo() : null)")
     @Mapping(target = "idCatalogoEstadoDetalle",

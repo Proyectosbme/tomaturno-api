@@ -6,7 +6,6 @@ import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.Turno
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.PuestoJpaRepository;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.TurnoJpaRepository;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.UsuarioJpaRepository;
-import com.empresa.tomaturno.shared.clases.CatalogoEnum;
 import com.empresa.tomaturno.turno.application.command.port.output.TurnoCommandRepository;
 import com.empresa.tomaturno.turno.dominio.entity.Turno;
 

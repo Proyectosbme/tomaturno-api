@@ -43,7 +43,6 @@ public class TurnoJpaEntity {
     @Column(name = "iddetalle")
     private Long idDetalle;
 
-    private Integer estado;
 
     @Column(name = "idcatalogoestado")
     private Long idCatalogoEstado;

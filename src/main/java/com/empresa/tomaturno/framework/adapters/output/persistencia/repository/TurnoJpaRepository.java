@@ -41,14 +41,16 @@ public class TurnoJpaRepository implements PanacheRepositoryBase<TurnoJpaEntity,
     public boolean existeTurnoLlamadoPorPuesto(Long idPuesto, Long idSucursal, LocalDate fecha) {
         LocalDateTime inicio = fecha.atStartOfDay();
         LocalDateTime fin = fecha.plusDays(1).atStartOfDay();
-        return count("idPuesto = ?1 and idpk.idSucursal = ?2 and estado = 2 and idpk.fechaCreacion >= ?3 and idpk.fechaCreacion < ?4",
+        return count(
+                "idPuesto = ?1 and idpk.idSucursal = ?2 and idCatalogoEstadoDetalle = 2 and idpk.fechaCreacion >= ?3 and idpk.fechaCreacion < ?4",
                 idPuesto, idSucursal, inicio, fin) > 0;
     }
 
     public boolean existeTurnoLlamadoPorUsuario(Long idUsuario, Long idSucursal, LocalDate fecha) {
         LocalDateTime inicio = fecha.atStartOfDay();
         LocalDateTime fin = fecha.plusDays(1).atStartOfDay();
-        return count("idUsuario = ?1 and idpk.idSucursal = ?2 and estado = 2 and idpk.fechaCreacion >= ?3 and idpk.fechaCreacion < ?4",
+        return count(
+                "idUsuario = ?1 and idpk.idSucursal = ?2 and idCatalogoEstadoDetalle = 2 and idpk.fechaCreacion >= ?3 and idpk.fechaCreacion < ?4",
                 idUsuario, idSucursal, inicio, fin) > 0;
     }
 
@@ -63,19 +65,24 @@ public class TurnoJpaRepository implements PanacheRepositoryBase<TurnoJpaEntity,
         StringBuilder jpql = new StringBuilder("SELECT t FROM TurnoJpaEntity t ");
         if (conPrioridad) {
             jpql.append("LEFT JOIN DetalleColaxPuestoJpaEntity d ")
-                .append("ON t.idCola = d.id.idCola ")
-                .append("AND t.idDetalle = d.id.idDetalle ")
-                .append("AND t.idpk.idSucursal = d.id.idSucursalCola ")
-                .append("AND d.id.idPuesto = :idPuesto ")
-                .append("AND d.id.idSucursalPuesto = :idSucursalPuesto ");
+                    .append("ON t.idCola = d.id.idCola ")
+                    .append("AND t.idDetalle = d.id.idDetalle ")
+                    .append("AND t.idpk.idSucursal = d.id.idSucursalCola ")
+                    .append("AND d.id.idPuesto = :idPuesto ")
+                    .append("AND d.id.idSucursalPuesto = :idSucursalPuesto ");
         }
         jpql.append("WHERE 1=1 ");
 
-        if (idSucursal != null) jpql.append("AND t.idpk.idSucursal = :idSucursal ");
-        if (idCola != null)     jpql.append("AND t.idCola = :idCola ");
-        if (idDetalle != null)  jpql.append("AND t.idDetalle = :idDetalle ");
-        if (estado != null)     jpql.append("AND t.estado = :estado ");
-        if (fecha != null)      jpql.append("AND t.idpk.fechaCreacion >= :fechaInicio AND t.idpk.fechaCreacion < :fechaFin ");
+        if (idSucursal != null)
+            jpql.append("AND t.idpk.idSucursal = :idSucursal ");
+        if (idCola != null)
+            jpql.append("AND t.idCola = :idCola ");
+        if (idDetalle != null)
+            jpql.append("AND t.idDetalle = :idDetalle ");
+        if (estado != null)
+            jpql.append("AND t.idCatalogoEstadoDetalle = :estado ");
+        if (fecha != null)
+            jpql.append("AND t.idpk.fechaCreacion >= :fechaInicio AND t.idpk.fechaCreacion < :fechaFin ");
 
         if (conPrioridad) {
             jpql.append("ORDER BY COALESCE(d.prioridad, 9999) ASC, t.idpk.fechaCreacion ASC");
@@ -89,10 +96,14 @@ public class TurnoJpaRepository implements PanacheRepositoryBase<TurnoJpaEntity,
             query.setParameter("idPuesto", idPuesto);
             query.setParameter("idSucursalPuesto", idSucursalPuesto);
         }
-        if (idSucursal != null) query.setParameter("idSucursal", idSucursal);
-        if (idCola != null)     query.setParameter("idCola", idCola);
-        if (idDetalle != null)  query.setParameter("idDetalle", idDetalle);
-        if (estado != null)     query.setParameter("estado", estado);
+        if (idSucursal != null)
+            query.setParameter("idSucursal", idSucursal);
+        if (idCola != null)
+            query.setParameter("idCola", idCola);
+        if (idDetalle != null)
+            query.setParameter("idDetalle", idDetalle);
+        if (estado != null)
+            query.setParameter("estado", estado);
         if (fecha != null) {
             query.setParameter("fechaInicio", fecha.atStartOfDay());
             query.setParameter("fechaFin", fecha.plusDays(1).atStartOfDay());

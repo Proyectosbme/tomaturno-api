@@ -60,7 +60,7 @@ public class Turno {
                 .idDetalle(idDetalle)
                 .codigoTurno(codigoTurno)
                 .fechaCreacion(LocalDateTime.now())
-                .estado(new CatalogoDetalle(CatalogoEstado.ESTADO_TURNO.getValor(), DetalleEstado.CREADO.getValor()))
+                .estado(new CatalogoDetalle(CatalogoEstado.ESTADO_TURNO.getValor(),    DetalleEstado.CREADO.getValor()))
                 .idPersona(idPersona)
                 .tipoCasoEspecial(tipoCasoEspecial)
                 .idCatalogo(CatalogoEnum.ESTADOS_TURNOS.getCodigo().longValue())
