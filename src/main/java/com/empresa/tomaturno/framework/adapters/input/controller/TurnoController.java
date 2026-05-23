@@ -61,6 +61,7 @@ public class TurnoController {
             @QueryParam("idPuesto") Long idPuesto,
             @QueryParam("idSucursalPuesto") Long idSucursalPuesto) {
         LocalDate localDate = fecha != null ? LocalDate.parse(fecha) : null;
+        
         List<Turno> turnos = turnoQueryInputPort.buscarPorFiltro(idSucursal, idCola, idDetalle, estado, localDate,
                 idPuesto, idSucursalPuesto);
         return turnos.stream().map(turnoInputMapper::toResponse).toList();
