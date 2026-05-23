@@ -1,6 +1,7 @@
 package com.empresa.tomaturno.framework.adapters.exceptions;
 
 import jakarta.json.bind.JsonbException;
+import jakarta.persistence.OptimisticLockException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.ws.rs.core.MediaType;
@@ -85,6 +86,20 @@ public class GlobalExceptionHandler {
         public Response toResponse(TurnoValidationException exception) {
             ErrorResponseDTO error = new ErrorResponseDTO(
                     409, "Operación no permitida", exception.getMessage(), "/turnos");
+            return Response.status(Response.Status.CONFLICT)
+                    .type(MediaType.APPLICATION_JSON)
+                    .entity(error).build();
+        }
+    }
+
+    @Provider
+    public static class OptimisticLockExceptionMapper implements ExceptionMapper<OptimisticLockException> {
+        @Override
+        public Response toResponse(OptimisticLockException exception) {
+            ErrorResponseDTO error = new ErrorResponseDTO(
+                    409, "Turno no disponible",
+                    "Este turno ya fue llamado por otro operador. Intente llamar el siguiente.",
+                    "/turnos");
             return Response.status(Response.Status.CONFLICT)
                     .type(MediaType.APPLICATION_JSON)
                     .entity(error).build();

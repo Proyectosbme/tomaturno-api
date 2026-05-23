@@ -67,4 +67,8 @@ public class TurnoJpaEntity {
 
     @Column(name = "tipocasoespecial")
     private Integer tipoCasoEspecial;
+
+    @Version
+    @Column(name = "version")
+    private Long version;
 }

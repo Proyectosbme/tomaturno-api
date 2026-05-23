@@ -21,6 +21,13 @@ public class TurnoJpaRepository implements PanacheRepositoryBase<TurnoJpaEntity,
 
     /** Siguiente número correlativo para codigoTurno (reinicia cada día) */
     public Long obtenerSiguienteNumero(Long idSucursal, LocalDate fecha, String codigoBase) {
+        // Lock por sucursal + cola para evitar correlativos duplicados en peticiones simultáneas
+        long lockKey = idSucursal * 100_000L + Math.abs((long) codigoBase.hashCode() % 100_000);
+        getEntityManager()
+                .createNativeQuery("SELECT pg_advisory_xact_lock(:key)")
+                .setParameter("key", lockKey)
+                .getSingleResult();
+
         LocalDateTime inicio = fecha.atStartOfDay();
         LocalDateTime fin = fecha.plusDays(1).atStartOfDay();
         long count = count(
@@ -103,7 +110,7 @@ public class TurnoJpaRepository implements PanacheRepositoryBase<TurnoJpaEntity,
         if (idDetalle != null)
             query.setParameter("idDetalle", idDetalle);
         if (estado != null)
-            query.setParameter("estado", estado);
+            query.setParameter("estado", estado.longValue());
         if (fecha != null) {
             query.setParameter("fechaInicio", fecha.atStartOfDay());
             query.setParameter("fechaFin", fecha.plusDays(1).atStartOfDay());
