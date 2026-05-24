@@ -49,7 +49,7 @@ public interface UsuarioInputMapper {
     @Mapping(source = "datosPersonales.telefono",               target = "telefono")
     @Mapping(source = "configuracion.perfil",                   target = "perfil")
     @Mapping(source = "configuracion.ip",                       target = "ip")
-    @Mapping(source = "configuracion.correlativo",              target = "correlativo")
+    @Mapping(source = "configuracion.correlativoPuesto",              target = "correlativo")
     @Mapping(source = "configuracion.atenderCasosEspeciales",   target = "atenderCasosEspeciales")
     @Mapping(source = "nombreSucursal",                         target = "nombreSucursal")
     @Mapping(source = "nombrePuesto",                           target = "nombrePuesto")

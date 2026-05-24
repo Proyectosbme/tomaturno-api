@@ -6,13 +6,13 @@ public class ConfiguracionOperador {
 
     private  String perfil;
     private final String ip;
-    private final Integer correlativo;
+    private final Integer correlativoPuesto;
     private final Integer atenderCasosEspeciales;
 
-    private ConfiguracionOperador(String perfil, String ip, Integer correlativo, Integer atenderCasosEspeciales) {
+    private ConfiguracionOperador(String perfil, String ip, Integer correlativoPuesto, Integer atenderCasosEspeciales) {
         this.perfil = perfil;
         this.ip = ip;
-        this.correlativo = correlativo;
+        this.correlativoPuesto = correlativoPuesto;
         this.atenderCasosEspeciales = atenderCasosEspeciales == null ? 0 : atenderCasosEspeciales;
     }
 
@@ -43,8 +43,8 @@ public class ConfiguracionOperador {
         return ip;
     }
 
-    public Integer getCorrelativo() {
-        return correlativo;
+    public Integer getCorrelativoPuesto() {
+        return correlativoPuesto;
     }
 
     public Integer getAtenderCasosEspeciales() {

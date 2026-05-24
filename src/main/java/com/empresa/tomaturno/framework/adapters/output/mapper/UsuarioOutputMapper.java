@@ -25,6 +25,7 @@ public interface UsuarioOutputMapper {
     @Mapping(target = "fechaModificacion", source = "auditoria.fechaModificacion")
     @Mapping(target = "estado", source = "estado", qualifiedByName = "estadoToCodigo")
     @Mapping(target = "foto", source = "foto")
+    @Mapping(target = "nombreCompleto", source = ".", qualifiedByName = "nombreCompleto")
     UsuarioJpaEntity toJpaEntity(Usuario usuario);
 
     default Usuario toDomain(UsuarioJpaEntity e) {
@@ -54,10 +55,16 @@ public interface UsuarioOutputMapper {
     @Mapping(target = "fechaModificacion", source = "auditoria.fechaModificacion")
     @Mapping(target = "estado", source = "estado", qualifiedByName = "estadoToCodigo")
     @Mapping(target = "foto", source = "foto")
+     @Mapping(target = "nombreCompleto", source = ".", qualifiedByName = "nombreCompleto")
     void updateEntityFromDomain(Usuario usuario, @MappingTarget UsuarioJpaEntity entity);
 
     @Named("estadoToCodigo")
     static Integer estadoToCodigo(Estado estado) {
         return estado == null ? null : estado.getCodigo();
+    }
+
+    @Named("nombreCompleto")
+    static String nombreCompleto(Usuario usuario){
+        return usuario.getNombres() + " " + usuario.getApellidos();
     }
 }

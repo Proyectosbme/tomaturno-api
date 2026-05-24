@@ -44,4 +44,5 @@ public class UsuarioJpaEntity {
     private String userCreacion;
     private String userModificacion;
     private LocalDateTime fechaModificacion;
+    private String nombreCompleto;
 }

@@ -15,7 +15,6 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -60,7 +59,7 @@ public class AuthController {
     }
 
     @POST
-    @Path("/crear")
+    @Path("/registrar")
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -70,16 +69,4 @@ public class AuthController {
         return Response.status(Response.Status.CREATED).entity(mapper.toResponse(usuario)).build();
     }
 
-    @GET
-    @Path("/perfil2")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response perfil2(@QueryParam("codigoUsuario") String codigousario) {
-
-        Usuario usuario = queryPort.buscarPorCodigo(codigousario);
-        if (usuario == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-        UsuarioResponseDTO dto = mapper.toResponse(usuario);
-        return Response.ok(dto).build();
-    }
 }

@@ -281,7 +281,7 @@ public class Usuario {
     }
 
     public Integer getCorrelativo() {
-        return configuracion != null ? configuracion.getCorrelativo() : null;
+        return configuracion != null ? configuracion.getCorrelativoPuesto(): null;
     }
 
     public Integer getAtenderCasosEspeciales() {
