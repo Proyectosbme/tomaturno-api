@@ -64,7 +64,7 @@ public class UsuarioQueryJpaAdapters implements UsuarioQueryRepository {
 
     
     @Override
-    public String existeCodigo(String codigoUsuario) {
+    public String generaCodigoUsuario(String codigoUsuario) {
         return generarCodigoDisponible(codigoUsuario, 1);
     }
 

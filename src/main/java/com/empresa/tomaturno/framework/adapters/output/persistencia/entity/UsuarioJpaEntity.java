@@ -25,7 +25,7 @@ public class UsuarioJpaEntity {
     @Column(insertable = false, updatable = false)
     private Long idSucursal;
 
-    private Integer correlativo;
+    private Integer correlativoPuesto;
 
     @Column(name = "atendercasosespeciales")
     private Integer atenderCasosEspeciales;

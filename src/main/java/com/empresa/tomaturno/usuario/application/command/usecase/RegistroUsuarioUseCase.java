@@ -22,7 +22,7 @@ public class RegistroUsuarioUseCase {
     public Usuario ejecutar(Usuario usuario) {        
 
         usuario.completarRegistro();
-        String codigo = queryRepository.existeCodigo(usuario.getCodigoUsuario());
+        String codigo = queryRepository.generaCodigoUsuario(usuario.getCodigoUsuario());
         usuario.asignarCodigoUsuario(codigo);       
 
         // Crear en Keycloak: nombres, apellidos, contraseña temporal, rol e idSucursal
@@ -34,7 +34,8 @@ public class RegistroUsuarioUseCase {
                 usuario.getApellidos(),
                 usuario.getContrasena(),
                 usuario.getPerfil(),
-                usuario.getIdSucursal()));
+                usuario.getIdSucursal(),
+                usuario.getCorreo()));
         usuario.asignarKeycloakId(keycloakId);
 
         

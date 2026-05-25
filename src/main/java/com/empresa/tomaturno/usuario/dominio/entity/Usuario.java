@@ -272,6 +272,10 @@ public class Usuario {
         return datosPersonales != null ? datosPersonales.getTelefono() : null;
     }
 
+    public String getCorreo() {
+        return datosPersonales != null ? datosPersonales.getCorreo() : null;
+    }
+
     public String getPerfil() {
         return configuracion != null ? configuracion.getPerfil() : null;
     }

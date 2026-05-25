@@ -40,7 +40,7 @@ public class SucursalEventPublisherAdapter implements SucursalEventPublisher {
 
     private void crearUsuario(Long idSucursal, String codigoBase, String perfil, String apellidos) {
         String codigo = codigoBase + "-" + idSucursal;
-        DatosPersonales datos = DatosPersonales.crear("Usuario", apellidos, null, null);
+        DatosPersonales datos = DatosPersonales.crear("Usuario", apellidos, null, null,null);
         ConfiguracionOperador config = ConfiguracionOperador.crear(perfil, null, null, null);
         Usuario usuario = Usuario.inicializar(idSucursal, null, codigo, Estado.ACTIVO, datos, config);
         usuario.asignarPerfilCreador("ADMIN");

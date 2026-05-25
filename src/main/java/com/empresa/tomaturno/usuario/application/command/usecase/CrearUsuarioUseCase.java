@@ -5,6 +5,7 @@ import com.empresa.tomaturno.usuario.application.command.port.output.KeycloakAdm
 import com.empresa.tomaturno.usuario.application.command.port.output.UsuarioCommandRepository;
 import com.empresa.tomaturno.usuario.application.query.port.output.UsuarioQueryRepository;
 import com.empresa.tomaturno.usuario.dominio.entity.Usuario;
+
 public class CrearUsuarioUseCase {
     private final UsuarioCommandRepository commandRepository;
     private final UsuarioQueryRepository queryRepository;
@@ -19,19 +20,22 @@ public class CrearUsuarioUseCase {
 
     public Usuario ejecutar(Usuario usuario, String usuarioCreador) {
         usuario.crear(usuarioCreador);
-        String codigo = queryRepository.existeCodigo(usuario.getCodigoUsuario());
+        String codigo = queryRepository.generaCodigoUsuario(usuario.getCodigoUsuario());
         usuario.asignarCodigoUsuario(codigo);
-        
         // Crear en Keycloak: nombres, apellidos, contraseña temporal, rol e idSucursal
-        String keycloakId = keycloakAdmin.crearUsuario(new CrearUsuarioKeycloakCommand(
+        String keycloakId = keycloakAdmin.crearUsuario(this.crearDtokeycloak(usuario));
+        usuario.asignarKeycloakId(keycloakId);
+        return commandRepository.save(usuario);
+    }
+
+    private CrearUsuarioKeycloakCommand crearDtokeycloak(Usuario usuario) {
+        return new CrearUsuarioKeycloakCommand(
                 usuario.getCodigoUsuario(),
                 usuario.getNombres(),
                 usuario.getApellidos(),
                 usuario.getContrasena(),
                 usuario.getPerfil(),
-                usuario.getIdSucursal()));
-        usuario.asignarKeycloakId(keycloakId);
-       
-        return commandRepository.save(usuario);
+                usuario.getIdSucursal(),
+                usuario.getCorreo());
     }
 }

@@ -38,7 +38,7 @@ public interface UsuarioOutputMapper {
                 .estado(Estado.fromCodigo(e.getEstado()))
                 .datosPersonales(DatosPersonales.reconstituir(null, null, e.getDui(), e.getTelefono()))
                 .configuracion(ConfiguracionOperador.reconstituir(
-                        null, e.getIp(), e.getCorrelativo(), e.getAtenderCasosEspeciales()))
+                        null, e.getIp(), e.getCorrelativoPuesto(), e.getAtenderCasosEspeciales()))
                 .auditoria(Auditoria.reconstituir(
                         e.getUserCreacion(), e.getFechaCreacion(),
                         e.getUserModificacion(), e.getFechaModificacion()))

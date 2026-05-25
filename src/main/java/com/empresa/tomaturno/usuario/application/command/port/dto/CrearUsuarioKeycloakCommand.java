@@ -6,5 +6,6 @@ public record CrearUsuarioKeycloakCommand(
         String apellidos,
         String contrasena,
         String perfil,
-        Long idSucursal
+        Long idSucursal,
+        String correo
 ) {}

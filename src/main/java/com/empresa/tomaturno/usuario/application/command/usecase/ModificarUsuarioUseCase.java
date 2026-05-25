@@ -38,7 +38,8 @@ public class ModificarUsuarioUseCase {
                 usuario.getApellidos(),
                 datosNuevos.getContrasena(),
                 usuario.getPerfil(),
-                idSucursal));
+                idSucursal,
+                usuario.getCorreo()));
 
         return commandRepository.modificar(usuario);
     }

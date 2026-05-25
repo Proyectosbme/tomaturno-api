@@ -1,5 +1,6 @@
 package com.empresa.tomaturno.framework.adapters.input.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -36,4 +37,9 @@ public class UsuarioRegistroRequestDTO extends AuditRequestDTO {
     @NotBlank
     @Size(max = 20)
     private String perfil;
+
+    @NotBlank
+    @Email
+    @Size(max = 150)
+    private String correo;
 }

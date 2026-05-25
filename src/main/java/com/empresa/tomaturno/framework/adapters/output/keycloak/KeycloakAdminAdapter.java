@@ -39,6 +39,10 @@ public class KeycloakAdminAdapter implements KeycloakAdminPort {
         user.setFirstName(cmd.nombres());
         user.setLastName(cmd.apellidos());
         user.setEnabled(true);
+        if (cmd.correo() != null && !cmd.correo().isBlank()) {
+            user.setEmail(cmd.correo());
+            user.setEmailVerified(false);
+        }
 
         Map<String, List<String>> attrs = new HashMap<>();
         if (cmd.idSucursal() != null)
@@ -150,6 +154,10 @@ public class KeycloakAdminAdapter implements KeycloakAdminPort {
         UserRepresentation user = encontrados.get(0);
         user.setFirstName(command.nombres());
         user.setLastName(command.apellidos());
+        if (command.correo() != null && !command.correo().isBlank()) {
+            user.setEmail(command.correo());
+            user.setEmailVerified(false);
+        }
 
         Map<String, List<String>> attrs = user.getAttributes() != null
                 ? new HashMap<>(user.getAttributes()) : new HashMap<>();

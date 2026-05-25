@@ -27,8 +27,8 @@ public class UsuarioJpaRepository implements PanacheRepositoryBase<UsuarioJpaEnt
 
     public String obtenerCorrelativo(Long idUsuario, Long idSucursal) {
         UsuarioJpaEntity usuario = buscarPorIdUsuarioYSucursal(idUsuario, idSucursal);
-        return (usuario != null && usuario.getCorrelativo() != null)
-                ? String.valueOf(usuario.getCorrelativo())
+        return (usuario != null && usuario.getCorrelativoPuesto() != null)
+                ? String.valueOf(usuario.getCorrelativoPuesto())
                 : null;
     }
 

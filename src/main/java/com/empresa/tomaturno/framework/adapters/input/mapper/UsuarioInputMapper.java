@@ -17,7 +17,7 @@ public interface UsuarioInputMapper {
 
     default Usuario toDomain(UsuarioRequestDTO dto) {
         DatosPersonales datos = DatosPersonales.crear(
-                dto.getNombres(), dto.getApellidos(), dto.getDui(), dto.getTelefono());
+                dto.getNombres(), dto.getApellidos(), dto.getDui(), dto.getTelefono(), dto.getCorreo());
         ConfiguracionOperador config = ConfiguracionOperador.crear(
                 dto.getPerfil(), dto.getIp(), dto.getCorrelativo(), dto.getAtenderCasosEspeciales());
         Usuario usuario = Usuario.inicializar(
@@ -31,7 +31,7 @@ public interface UsuarioInputMapper {
 
     default Usuario toRegistrarDomain(UsuarioRegistroRequestDTO dto) {
         DatosPersonales datos = DatosPersonales.crear(
-                dto.getNombres(), dto.getApellidos(), dto.getDui(), dto.getTelefono());
+                dto.getNombres(), dto.getApellidos(), dto.getDui(), dto.getTelefono(), dto.getCorreo());
         ConfiguracionOperador config = ConfiguracionOperador.crear(
                 dto.getPerfil(), null, dto.getCorrelativo(), null);
         Usuario usuario = Usuario.inicializar(
