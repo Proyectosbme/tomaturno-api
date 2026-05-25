@@ -10,7 +10,6 @@ import com.empresa.tomaturno.turno.dominio.exceptions.TurnoValidationException;
 
 public class Turno {
 
-
     private Long id;
     private Long idSucursal;
     private LocalDateTime fechaCreacion;
@@ -60,7 +59,7 @@ public class Turno {
                 .idDetalle(idDetalle)
                 .codigoTurno(codigoTurno)
                 .fechaCreacion(LocalDateTime.now())
-                .estado(new CatalogoDetalle(CatalogoEstado.ESTADO_TURNO.getValor(),    DetalleEstado.CREADO.getValor()))
+                .estado(new CatalogoDetalle(CatalogoEstado.ESTADO_TURNO.getValor(), DetalleEstado.CREADO.getValor()))
                 .idPersona(idPersona)
                 .tipoCasoEspecial(tipoCasoEspecial)
                 .idCatalogo(CatalogoEnum.ESTADOS_TURNOS.getCodigo().longValue())
@@ -99,6 +98,14 @@ public class Turno {
                 .estado(new CatalogoDetalle(CatalogoEstado.ESTADO_TURNO.getValor(), DetalleEstado.CREADO.getValor()))
                 .idTurnoRelacionado(this.id)
                 .build();
+    }
+
+    public static String generarCodigoTurno(String base, Long numero){
+        if(base == null)
+           throw new  TurnoValidationException("La base del turno no puede estar null");
+        if(numero == null)
+            throw new TurnoValidationException("EL numero para generar el turno no puede estar null");
+        return base + "-" + String.format("%03d", numero);
     }
 
     public void rellamarDesdeHistorial(Long idPuesto, Long idSucursalPuesto, Long idUsuario) {
@@ -177,7 +184,6 @@ public class Turno {
         return idSucursal;
     }
 
-    
     public Long getIdCatalogo() {
         return idCatalogo;
     }
@@ -296,7 +302,7 @@ public class Turno {
             return this;
         }
 
-        public Builder idCatalogo(Long idCatalogo){
+        public Builder idCatalogo(Long idCatalogo) {
             this.idCatalogo = idCatalogo;
             return this;
         }

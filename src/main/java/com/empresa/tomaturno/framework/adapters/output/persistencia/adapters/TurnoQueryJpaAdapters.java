@@ -4,9 +4,19 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.empresa.tomaturno.cola.dominio.entity.Cola;
+import com.empresa.tomaturno.cola.dominio.entity.Detalle;
+import com.empresa.tomaturno.framework.adapters.output.mapper.ColaOutputMapper;
 import com.empresa.tomaturno.framework.adapters.output.mapper.TurnoOutputMapper;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.ColaJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaPK;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.SucursalJpaEntity;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.TurnoJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.ColaDetalleRepository;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.ColaJpaRespository;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.PuestoJpaRepository;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.SucursalJpaRepository;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.TurnoJpaRepository;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.UsuarioJpaRepository;
 import com.empresa.tomaturno.turno.application.query.port.output.TurnoQueryRepository;
@@ -21,15 +31,27 @@ public class TurnoQueryJpaAdapters implements TurnoQueryRepository {
     private final TurnoOutputMapper turnoOutputMapper;
     private final PuestoJpaRepository puestoJpaRepository;
     private final UsuarioJpaRepository usuarioJpaRepository;
+    private final ColaJpaRespository colaJpaRepository;
+    private final SucursalJpaRepository sucursalJpaRepository;
+    private final ColaOutputMapper colaOutputMapper;
+    private final ColaDetalleRepository colaDetalleRepository;
 
     public TurnoQueryJpaAdapters(TurnoJpaRepository turnoJpaRepository,
             TurnoOutputMapper turnoOutputMapper,
             PuestoJpaRepository puestoJpaRepository,
-            UsuarioJpaRepository usuarioJpaRepository) {
+            UsuarioJpaRepository usuarioJpaRepository,
+            ColaJpaRespository colaJpaRepository,
+            SucursalJpaRepository sucursalJpaRepository,
+            ColaOutputMapper colaOutputMapper,
+            ColaDetalleRepository colaDetalleRepository) {
         this.turnoJpaRepository = turnoJpaRepository;
         this.turnoOutputMapper = turnoOutputMapper;
         this.puestoJpaRepository = puestoJpaRepository;
         this.usuarioJpaRepository = usuarioJpaRepository;
+        this.colaJpaRepository = colaJpaRepository;
+        this.sucursalJpaRepository = sucursalJpaRepository;
+        this.colaOutputMapper = colaOutputMapper;
+        this.colaDetalleRepository = colaDetalleRepository;
     }
 
     private void enriquecerNombreLlamada(Turno turno) {
@@ -87,4 +109,35 @@ public class TurnoQueryJpaAdapters implements TurnoQueryRepository {
     public boolean existeTurnoLlamadoPorUsuario(Long idUsuario, Long idSucursal, LocalDate fecha) {
         return turnoJpaRepository.existeTurnoLlamadoPorUsuario(idUsuario, idSucursal, fecha);
     }
+
+    @Override
+    public String obtenerCodigoBaseTurno(Long idSucursal, Long idCola, Long idDetalle) {
+        ColaJpaEntity entity = colaJpaRepository.buscarPorIdColaYSucursal(idCola, idSucursal);
+        Cola cola = null;
+        Detalle detalle = null;
+        if (entity != null) {
+            SucursalJpaEntity sucursal = sucursalJpaRepository.findById(idSucursal);
+            cola = colaOutputMapper.toDomainConSucursal(entity, sucursal);
+        }
+
+        DetalleColaPK pk = new DetalleColaPK(idCola, idSucursal.intValue(), idDetalle);
+        DetalleColaJpaEntity entityDetalle = colaDetalleRepository.findById(pk);
+        if (entity != null) {
+            detalle = colaOutputMapper.toDomainDetalle(entityDetalle);
+        }
+        return cola != null ? cola.resolverCodigoBase(detalle) : null;
+
+    }
+
+    @Override
+    public Long obtenerCorreltivoDetalle(Long idSucursal, Long idCola, Long idDetalle) {
+
+        DetalleColaPK pk = new DetalleColaPK(idCola, idSucursal.intValue(), idDetalle);
+        DetalleColaJpaEntity entity = colaDetalleRepository.findById(pk);
+        if (entity == null)
+            return null;
+
+        return entity.getId().getIdDetalle();
+    }
+
 }

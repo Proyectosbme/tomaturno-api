@@ -21,7 +21,8 @@ public class TurnoJpaRepository implements PanacheRepositoryBase<TurnoJpaEntity,
 
     /** Siguiente número correlativo para codigoTurno (reinicia cada día) */
     public Long obtenerSiguienteNumero(Long idSucursal, LocalDate fecha, String codigoBase) {
-        // Lock por sucursal + cola para evitar correlativos duplicados en peticiones simultáneas
+        // Lock por sucursal + cola para evitar correlativos duplicados en peticiones
+        // simultáneas
         long lockKey = idSucursal * 100_000L + Math.abs((long) codigoBase.hashCode() % 100_000);
         getEntityManager()
                 .createNativeQuery("SELECT pg_advisory_xact_lock(:key)")
@@ -117,5 +118,42 @@ public class TurnoJpaRepository implements PanacheRepositoryBase<TurnoJpaEntity,
         }
 
         return query.getResultList();
+    }
+
+    public boolean existeTurno(Long idSucursal,
+            Integer estado, LocalDate fecha, Long idPuesto, Long idSucursalPuesto) {
+        if (idSucursal == null && estado == null && fecha == null) {
+            return false;
+        }
+
+        StringBuilder jpql = new StringBuilder("SELECT COUNT(t) FROM TurnoJpaEntity t WHERE 1=1 ");
+
+        if (idSucursal != null)
+            jpql.append("AND t.idpk.idSucursal = :idSucursal ");
+        if (estado != null)
+            jpql.append("AND t.idCatalogoEstadoDetalle = :estado ");
+        if (fecha != null)
+            jpql.append("AND t.idpk.fechaCreacion >= :fechaInicio AND t.idpk.fechaCreacion < :fechaFin ");
+        if (idPuesto != null)
+            jpql.append("AND t.idPuesto = :idPuesto ");
+        if (idSucursalPuesto != null)
+            jpql.append("AND t.idSucursalPuesto = :idSucursalPuesto ");
+
+        TypedQuery<Long> query = getEntityManager().createQuery(jpql.toString(), Long.class);
+
+        if (idSucursal != null)
+            query.setParameter("idSucursal", idSucursal);
+        if (estado != null)
+            query.setParameter("estado", estado.longValue());
+        if (fecha != null) {
+            query.setParameter("fechaInicio", fecha.atStartOfDay());
+            query.setParameter("fechaFin", fecha.plusDays(1).atStartOfDay());
+        }
+        if (idPuesto != null)
+            query.setParameter("idPuesto", idPuesto);
+        if (idSucursalPuesto != null)
+            query.setParameter("idSucursalPuesto", idSucursalPuesto);
+
+        return query.getSingleResult() > 0;
     }
 }

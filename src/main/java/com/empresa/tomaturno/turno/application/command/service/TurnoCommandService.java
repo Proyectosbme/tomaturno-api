@@ -30,9 +30,9 @@ public class TurnoCommandService implements TurnoCommandInputPort {
             TurnoQueryRepository turnoQueryRepository,
             ColaQueryRepository colaQueryRepository,
             ConfiguracionQueryRepository configuracionQueryRepository) {
-        this.crearTurnoUseCase = new CrearTurnoUseCase(turnoCommandRepository, turnoQueryRepository, colaQueryRepository);
+        this.crearTurnoUseCase = new CrearTurnoUseCase(turnoCommandRepository, turnoQueryRepository);
         this.llamarTurnoUseCase = new LlamarTurnoUseCase(turnoCommandRepository, turnoQueryRepository, configuracionQueryRepository);
-        this.llamarSiguienteTurnoUseCase = new LlamarSiguienteTurnoUseCase(turnoQueryRepository, llamarTurnoUseCase);
+        this.llamarSiguienteTurnoUseCase = new LlamarSiguienteTurnoUseCase(turnoQueryRepository, new LlamarTurnoAdapter(llamarTurnoUseCase));
         this.marcarSinAtenderUseCase = new MarcarSinAtenderUseCase(turnoCommandRepository, turnoQueryRepository);
         this.reasignarTurnoUseCase = new ReasignarTurnoUseCase(turnoCommandRepository, turnoQueryRepository, colaQueryRepository);
         this.finalizarTurnoUseCase = new FinalizarTurnoUseCase(turnoCommandRepository, turnoQueryRepository);

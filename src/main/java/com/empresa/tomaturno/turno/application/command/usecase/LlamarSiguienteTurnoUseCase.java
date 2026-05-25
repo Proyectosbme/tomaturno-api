@@ -3,6 +3,7 @@ package com.empresa.tomaturno.turno.application.command.usecase;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.empresa.tomaturno.turno.application.command.port.input.LlamarTurnoInputPort;
 import com.empresa.tomaturno.turno.application.query.port.output.TurnoQueryRepository;
 import com.empresa.tomaturno.turno.dominio.entity.Turno;
 import com.empresa.tomaturno.turno.dominio.exceptions.TurnoNotFoundException;
@@ -10,27 +11,24 @@ import com.empresa.tomaturno.turno.dominio.exceptions.TurnoNotFoundException;
 public class LlamarSiguienteTurnoUseCase {
 
     private final TurnoQueryRepository turnoQueryRepository;
-    private final LlamarTurnoUseCase llamarTurnoUseCase;
+    private final LlamarTurnoInputPort llamarTurnoPort;
 
     public LlamarSiguienteTurnoUseCase(TurnoQueryRepository turnoQueryRepository,
-            LlamarTurnoUseCase llamarTurnoUseCase) {
+            LlamarTurnoInputPort llamarTurnoPort) {
         this.turnoQueryRepository = turnoQueryRepository;
-        this.llamarTurnoUseCase = llamarTurnoUseCase;
+        this.llamarTurnoPort = llamarTurnoPort;
     }
 
     public Turno ejecutar(Long idSucursal, Long idPuesto, Long idSucursalPuesto, Long idUsuario) {
         List<Turno> pendientes = turnoQueryRepository.buscarPorFiltro(
-                idSucursal, null, null,
-                1,
-                LocalDate.now(),
-                idPuesto, idSucursalPuesto);
+                idSucursal, null, null, 1, LocalDate.now(), idPuesto, idSucursalPuesto);
 
         if (pendientes.isEmpty()) {
             throw new TurnoNotFoundException("No hay turnos pendientes para atender");
         }
 
         Turno siguiente = pendientes.get(0);
-        return llamarTurnoUseCase.ejecutar(
+        return llamarTurnoPort.ejecutar(
                 siguiente.getIdSucursal(),
                 siguiente.getFechaCreacion(),
                 siguiente.getCodigoTurno(),
