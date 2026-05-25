@@ -19,7 +19,7 @@ public class SucursalEventPublisherAdapter implements SucursalEventPublisher {
     private final UsuarioCommandInputPort usuarioCommandInputPort;
 
     public SucursalEventPublisherAdapter(ConfiguracionDefaultBean configuracionDefaultBean,
-                                         UsuarioCommandInputPort usuarioCommandInputPort) {
+            UsuarioCommandInputPort usuarioCommandInputPort) {
         this.configuracionDefaultBean = configuracionDefaultBean;
         this.usuarioCommandInputPort = usuarioCommandInputPort;
     }
@@ -33,14 +33,16 @@ public class SucursalEventPublisherAdapter implements SucursalEventPublisher {
     }
 
     private void crearUsuariosDeSucursal(Long idSucursal) {
+        String perfil = Long.valueOf(1L).equals(idSucursal) ? "ADMIN" : "SUBADMIN";
+
+        crearUsuario(idSucursal, "admin", perfil, "Admin");
         crearUsuario(idSucursal, "publico", "PUBLICO", "Publico");
         crearUsuario(idSucursal, "monitor", "MONITOR", "Monitor");
-        crearUsuario(idSucursal, "admin",   "ADMIN",   "Admin");
     }
 
     private void crearUsuario(Long idSucursal, String codigoBase, String perfil, String apellidos) {
         String codigo = codigoBase + "-" + idSucursal;
-        DatosPersonales datos = DatosPersonales.crear("Usuario", apellidos, null, null,null);
+        DatosPersonales datos = DatosPersonales.crear("Usuario", apellidos, null, null, null);
         ConfiguracionOperador config = ConfiguracionOperador.crear(perfil, null, null, null);
         Usuario usuario = Usuario.inicializar(idSucursal, null, codigo, Estado.ACTIVO, datos, config);
         usuario.asignarPerfilCreador("ADMIN");
