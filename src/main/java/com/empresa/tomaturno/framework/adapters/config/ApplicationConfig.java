@@ -41,6 +41,8 @@ import com.empresa.tomaturno.sucursal.application.command.service.SucursalComman
 import com.empresa.tomaturno.sucursal.application.query.port.input.SucursalQueryInputPort;
 import com.empresa.tomaturno.sucursal.application.query.port.output.SucursalQueryRepository;
 import com.empresa.tomaturno.sucursal.application.query.service.SucursalQueryService;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.adapters.TurnoColaAdapter;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.adapters.TurnoConfiguracionAdapter;
 import com.empresa.tomaturno.turno.application.command.port.input.TurnoCommandInputPort;
 import com.empresa.tomaturno.turno.application.command.port.output.TurnoCommandRepository;
 import com.empresa.tomaturno.turno.application.command.service.TurnoCommandService;
@@ -191,7 +193,9 @@ public class ApplicationConfig {
     @Produces
     @ApplicationScoped
     public TurnoCommandInputPort turnoCommandService() {
-        return new TurnoCommandService(turnoCommandRepository, turnoQueryRepository, colaQueryRepository, configuracionQueryRepository);
+        return new TurnoCommandService(turnoCommandRepository, turnoQueryRepository,
+                new TurnoColaAdapter(colaQueryRepository),
+                new TurnoConfiguracionAdapter(configuracionQueryRepository));
     }
 
     @Produces

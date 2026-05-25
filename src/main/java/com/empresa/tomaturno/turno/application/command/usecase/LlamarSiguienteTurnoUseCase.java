@@ -28,7 +28,7 @@ public class LlamarSiguienteTurnoUseCase {
         }
 
         Turno siguiente = pendientes.get(0);
-        return llamarTurnoPort.ejecutar(
+        return llamarTurnoPort.llamar(
                 siguiente.getIdSucursal(),
                 siguiente.getFechaCreacion(),
                 siguiente.getCodigoTurno(),

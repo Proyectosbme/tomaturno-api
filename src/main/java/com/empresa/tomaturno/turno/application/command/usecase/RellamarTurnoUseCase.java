@@ -3,27 +3,25 @@ package com.empresa.tomaturno.turno.application.command.usecase;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import com.empresa.tomaturno.configuracion.application.query.port.output.ConfiguracionQueryRepository;
-import com.empresa.tomaturno.configuracion.dominio.entity.Configuracion;
 import com.empresa.tomaturno.turno.application.command.port.output.TurnoCommandRepository;
+import com.empresa.tomaturno.turno.application.query.port.output.TurnoConfiguracionPort;
 import com.empresa.tomaturno.turno.application.query.port.output.TurnoQueryRepository;
 import com.empresa.tomaturno.turno.dominio.entity.Turno;
 import com.empresa.tomaturno.turno.dominio.exceptions.TurnoNotFoundException;
 import com.empresa.tomaturno.turno.dominio.exceptions.TurnoValidationException;
-import com.empresa.tomaturno.shared.clases.ConfiguracionClave;
 
 public class RellamarTurnoUseCase {
 
     private final TurnoCommandRepository turnoCommandRepository;
     private final TurnoQueryRepository turnoQueryRepository;
-    private final ConfiguracionQueryRepository configuracionQueryRepository;
+    private final TurnoConfiguracionPort turnoConfiguracionPort;
 
     public RellamarTurnoUseCase(TurnoCommandRepository turnoCommandRepository,
             TurnoQueryRepository turnoQueryRepository,
-            ConfiguracionQueryRepository configuracionQueryRepository) {
+            TurnoConfiguracionPort turnoConfiguracionPort) {
         this.turnoCommandRepository = turnoCommandRepository;
         this.turnoQueryRepository = turnoQueryRepository;
-        this.configuracionQueryRepository = configuracionQueryRepository;
+        this.turnoConfiguracionPort = turnoConfiguracionPort;
     }
 
     public Turno ejecutar(Long idSucursal, LocalDateTime fechaCreacion, String codigoTurno,
@@ -34,9 +32,7 @@ public class RellamarTurnoUseCase {
             throw new TurnoNotFoundException("Turno no encontrado: " + codigoTurno);
         }
 
-        // Si parametro=0, el operador no puede tener otro turno activo (LLAMADO)
-        Configuracion config = configuracionQueryRepository.buscarPorNombreYSucursal(idSucursal, ConfiguracionClave.LLAMAR_CON_ACTIVO.clave());
-        if (config != null && Integer.valueOf(0).equals(config.getParametro())) {
+        if (turnoConfiguracionPort.debeVerificarTurnoActivo(idSucursal)) {
             boolean tieneActivo = (idUsuario != null)
                     ? turnoQueryRepository.existeTurnoLlamadoPorUsuario(idUsuario, idSucursal, LocalDate.now())
                     : turnoQueryRepository.existeTurnoLlamadoPorPuesto(idPuesto, idSucursal, LocalDate.now());
