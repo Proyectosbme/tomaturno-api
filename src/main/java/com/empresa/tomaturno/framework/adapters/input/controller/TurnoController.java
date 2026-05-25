@@ -31,6 +31,7 @@ public class TurnoController {
     private final TurnoInputMapper turnoInputMapper;
     private final TurnoWebSocket turnoWebSocket;
     private final Jsonb jsonb;
+    private final String TURNO_LLAMADO = "TURNO_LLAMADO";
 
     public TurnoController(TurnoCommandInputPort turnoCommandInputPort,
             TurnoQueryInputPort turnoQueryInputPort,
@@ -61,7 +62,7 @@ public class TurnoController {
             @QueryParam("idPuesto") Long idPuesto,
             @QueryParam("idSucursalPuesto") Long idSucursalPuesto) {
         LocalDate localDate = fecha != null ? LocalDate.parse(fecha) : null;
-        
+
         List<Turno> turnos = turnoQueryInputPort.buscarPorFiltro(idSucursal, idCola, idDetalle, estado, localDate,
                 idPuesto, idSucursalPuesto);
         return turnos.stream().map(turnoInputMapper::toResponse).toList();
@@ -72,9 +73,10 @@ public class TurnoController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"PUBLICO", "ADMIN"})
+    @RolesAllowed({"OPERADOR", "ADMIN" , "SUBADMIN"})
     public Response crear(@Valid CrearTurnoRequestDTO dto) {
-        Turno turno = turnoCommandInputPort.crear(dto.getIdSucursal(), dto.getIdCola(), dto.getIdDetalle(), dto.getIdPersona(), dto.getTipoCasoEspecial());
+        Turno turno = turnoCommandInputPort.crear(dto.getIdSucursal(), dto.getIdCola(), dto.getIdDetalle(),
+                dto.getIdPersona(), dto.getTipoCasoEspecial());
         turnoWebSocket.enviarTurno("{\"event\":\"TURNO_CREADO\",\"idSucursal\":" + dto.getIdSucursal() + "}");
         return Response.status(Response.Status.CREATED)
                 .entity(turnoInputMapper.toResponse(turno)).build();
@@ -85,12 +87,12 @@ public class TurnoController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"OPERADOR", "ADMIN"})
+    @RolesAllowed({ "OPERADOR", "ADMIN" })
     public Response llamarSiguiente(@Valid LlamarSiguienteTurnoRequestDTO dto) {
         Turno turno = turnoCommandInputPort.llamarSiguiente(
                 dto.getIdSucursal(), dto.getIdPuesto(), dto.getIdSucursalPuesto(), dto.getIdUsuario());
         TurnoResponseDTO responseDTO = turnoInputMapper.toResponse(turno);
-        turnoWebSocket.enviarTurno(wsPayload("TURNO_LLAMADO", dto.getIdSucursal(), responseDTO));
+        turnoWebSocket.enviarTurno(wsPayload(TURNO_LLAMADO, dto.getIdSucursal(), responseDTO));
         return Response.ok(responseDTO).build();
     }
 
@@ -99,7 +101,7 @@ public class TurnoController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"OPERADOR", "ADMIN"})
+    @RolesAllowed({ "OPERADOR", "ADMIN", "SUBADMIN" })
     public Response llamar(
             @PathParam("idSucursal") Long idSucursal,
             @PathParam("codigoTurno") String codigoTurno,
@@ -109,7 +111,7 @@ public class TurnoController {
         Turno turno = turnoCommandInputPort.llamar(idSucursal, fechaCreacion, codigoTurno,
                 dto.getIdPuesto(), dto.getIdSucursalPuesto(), dto.getIdUsuario());
         TurnoResponseDTO responseDTO = turnoInputMapper.toResponse(turno);
-        turnoWebSocket.enviarTurno(wsPayload("TURNO_LLAMADO", idSucursal, responseDTO));
+        turnoWebSocket.enviarTurno(wsPayload(TURNO_LLAMADO, idSucursal, responseDTO));
         return Response.ok(responseDTO).build();
     }
 
@@ -118,7 +120,7 @@ public class TurnoController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"OPERADOR", "ADMIN"})
+    @RolesAllowed({ "OPERADOR", "ADMIN", "SUBADMIN" })
     public Response reasignar(
             @PathParam("idSucursal") Long idSucursal,
             @PathParam("codigoTurno") String codigoTurno,
@@ -135,7 +137,7 @@ public class TurnoController {
     @Path("/{idSucursal}/{codigoTurno}/sin-atender")
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"OPERADOR", "ADMIN"})
+    @RolesAllowed({ "OPERADOR", "ADMIN", "SUBADMIN" })
     public Response sinAtender(
             @PathParam("idSucursal") Long idSucursal,
             @PathParam("codigoTurno") String codigoTurno,
@@ -151,7 +153,7 @@ public class TurnoController {
     @Path("/{idSucursal}/{codigoTurno}/finalizar")
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"OPERADOR", "ADMIN"})
+    @RolesAllowed({"OPERADOR", "ADMIN" , "SUBADMIN"})
     public Response finalizar(
             @PathParam("idSucursal") Long idSucursal,
             @PathParam("codigoTurno") String codigoTurno,
@@ -168,7 +170,7 @@ public class TurnoController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"OPERADOR", "ADMIN"})
+    @RolesAllowed({"OPERADOR", "ADMIN" , "SUBADMIN"})
     public Response rellamar(
             @PathParam("idSucursal") Long idSucursal,
             @PathParam("codigoTurno") String codigoTurno,
@@ -178,7 +180,7 @@ public class TurnoController {
         Turno turno = turnoCommandInputPort.rellamar(idSucursal, fechaCreacion, codigoTurno,
                 dto.getIdPuesto(), dto.getIdSucursalPuesto(), dto.getIdUsuario());
         TurnoResponseDTO responseDTO = turnoInputMapper.toResponse(turno);
-        turnoWebSocket.enviarTurno(wsPayload("TURNO_LLAMADO", idSucursal, responseDTO));
+        turnoWebSocket.enviarTurno(wsPayload(TURNO_LLAMADO, idSucursal, responseDTO));
         return Response.ok(responseDTO).build();
     }
 }

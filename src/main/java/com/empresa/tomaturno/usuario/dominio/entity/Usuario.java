@@ -133,9 +133,9 @@ public class Usuario {
         String nombres = this.datosPersonales.getNombres().trim();
         String apellidos = this.datosPersonales.getApellidos().trim();
         // Primera letra del nombre (en minúscula)
-         String primeraLetraNombre = "";
+        String primeraLetraNombre = "";
         if (!nombres.equalsIgnoreCase("usuario")) {
-             primeraLetraNombre = nombres.substring(0, 1).toLowerCase();
+            primeraLetraNombre = nombres.substring(0, 1).toLowerCase();
         }
         // Solo el primer apellido (antes del primer espacio)
         String primerApellido = apellidos.split("\\s+")[0].toLowerCase();
@@ -181,7 +181,8 @@ public class Usuario {
         if (this.perfilCreador == null || this.perfilCreador.isBlank()) {
             throw new UsuarioValidationException("El perfil del usuario creador es obligatorio");
         }
-        boolean creadorAutorizado = this.perfilCreador.equalsIgnoreCase("ADMIN");
+        boolean creadorAutorizado = this.perfilCreador.equalsIgnoreCase("ADMIN") ||
+                this.perfilCreador.equalsIgnoreCase("SUBADMIN");
         if (!creadorAutorizado) {
             throw new UsuarioValidationException("Solo usuarios con perfil ADMIN pueden crear usuarios");
         }
@@ -285,7 +286,7 @@ public class Usuario {
     }
 
     public Integer getCorrelativo() {
-        return configuracion != null ? configuracion.getCorrelativoPuesto(): null;
+        return configuracion != null ? configuracion.getCorrelativoPuesto() : null;
     }
 
     public Integer getAtenderCasosEspeciales() {

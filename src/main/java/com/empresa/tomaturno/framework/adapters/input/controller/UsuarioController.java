@@ -35,8 +35,8 @@ public class UsuarioController {
     SecurityContext securityContext;
 
     public UsuarioController(UsuarioCommandInputPort commandPort,
-                              UsuarioQueryInputPort queryPort,
-                              UsuarioInputMapper mapper) {
+            UsuarioQueryInputPort queryPort,
+            UsuarioInputMapper mapper) {
         this.commandPort = commandPort;
         this.queryPort = queryPort;
         this.mapper = mapper;
@@ -51,7 +51,7 @@ public class UsuarioController {
     @GET
     @Path("/buscar")
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"ADMIN"})
+    @RolesAllowed({ "ADMIN", "SUDAMIN" })
     public List<UsuarioResponseDTO> buscar(
             @QueryParam("idSucursal") Long idSucursal,
             @QueryParam("codigoUsuario") String codigoUsuario) {
@@ -62,7 +62,7 @@ public class UsuarioController {
     @GET
     @Path("/{idUsuario}/sucursal/{idSucursal}")
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"ADMIN"})
+    @RolesAllowed({ "ADMIN", "SUDAMIN" })
     public Response buscarPorId(
             @PathParam("idUsuario") Long idUsuario,
             @PathParam("idSucursal") Long idSucursal) {
@@ -75,7 +75,7 @@ public class UsuarioController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-      @RolesAllowed({"ADMIN"})
+    @RolesAllowed({ "ADMIN", "SUDAMIN" })
     public Response crear(@Valid UsuarioRequestDTO dto) {
         Usuario usuario = mapper.toDomain(dto);
         usuario = commandPort.crear(usuario, usuarioActual());
@@ -87,7 +87,7 @@ public class UsuarioController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"ADMIN"})
+    @RolesAllowed({ "ADMIN", "SUDAMIN" })
     public Response modificar(
             @PathParam("idUsuario") Long idUsuario,
             @PathParam("idSucursal") Long idSucursal,
@@ -104,8 +104,8 @@ public class UsuarioController {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Authenticated
     public Response asignarFoto(@PathParam("idUsuario") Long idUsuario,
-                                @PathParam("idSucursal") Long idSucursal,
-                                @RestForm("foto") FileUpload foto) throws java.io.IOException {
+            @PathParam("idSucursal") Long idSucursal,
+            @RestForm("foto") FileUpload foto) throws java.io.IOException {
         byte[] fotoBytes = java.nio.file.Files.readAllBytes(foto.uploadedFile());
         Usuario usuario = commandPort.asignarFoto(idUsuario, idSucursal, fotoBytes);
         return Response.ok(mapper.toResponse(usuario)).build();
@@ -116,7 +116,7 @@ public class UsuarioController {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     @Authenticated
     public Response obtenerFoto(@PathParam("idUsuario") Long idUsuario,
-                                @PathParam("idSucursal") Long idSucursal) {
+            @PathParam("idSucursal") Long idSucursal) {
         byte[] foto = queryPort.obtenerFoto(idUsuario, idSucursal);
         if (foto == null || foto.length == 0) {
             return Response.status(Response.Status.NOT_FOUND).build();

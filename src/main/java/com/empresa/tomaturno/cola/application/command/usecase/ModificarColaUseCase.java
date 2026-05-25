@@ -24,8 +24,7 @@ public class ModificarColaUseCase {
         }
         cola.modificar(datosNuevos.getNombre(),
                 datosNuevos.getCodigo(),
-                datosNuevos.getPrioridad(),
-                datosNuevos.getEstado(),usuario);
+                datosNuevos.getEstado(), usuario);
         return colaCommandRepository.modificar(cola);
     }
 }

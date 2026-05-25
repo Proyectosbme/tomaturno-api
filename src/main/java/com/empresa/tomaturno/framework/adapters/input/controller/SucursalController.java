@@ -63,7 +63,7 @@ public class SucursalController {
     @Operation(summary = "Crear sucursal", description = "Registra una nueva sucursal en el sistema y crea su configuración por defecto")
     @APIResponse(responseCode = "201", description = "Sucursal creada exitosamente")
     @APIResponse(responseCode = "400", description = "Datos de la sucursal inválidos")
-    @RolesAllowed({"ADMIN"})
+    @RolesAllowed({"ADMIN","SUBADMIN"})
     public Response crearSucursal(@Valid SucursalRequestDTO sucursalRequestDTO) {
         String usuarioActual = usuarioActual();
         Sucursal sucursal = sucursalInputMapper.toSucursal(sucursalRequestDTO);
@@ -84,7 +84,7 @@ public class SucursalController {
     @APIResponse(responseCode = "200", description = "Sucursal modificada exitosamente")
     @APIResponse(responseCode = "400", description = "Datos inválidos")
     @APIResponse(responseCode = "404", description = "Sucursal no encontrada")
-    @RolesAllowed({"ADMIN"})
+   @RolesAllowed({"ADMIN","SUBADMIN"})
     public Response modificarSucursal(
             @Parameter(description = "ID de la sucursal a modificar", required = true) @QueryParam("id") Long id,
             @Valid SucursalRequestDTO sucursalRequestDTO) {

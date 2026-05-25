@@ -27,7 +27,6 @@ public class ColaJpaEntity {
 
     private String nombre;
     private String codigo;
-    private Long prioridad;
     private LocalDateTime fechaCreacion;
     private String userCreacion;
     private String userModificacion;

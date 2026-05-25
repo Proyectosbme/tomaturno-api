@@ -69,7 +69,7 @@ public class ConfiguracionController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"ADMIN"})
+    @RolesAllowed({"ADMIN","SUBADMIN"})
     public Response crear(@Valid ConfiguracionRequestDTO dto) {
         Configuracion configuracion = mapper.toDomain(dto);
         configuracion = commandPort.crear(configuracion, usuarioActual());
@@ -81,7 +81,7 @@ public class ConfiguracionController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"ADMIN"})
+  @RolesAllowed({"ADMIN","SUBADMIN"})
     public Response modificar(
             @PathParam("idConfiguracion") Long idConfiguracion,
             @PathParam("idSucursal") Long idSucursal,

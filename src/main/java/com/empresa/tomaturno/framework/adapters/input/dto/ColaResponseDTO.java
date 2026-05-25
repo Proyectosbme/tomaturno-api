@@ -17,7 +17,6 @@ public class ColaResponseDTO {
     private Long idSucursal;
     private String nombre;
     private String codigo;
-    private Long prioridad;
     private String usuarioCreacion;
     private LocalDateTime fechaCreacion;
     private String usuarioModificacion;

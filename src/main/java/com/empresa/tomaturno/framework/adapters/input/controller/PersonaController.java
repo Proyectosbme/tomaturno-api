@@ -6,6 +6,7 @@ import com.empresa.tomaturno.framework.adapters.input.mapper.PersonaInputMapper;
 import com.empresa.tomaturno.persona.application.command.port.input.PersonaCommandInputPort;
 import com.empresa.tomaturno.persona.dominio.entity.Persona;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -29,6 +30,7 @@ public class PersonaController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"ADMIN","SUBADMIN","PUBLICO"})
     public Response crearOActualizar(@Valid PersonaRequestDTO dto) {
         Persona persona = personaInputMapper.toDomain(dto);
         persona = personaCommandInputPort.crearOActualizar(persona);

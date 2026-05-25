@@ -60,7 +60,7 @@ public class DetalleColaxPuestoController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"ADMIN"})
+    @RolesAllowed({"ADMIN","SUBADMIN"})
     public Response asignar(@Valid DetalleColaxPuestoRequestDTO dto) {
         DetalleColaxPuesto domain = mapper.toDomain(dto);
         DetalleColaxPuesto resultado = commandPort.asignar(domain, usuarioActual());
@@ -70,7 +70,7 @@ public class DetalleColaxPuestoController {
     @DELETE
     @Path("/{idPuesto}/{idSucursalPuesto}/{idCola}/{idDetalle}/{idSucursalCola}")
     @Transactional
-    @RolesAllowed({"ADMIN"})
+   @RolesAllowed({"ADMIN","SUBADMIN"})
     public Response desasignar(
             @PathParam("idPuesto") Long idPuesto,
             @PathParam("idSucursalPuesto") Long idSucursalPuesto,

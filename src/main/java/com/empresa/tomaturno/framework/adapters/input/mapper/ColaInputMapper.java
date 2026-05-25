@@ -24,7 +24,6 @@ public interface ColaInputMapper {
         return Cola.builder()
                 .nombre(dto.getNombre())
                 .codigo(dto.getCodigo())
-                .prioridad(dto.getPrioridad())
                 .estado(Estado.fromCodigo(dto.getEstado()))
                 .sucursal(new Sucursal(dto.getIdSucursal(), null))
                 .inicializar();

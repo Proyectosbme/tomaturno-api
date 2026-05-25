@@ -2,6 +2,8 @@ package com.empresa.tomaturno.framework.adapters.input.controller;
 
 import com.empresa.tomaturno.framework.adapters.output.jasper.ReporteService;
 import com.empresa.tomaturno.shared.clases.FormatoRpt;
+
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
@@ -11,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Path("/reportes")
+@RolesAllowed({"ADMIN","SUBADMIN"})
 public class ReporteResource {
 
     private final ReporteService reporteService;

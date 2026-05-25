@@ -13,7 +13,6 @@ public class Cola {
     private Long identificador;
     private String nombre;
     private String codigo;
-    private Long prioridad;
     private Estado estado;
     private Sucursal sucursal;
     private Auditoria auditoria;
@@ -32,7 +31,6 @@ public class Cola {
         private Long identificador;
         private String nombre;
         private String codigo;
-        private Long prioridad;
         private Estado estado;
         private Sucursal sucursal;
         private Auditoria auditoria;
@@ -50,11 +48,6 @@ public class Cola {
 
         public Builder codigo(String codigo) {
             this.codigo = codigo;
-            return this;
-        }
-
-        public Builder prioridad(Long prioridad) {
-            this.prioridad = prioridad;
             return this;
         }
 
@@ -83,7 +76,6 @@ public class Cola {
             Cola c = new Cola();
             c.nombre = this.nombre != null ? this.nombre.trim().toUpperCase() : null;
             c.codigo = this.codigo;
-            c.prioridad = this.prioridad;
             c.estado = this.estado;
             c.sucursal = this.sucursal;
             return c;
@@ -95,7 +87,6 @@ public class Cola {
             c.identificador = this.identificador;
             c.nombre = this.nombre;
             c.codigo = this.codigo;
-            c.prioridad = this.prioridad;
             c.estado = this.estado;
             c.sucursal = this.sucursal;
             c.auditoria = this.auditoria;
@@ -110,15 +101,12 @@ public class Cola {
         validarCreacion();
     }
 
-    public void modificar(String nombre, String codigo, Long prioridad, Estado estado, String usuario) {
+    public void modificar(String nombre, String codigo, Estado estado, String usuario) {
         if(nombre != null) {
             this.nombre = nombre.trim().toUpperCase();
         }
         if(codigo != null) {
             this.codigo = codigo;
-        }
-        if(prioridad != null) {
-            this.prioridad = prioridad;
         }
         if(estado != null) {
             this.estado = estado;
@@ -172,9 +160,6 @@ public class Cola {
         if (this.codigo == null || this.codigo.isEmpty()) {
             throw new ColaValidationException("El codigo de la cola es obligatorio");
         }
-        if (this.prioridad == null) {
-            throw new ColaValidationException("La prioridad de la cola es obligatoria");
-        }
         if (this.estado == null) {
             throw new ColaValidationException("El estado de la cola es obligatorio");
         }
@@ -202,10 +187,6 @@ public class Cola {
 
     public String getCodigo() {
         return codigo;
-    }
-
-    public Long getPrioridad() {
-        return prioridad;
     }
 
     public Estado getEstado() {

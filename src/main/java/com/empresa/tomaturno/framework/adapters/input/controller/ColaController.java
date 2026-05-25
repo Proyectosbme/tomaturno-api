@@ -57,6 +57,7 @@ public class ColaController {
     @GET
     @Path("/buscar")
     @Produces(MediaType.APPLICATION_JSON)
+    @Authenticated
     public List<ColaResponseDTO> buscarColasPorFiltro(
             @QueryParam("id") Long id,
             @QueryParam("idSucursal") Long idSucursal,
@@ -96,7 +97,7 @@ public class ColaController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"ADMIN"})
+    @RolesAllowed({ "ADMIN", "SUBADMIN" })
     public Response crearCola(@Valid ColaRequestDTO colaRequestDTO) {
         Cola cola = colaInputMapper.toDomain(colaRequestDTO);
         cola = colaCommandInputPort.crear(cola, usuarioActual());
@@ -109,7 +110,7 @@ public class ColaController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"ADMIN"})
+    @RolesAllowed({ "ADMIN", "SUBADMIN" })
     public Response modificarCola(
             @PathParam("idCola") Long idCola,
             @PathParam("idSucursal") Long idSucursal,
@@ -124,7 +125,7 @@ public class ColaController {
     @Transactional
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"ADMIN"})
+    @RolesAllowed({ "ADMIN", "SUBADMIN" })
     public Response crearDetalle(
             @PathParam("idCola") Long idCola,
             @PathParam("idSucursal") Long idSucursal,
@@ -140,14 +141,14 @@ public class ColaController {
     @Transactional
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"ADMIN"})
+    @RolesAllowed({ "ADMIN", "SUBADMIN" })
     public Response modificarDetalle(
             @PathParam("idCola") Long idCola,
             @PathParam("idSucursal") Long idSucursal,
             @PathParam("idDetalle") Long idDetalle,
             @Valid DetalleRequestDTO request) {
         Detalle detalle = colaInputMapper.toDetalleDomain(request);
-        Cola cola = colaCommandInputPort.editarDetalleCola(idCola, idSucursal, idDetalle,detalle, usuarioActual());
+        Cola cola = colaCommandInputPort.editarDetalleCola(idCola, idSucursal, idDetalle, detalle, usuarioActual());
         return Response.status(Response.Status.CREATED)
                 .entity(colaInputMapper.toResponse(cola)).build();
     }
@@ -156,7 +157,7 @@ public class ColaController {
     @Path("/replicar")
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"ADMIN"})
+    @RolesAllowed({ "ADMIN", "SUBADMIN" })
     public Response replicarColas(
             @QueryParam("idOrigen") Long idOrigen,
             @QueryParam("idDestino") Long idDestino) {

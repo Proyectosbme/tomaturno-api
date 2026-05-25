@@ -71,7 +71,7 @@ public class PuestoController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({ "ADMIN"})
+   @RolesAllowed({"ADMIN","SUBADMIN"})
     public Response crearPuesto(@Valid PuestoRequestDTO dto) {
         Puesto puesto = puestoInputMapper.toDomain(dto);
         puesto = puestoCommandInputPort.crear(puesto, usuarioActual());
@@ -84,7 +84,7 @@ public class PuestoController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({ "ADMIN"})
+    @RolesAllowed({"ADMIN","SUBADMIN"})
     public Response modificarPuesto(
             @PathParam("idPuesto") Long idPuesto,
             @PathParam("idSucursal") Long idSucursal,
