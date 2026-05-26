@@ -78,7 +78,6 @@ public class ColaCommanJpaAdapters implements ColaCommandRepository {
         Cola colaDestino = Cola.builder()
                 .nombre(colaOrigen.getNombre())
                 .codigo(colaOrigen.getCodigo())
-                .prioridad(colaOrigen.getPrioridad())
                 .estado(colaOrigen.getEstado())
                 .sucursal(new Sucursal(idSucursalDestino, null))
                 .inicializar();
