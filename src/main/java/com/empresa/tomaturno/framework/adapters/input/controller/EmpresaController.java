@@ -42,7 +42,7 @@ public class EmpresaController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({ "ADMIN", "SUDAMIN" })
+    @RolesAllowed({ "ADMIN", "SUBADMIN" })
     public Response actualizarNombre(@Valid EmpresaNombreRequestDTO dto) {
         Empresa empresa = commandPort.actualizarNombre(dto.getNombre());
         return Response.ok(mapper.toResponse(empresa)).build();
@@ -53,7 +53,7 @@ public class EmpresaController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @RolesAllowed({ "ADMIN", "SUDAMIN" })
+    @RolesAllowed({ "ADMIN", "SUBADMIN" })
     public Response actualizarBanner(@RestForm("banner") FileUpload banner) throws java.io.IOException {
         byte[] bannerBytes = java.nio.file.Files.readAllBytes(banner.uploadedFile());
         Empresa empresa = commandPort.actualizarBanner(bannerBytes);
@@ -65,7 +65,7 @@ public class EmpresaController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @RolesAllowed({ "ADMIN", "SUDAMIN" })
+    @RolesAllowed({ "ADMIN", "SUBADMIN" })
     public Response actualizarLogo(@RestForm("logo") FileUpload logo) throws java.io.IOException {
         byte[] logoBytes = java.nio.file.Files.readAllBytes(logo.uploadedFile());
         Empresa empresa = commandPort.actualizarLogo(logoBytes);

@@ -51,7 +51,7 @@ public class UsuarioController {
     @GET
     @Path("/buscar")
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({ "ADMIN", "SUDAMIN" })
+    @RolesAllowed({ "ADMIN", "SUBADMIN" })
     public List<UsuarioResponseDTO> buscar(
             @QueryParam("idSucursal") Long idSucursal,
             @QueryParam("codigoUsuario") String codigoUsuario) {
@@ -62,7 +62,7 @@ public class UsuarioController {
     @GET
     @Path("/{idUsuario}/sucursal/{idSucursal}")
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({ "ADMIN", "SUDAMIN" })
+    @RolesAllowed({ "ADMIN", "SUBADMIN" })
     public Response buscarPorId(
             @PathParam("idUsuario") Long idUsuario,
             @PathParam("idSucursal") Long idSucursal) {
@@ -75,7 +75,7 @@ public class UsuarioController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({ "ADMIN", "SUDAMIN" })
+    @RolesAllowed({ "ADMIN", "SUBADMIN" })
     public Response crear(@Valid UsuarioRequestDTO dto) {
         Usuario usuario = mapper.toDomain(dto);
         usuario = commandPort.crear(usuario, usuarioActual());
@@ -87,7 +87,7 @@ public class UsuarioController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({ "ADMIN", "SUDAMIN" })
+    @RolesAllowed({ "ADMIN", "SUBADMIN" })
     public Response modificar(
             @PathParam("idUsuario") Long idUsuario,
             @PathParam("idSucursal") Long idSucursal,
