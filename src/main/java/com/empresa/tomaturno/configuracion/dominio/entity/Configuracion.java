@@ -12,7 +12,6 @@ public class Configuracion {
     private Long idSucursal;
     private String nombre;
     private Integer parametro;
-    private String valorTexto;
     private String descripcion;
     private Estado estado;
     private Auditoria auditoria;
@@ -32,7 +31,6 @@ public class Configuracion {
         private Long idSucursal;
         private String nombre;
         private Integer parametro;
-        private String valorTexto;
         private String descripcion;
         private Estado estado;
         private Auditoria auditoria;
@@ -55,11 +53,6 @@ public class Configuracion {
 
         public Builder parametro(Integer parametro) {
             this.parametro = parametro;
-            return this;
-        }
-
-        public Builder valorTexto(String valorTexto) {
-            this.valorTexto = valorTexto;
             return this;
         }
 
@@ -89,7 +82,6 @@ public class Configuracion {
             c.idSucursal = this.idSucursal;
             c.nombre = this.nombre;
             c.parametro = this.parametro;
-            c.valorTexto = this.valorTexto;
             c.descripcion = this.descripcion;
             c.estado = this.estado;
             return c;
@@ -102,7 +94,6 @@ public class Configuracion {
             c.idSucursal = this.idSucursal;
             c.nombre = this.nombre;
             c.parametro = this.parametro;
-            c.valorTexto = this.valorTexto;
             c.descripcion = this.descripcion;
             c.estado = this.estado;
             c.auditoria = this.auditoria;
@@ -118,11 +109,10 @@ public class Configuracion {
         validarCreacion();
     }
 
-    public void modificar(String nombre, Integer parametro, String valorTexto,
+    public void modificar(String nombre, Integer parametro,
             String descripcion, Estado estado, String usuario) {
         this.nombre = nombre;
         this.parametro = parametro;
-        this.valorTexto = valorTexto;
         this.descripcion = descripcion;
         this.estado = estado;
         this.auditoria = this.auditoria.conModificacion(usuario, LocalDateTime.now());
@@ -169,10 +159,6 @@ public class Configuracion {
 
     public Integer getParametro() {
         return parametro;
-    }
-
-    public String getValorTexto() {
-        return valorTexto;
     }
 
     public String getDescripcion() {

@@ -52,7 +52,6 @@ public interface ConfiguracionOutputMapper {
                 .idSucursal(e.getIdpk().getIdSucursal())
                 .nombre(e.getNombre())
                 .parametro(e.getParametro())
-                .valorTexto(e.getValorTexto())
                 .descripcion(e.getDescripcion())
                 .estado(Estado.fromCodigo(e.getEstado()))
                 .auditoria(auditoria)

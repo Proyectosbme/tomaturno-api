@@ -24,7 +24,6 @@ public class ModificarConfiguracionUseCase {
         existente.modificar(
                 datosNuevos.getNombre(),
                 datosNuevos.getParametro(),
-                datosNuevos.getValorTexto(),
                 datosNuevos.getDescripcion(),
                 datosNuevos.getEstado(), usuario);
         return commandRepository.modificar(existente);

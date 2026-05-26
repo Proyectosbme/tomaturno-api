@@ -9,7 +9,6 @@ public class ConfiguracionResponseDTO {
     private String nombreSucursal;
     private String nombre;
     private Integer parametro;
-    private String valorTexto;
     private String descripcion;
     private Integer estado;
     private String userCreacion;
@@ -27,8 +26,6 @@ public class ConfiguracionResponseDTO {
     public void setNombre(String nombre) { this.nombre = nombre; }
     public Integer getParametro() { return parametro; }
     public void setParametro(Integer parametro) { this.parametro = parametro; }
-    public String getValorTexto() { return valorTexto; }
-    public void setValorTexto(String valorTexto) { this.valorTexto = valorTexto; }
     public String getDescripcion() { return descripcion; }
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
     public Integer getEstado() { return estado; }

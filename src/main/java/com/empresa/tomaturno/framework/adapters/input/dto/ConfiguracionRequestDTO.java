@@ -20,13 +20,8 @@ public class ConfiguracionRequestDTO extends AuditRequestDTO {
     @Size(max = 100)
     public String nombre;
 
-    /** Valor numérico: 0/1 para flags booleanos, número para correlativos */
     @NotNull(message = "El parametro es obligatorio")
     public Integer parametro;
-
-    /** Valor de texto: prefijos, formatos (ej: "C-", "P-") */
-    @Size(max = 200)
-    public String valorTexto;
 
     @Size(max = 500)
     public String descripcion;

@@ -17,7 +17,6 @@ public interface ConfiguracionInputMapper {
                 .idSucursal(dto.getIdSucursal())
                 .nombre(dto.getNombre())
                 .parametro(dto.getParametro())
-                .valorTexto(dto.getValorTexto())
                 .descripcion(dto.getDescripcion())
                 .estado(Estado.fromCodigo(dto.getEstado()))
                 .inicializar();

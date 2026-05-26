@@ -20,9 +20,6 @@ public class IpValidationFilter implements ContainerRequestFilter {
     private final UsuarioQueryInputPort usuarioQuery;
     private final ConfiguracionQueryInputPort configuracionQuery;
 
-
-
-    
     public IpValidationFilter(SecurityIdentity identity, UsuarioQueryInputPort usuarioQuery,
             ConfiguracionQueryInputPort configuracionQuery) {
         this.identity = identity;
@@ -45,8 +42,12 @@ public class IpValidationFilter implements ContainerRequestFilter {
             return;
 
         String ipPermitida = usuario.getIp();
-        if (ipPermitida == null || ipPermitida.isBlank())
+        if (ipPermitida == null || ipPermitida.isBlank()) {
+            ctx.abortWith(Response.status(Response.Status.FORBIDDEN)
+                    .entity("{\"error\":\"Usuario sin IP configurada\"}")
+                    .build());
             return;
+        }
 
         String ipCliente = obtenerIp(ctx);
         if (!ipPermitida.equals(ipCliente)) {

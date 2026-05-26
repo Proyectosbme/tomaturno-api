@@ -27,7 +27,6 @@ public class ConfiguracionJpaEntity {
 
     private String nombre;
     private Integer parametro;
-    private String valorTexto;
     private String descripcion;
     private Integer estado;
     private LocalDateTime fechaCreacion;
