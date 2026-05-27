@@ -25,7 +25,7 @@ public class TurnoJpaEntity {
     @Column(name = "idsucursal", insertable = false, updatable = false)
     private Long idSucursal;
 
-    @Column(name = "fechacrecion", insertable = false, updatable = false)
+    @Column(name = "fechacreacion", insertable = false, updatable = false)
     private LocalDateTime fechaCreacion;
 
     @Column(name = "codigoturno", insertable = false, updatable = false)

@@ -67,10 +67,28 @@ public class DetalleColaxPuestoController {
         return Response.status(Response.Status.CREATED).entity(mapper.toResponse(resultado)).build();
     }
 
+    @PATCH
+    @Path("/{idPuesto}/{idSucursalPuesto}/{idCola}/{idDetalle}/{idSucursalCola}/prioridad")
+    @Transactional
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"ADMIN","SUBADMIN"})
+    public Response modificarPrioridad(
+            @PathParam("idPuesto") Long idPuesto,
+            @PathParam("idSucursalPuesto") Long idSucursalPuesto,
+            @PathParam("idCola") Long idCola,
+            @PathParam("idDetalle") Long idDetalle,
+            @PathParam("idSucursalCola") Long idSucursalCola,
+            @QueryParam("prioridad") Long prioridad) {
+        DetalleColaxPuesto resultado = commandPort.modificarPrioridad(
+                idPuesto, idSucursalPuesto, idCola, idDetalle, idSucursalCola, prioridad);
+        if (resultado == null) return Response.status(Response.Status.NOT_FOUND).build();
+        return Response.ok(mapper.toResponse(resultado)).build();
+    }
+
     @DELETE
     @Path("/{idPuesto}/{idSucursalPuesto}/{idCola}/{idDetalle}/{idSucursalCola}")
     @Transactional
-   @RolesAllowed({"ADMIN","SUBADMIN"})
+    @RolesAllowed({"ADMIN","SUBADMIN"})
     public Response desasignar(
             @PathParam("idPuesto") Long idPuesto,
             @PathParam("idSucursalPuesto") Long idSucursalPuesto,

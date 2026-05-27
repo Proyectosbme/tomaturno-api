@@ -48,6 +48,7 @@ public interface UsuarioInputMapper {
     @Mapping(source = "datosPersonales.dui",                    target = "dui")
     @Mapping(source = "datosPersonales.telefono",               target = "telefono")
     @Mapping(source = "configuracion.perfil",                   target = "perfil")
+    @Mapping(source = "datosPersonales.correo",                 target = "correo")
     @Mapping(source = "configuracion.ip",                       target = "ip")
     @Mapping(source = "configuracion.correlativoPuesto",              target = "correlativo")
     @Mapping(source = "configuracion.atenderCasosEspeciales",   target = "atenderCasosEspeciales")

@@ -26,6 +26,9 @@ public interface UsuarioOutputMapper {
     @Mapping(target = "estado", source = "estado", qualifiedByName = "estadoToCodigo")
     @Mapping(target = "foto", source = "foto")
     @Mapping(target = "nombreCompleto", source = ".", qualifiedByName = "nombreCompleto")
+    @Mapping(target = "correlativoPuesto", source = "configuracion.correlativoPuesto")
+    @Mapping(target = "ip", source = "configuracion.ip")
+    @Mapping(target = "atenderCasosEspeciales", source = "configuracion.atenderCasosEspeciales")
     UsuarioJpaEntity toJpaEntity(Usuario usuario);
 
     default Usuario toDomain(UsuarioJpaEntity e) {

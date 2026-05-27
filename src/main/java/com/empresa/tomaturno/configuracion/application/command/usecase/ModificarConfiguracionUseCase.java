@@ -22,7 +22,6 @@ public class ModificarConfiguracionUseCase {
                     "No se encontró la configuración con id " + idConfiguracion + " y sucursal " + idSucursal);
 
         existente.modificar(
-                datosNuevos.getNombre(),
                 datosNuevos.getParametro(),
                 datosNuevos.getDescripcion(),
                 datosNuevos.getEstado(), usuario);

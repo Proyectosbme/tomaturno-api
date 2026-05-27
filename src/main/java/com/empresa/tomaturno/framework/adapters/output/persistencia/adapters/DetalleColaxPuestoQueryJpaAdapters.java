@@ -10,6 +10,7 @@ import com.empresa.tomaturno.framework.adapters.output.mapper.DetalleColaxPuesto
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.ColaJpaEntity;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaJpaEntity;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaxPuestoJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaxPuestoPK;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.ColaDetalleRepository;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.ColaJpaRespository;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.DetalleColaxPuestoJpaRepository;
@@ -72,5 +73,23 @@ public class DetalleColaxPuestoQueryJpaAdapters implements DetalleColaxPuestoQue
                     return a.conNombres(nombreCola, nombreDetalle);
                 })
                 .toList();
+    }
+
+    @Override
+    public DetalleColaxPuesto obtenerDetalleColaXPuesto(Long idPuesto, Long idSucursalPuesto, Long idCola,
+            Long idDetalle, Long idSucursalCola) {
+        DetalleColaxPuestoPK pk = new DetalleColaxPuestoPK(idPuesto, idSucursalPuesto, idCola, idDetalle, idSucursalCola);
+        DetalleColaxPuestoJpaEntity entity = repository.findById(pk);
+        if (entity == null) return null;
+
+        DetalleColaxPuesto asignacion = mapper.toDomain(entity);
+
+        ColaJpaEntity cola = colaJpaRespository.find("idpk.id = ?1", idCola).firstResult();
+        String nombreCola = cola != null ? cola.getNombre() : "";
+
+        DetalleColaJpaEntity detalle = colaDetalleRepository.buscarPorId(idCola, idSucursalCola.intValue(), idDetalle);
+        String nombreDetalle = detalle != null ? detalle.getNombre() : null;
+
+        return asignacion.conNombres(nombreCola, nombreDetalle);
     }
 }

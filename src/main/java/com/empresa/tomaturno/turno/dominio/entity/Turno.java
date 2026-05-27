@@ -61,7 +61,7 @@ public class Turno {
                 .fechaCreacion(LocalDateTime.now())
                 .estado(new CatalogoDetalle(CatalogoEstado.ESTADO_TURNO.getValor(), DetalleEstado.CREADO.getValor()))
                 .idPersona(idPersona)
-                .tipoCasoEspecial(tipoCasoEspecial)
+                .tipoCasoEspecial(tipoCasoEspecial==null?0:tipoCasoEspecial)
                 .idCatalogo(CatalogoEnum.ESTADOS_TURNOS.getCodigo().longValue())
                 .build();
         turno.validarCreacion();
@@ -88,6 +88,7 @@ public class Turno {
     public Turno reasignarA(Long nuevoId, Long idSucursalDestino, Long idColaDestino, Long idDetalleValido) {
         validarTransicionReasignar();
         this.estado = new CatalogoDetalle(CatalogoEstado.ESTADO_TURNO.getValor(), DetalleEstado.TRASLADO.getValor());
+        this.fechaFinalizacion = LocalDateTime.now();
         return Turno.builder()
                 .id(nuevoId)
                 .idSucursal(idSucursalDestino)
@@ -97,6 +98,7 @@ public class Turno {
                 .fechaCreacion(LocalDateTime.now())
                 .estado(new CatalogoDetalle(CatalogoEstado.ESTADO_TURNO.getValor(), DetalleEstado.CREADO.getValor()))
                 .idTurnoRelacionado(this.id)
+                .tipoCasoEspecial(this.tipoCasoEspecial)
                 .build();
     }
 

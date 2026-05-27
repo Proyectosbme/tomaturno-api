@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Path("/reportes")
-@RolesAllowed({"ADMIN","SUBADMIN"})
 public class ReporteResource {
 
     private final ReporteService reporteService;
@@ -22,29 +21,6 @@ public class ReporteResource {
         this.reporteService = reporteService;
     }
 
-    @GET
-    @Path("/cola")
-    public Response reportePorCola(@QueryParam("formato") @DefaultValue("PDF") String formatoParam) {
-        try {
-            FormatoRpt formato = FormatoRpt.fromNombre(formatoParam);
-            byte[] bytes = reporteService.generarReporte("rpt1", null, formato);
-
-            return Response.ok(bytes)
-                    .header("Content-Type", formato.getContentType())
-                    .header("Content-Disposition", "inline; filename=reporte_por_cola." + formato.getExtension())
-                    .build();
-
-        } catch (IllegalArgumentException e) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Formato inválido. Use: PDF o EXCEL")
-                    .build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Response.serverError()
-                    .entity("Error generando reporte: " + e.getMessage())
-                    .build();
-        }
-    }
 
     @GET
     @Path("/{nombreReporte}")
@@ -71,6 +47,31 @@ public class ReporteResource {
         } catch (IllegalArgumentException e) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("Formato inválido. Use: PDF o EXCEL")
+                    .build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.serverError()
+                    .entity("Error generando reporte: " + e.getMessage())
+                    .build();
+        }
+    }
+
+    @GET
+    @Path("actual/{idSucursal}")
+    public Response generarReporte(
+            @PathParam("idSucursal") Integer idsucursal) {
+        try {
+            FormatoRpt formato = FormatoRpt.fromNombre("PDF");
+            Map<String, Object> params = new HashMap<>();
+            params.put("idSucursal", idsucursal);
+            params.put("usuario", "bmarroquin");
+
+
+             byte[] bytes = reporteService.generarReporte("RptSucursal", params, formato);
+
+            return Response.ok(bytes)
+                    .header("Content-Type", formato.getContentType())
+                    .header("Content-Disposition", "inline; filename=Reporte_Atencion_Sucursal_" + idsucursal + "." + formato.getExtension())
                     .build();
         } catch (Exception e) {
             e.printStackTrace();

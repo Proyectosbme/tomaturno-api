@@ -35,6 +35,10 @@ public class DatosPersonales {
         return new DatosPersonales(nombres, apellidos, dui, telefono, null);
     }
 
+    public static DatosPersonales reconstituir(String nombres, String apellidos, String dui, String telefono, String correo) {
+        return new DatosPersonales(nombres, apellidos, dui, telefono, correo);
+    }
+
     public String getNombres() {
         return nombres;
     }

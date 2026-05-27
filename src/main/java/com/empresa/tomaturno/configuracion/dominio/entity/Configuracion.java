@@ -109,9 +109,8 @@ public class Configuracion {
         validarCreacion();
     }
 
-    public void modificar(String nombre, Integer parametro,
+    public void modificar(Integer parametro,
             String descripcion, Estado estado, String usuario) {
-        this.nombre = nombre;
         this.parametro = parametro;
         this.descripcion = descripcion;
         this.estado = estado;

@@ -29,6 +29,7 @@ public class UsuarioResponseDTO {
     private String telefono;
     private String ip;
     private String perfil;
+    private String correo;
     private String usuarioCreacion;
     private LocalDateTime fechaCreacion;
     private String usuarioModificacion;

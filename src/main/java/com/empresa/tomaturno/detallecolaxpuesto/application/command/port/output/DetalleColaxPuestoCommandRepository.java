@@ -5,4 +5,6 @@ import com.empresa.tomaturno.detallecolaxpuesto.dominio.entity.DetalleColaxPuest
 public interface DetalleColaxPuestoCommandRepository {
     DetalleColaxPuesto save(DetalleColaxPuesto asignacion);
     void eliminar(Long idPuesto, Long idSucursalPuesto, Long idCola, Long idDetalle, Long idSucursalCola);
+
+     DetalleColaxPuesto modificarPrioridad(DetalleColaxPuesto modificacion);
 }

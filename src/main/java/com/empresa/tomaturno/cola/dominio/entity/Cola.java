@@ -75,7 +75,7 @@ public class Cola {
         public Cola inicializar() {
             Cola c = new Cola();
             c.nombre = this.nombre != null ? this.nombre.trim().toUpperCase() : null;
-            c.codigo = this.codigo;
+            c.codigo = this.codigo != null ? this.codigo.trim().toUpperCase() : null;
             c.estado = this.estado;
             c.sucursal = this.sucursal;
             return c;

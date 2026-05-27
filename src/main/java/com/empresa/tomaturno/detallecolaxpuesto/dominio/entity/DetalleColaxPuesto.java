@@ -12,7 +12,7 @@ public class DetalleColaxPuesto {
     private final Long idCola;
     private final Long idDetalle;
     private final Long idSucursalCola;
-    private final Integer prioridad;
+    private  Integer prioridad;
     private Auditoria auditoria;
     // Campos enriquecidos (no persistidos)
     private final String nombreCola;
@@ -47,6 +47,10 @@ public class DetalleColaxPuesto {
     public void asignar(String usuario) {
         this.auditoria = Auditoria.deCreacion(usuario, LocalDateTime.now());
         this.validarAsignacion();
+    }
+
+    public void actualizarPrioridad(Integer prioridad){
+        this.prioridad=prioridad;
     }
 
     private void validarAsignacion() {

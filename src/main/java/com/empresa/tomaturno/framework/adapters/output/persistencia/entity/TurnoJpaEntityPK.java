@@ -21,7 +21,7 @@ public class TurnoJpaEntityPK implements Serializable {
     @Column(name = "idsucursal")
     private Long idSucursal;
 
-    @Column(name = "fechacrecion")
+    @Column(name = "fechacreacion")
     private LocalDateTime fechaCreacion;
 
     @Column(name = "codigoturno")

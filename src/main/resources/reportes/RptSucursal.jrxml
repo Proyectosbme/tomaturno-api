@@ -1,0 +1,199 @@
+<!-- Created with Jaspersoft Studio version 7.0.6.final using JasperReports Library version 7.0.6-5d2a603fdc6b3db8f842a83383e594f41891534d  -->
+<jasperReport name="Blank_A4" language="java" columnCount="1" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="be6b3f64-fcb6-4029-b541-923ec30b99d3">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="tomaturno"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="217"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="777"/>
+	<parameter name="idSucursal" class="java.lang.Integer">
+		<description><![CDATA[identificador de susursal]]></description>
+		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+	</parameter>
+	<parameter name="usuario" class="java.lang.String">
+		<defaultValueExpression><![CDATA["admin"]]></defaultValueExpression>
+	</parameter>
+	<query language="SQL"><![CDATA[SELECT 
+    vm.sucursalticket,
+    vm.cola,
+    vm.detalle,
+    vm.estado,
+    count(*) as turnos,
+    -- Promedio minutos de llamada
+    CONCAT(
+        FLOOR(AVG(EXTRACT(EPOCH FROM (vm.fechallamada - vm.fechacreacion)) / 60) / 60), 
+        ' horas con ',
+        FLOOR(AVG(EXTRACT(EPOCH FROM (vm.fechallamada - vm.fechacreacion)) / 60) % 60), 
+        ' minutos'
+    ) AS promedio_llamada,
+    -- Promedio minutos total
+    CONCAT(
+        FLOOR(AVG(EXTRACT(EPOCH FROM (vm.fechafinalizacion - vm.fechacreacion)) / 60) / 60), 
+        ' horas con ',
+        FLOOR(AVG(EXTRACT(EPOCH FROM (vm.fechafinalizacion - vm.fechacreacion)) / 60) % 60), 
+        ' minutos'
+    ) AS promedio_total 
+FROM tomaturno.vwturnoshoy vm 
+WHERE vm.idcatalogoestadodetalle IN (3,4) and vm.idsucursalticket = $P{idSucursal}
+GROUP BY vm.sucursalticket, vm.cola, vm.detalle, vm.estado
+ORDER BY vm.sucursalticket, vm.cola, vm.detalle;]]></query>
+	<field name="sucursalticket" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="sucursalticket"/>
+		<property name="com.jaspersoft.studio.field.label" value="sucursalticket"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="vwturnoshoy"/>
+	</field>
+	<field name="cola" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cola"/>
+		<property name="com.jaspersoft.studio.field.label" value="cola"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="vwturnoshoy"/>
+	</field>
+	<field name="detalle" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="detalle"/>
+		<property name="com.jaspersoft.studio.field.label" value="detalle"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="vwturnoshoy"/>
+	</field>
+	<field name="estado" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="estado"/>
+		<property name="com.jaspersoft.studio.field.label" value="estado"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="vwturnoshoy"/>
+	</field>
+	<field name="turnos" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="turnos"/>
+		<property name="com.jaspersoft.studio.field.label" value="turnos"/>
+	</field>
+	<field name="promedio_llamada" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="promedio_llamada"/>
+		<property name="com.jaspersoft.studio.field.label" value="promedio_llamada"/>
+	</field>
+	<field name="promedio_total" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="promedio_total"/>
+		<property name="com.jaspersoft.studio.field.label" value="promedio_total"/>
+	</field>
+	<group name="sucursalticket">
+		<expression><![CDATA[$F{sucursalticket}]]></expression>
+	</group>
+	<group name="cola">
+		<expression><![CDATA[$F{cola}]]></expression>
+	</group>
+	<group name="detalle">
+		<expression><![CDATA[$F{detalle}]]></expression>
+	</group>
+	<group name="estado">
+		<expression><![CDATA[$F{estado}]]></expression>
+	</group>
+	<group name="turnos">
+		<expression><![CDATA[$F{turnos}]]></expression>
+	</group>
+	<group name="promedio_llamada">
+		<expression><![CDATA[$F{promedio_llamada}]]></expression>
+	</group>
+	<group name="promedio_total">
+		<expression><![CDATA[$F{promedio_total}]]></expression>
+	</group>
+	<background splitType="Stretch"/>
+	<title height="93" splitType="Stretch">
+		<element kind="rectangle" uuid="be6b47ad-29b9-4e7a-96e3-bf4f3b58a381" x="0" y="0" width="802" height="90" backcolor="#2C5F8D">
+			<pen lineWidth="0.0"/>
+		</element>
+		<element kind="staticText" uuid="92177599-687a-41cc-9bfd-8f6858cf5de5" x="20" y="15" width="762" height="35" forecolor="#FFFFFF" fontSize="22.0" bold="true" hTextAlign="Left" vTextAlign="Middle">
+			<text><![CDATA[Reporte de atención por agencia]]></text>
+		</element>
+		<element kind="staticText" uuid="33249da1-ae4a-4c35-946c-ef8e6e7d01e6" x="20" y="50" width="562" height="20" forecolor="#FFFFFF" fontSize="11.0" hTextAlign="Left" vTextAlign="Middle">
+			<text><![CDATA[Sistema Toma Turno - Resumen estadistico de atencion]]></text>
+		</element>
+		<element kind="textField" uuid="73ccd32d-c097-42a9-a9a1-e25585e35bb9" x="20" y="70" width="500" height="18" forecolor="#FFFFFF" fontSize="10.0" hTextAlign="Left" vTextAlign="Middle">
+			<expression><![CDATA[ " Sucursal :" + $F{sucursalticket}
+]]></expression>
+		</element>
+		<element kind="textField" uuid="c3986c4f-09f1-4748-bbff-e65a51fa1df7" x="582" y="70" width="200" height="18" forecolor="#FFFFFF" fontSize="9.0" pattern="dd/MM/yyyy HH:mm" hTextAlign="Right" vTextAlign="Middle">
+			<expression><![CDATA["Generado: " + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new java.util.Date())]]></expression>
+		</element>
+		<element kind="textField" uuid="ac87369e-cffb-4864-94bd-34ea5c2d751f" x="580" y="51" width="200" height="18" forecolor="#FFFFFF" fontSize="9.0" pattern="dd/MM/yyyy HH:mm" hTextAlign="Right" vTextAlign="Middle">
+			<expression><![CDATA["Usuario: " + $P{usuario}]]></expression>
+		</element>
+	</title>
+	<pageHeader height="35" splitType="Stretch"/>
+	<columnHeader height="30" splitType="Stretch">
+		<element kind="staticText" uuid="78e8ed22-2887-4d57-81bc-6744ac733f69" x="0" y="0" width="114" height="30" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Cola]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1e058348-caf7-4419-96c7-c09a48ac53fa"/>
+			<box leftPadding="2" rightPadding="2">
+				<bottomPen lineWidth="0.25"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="ca5d7233-fd98-4283-86d7-813f51752fae" x="114" y="0" width="114" height="30" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Detalle de cola]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a5a2ab4d-30f8-46d9-b77a-d3cc1bf57694"/>
+			<box leftPadding="2" rightPadding="2">
+				<bottomPen lineWidth="0.25"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="4e69de6f-5bea-4422-923c-1a9133a5c34b" x="228" y="0" width="114" height="30" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Estado]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0afd3555-4c47-471b-9414-023c1ae49454"/>
+			<box leftPadding="2" rightPadding="2">
+				<bottomPen lineWidth="0.25"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="bdc7bb0a-4f75-48d0-b5fe-91e383e6a827" x="342" y="0" width="114" height="30" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[#Turnos]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="95b1eaae-d30c-428e-80a3-d3a26c42732b"/>
+			<box leftPadding="2" rightPadding="2">
+				<bottomPen lineWidth="0.25"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="23a92a68-79bb-42e7-923f-ba23f7cc6887" x="456" y="0" width="174" height="30" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Promedio de llamado]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="24e97f6c-24f1-4945-9904-1285e327d97e"/>
+			<box leftPadding="2" rightPadding="2">
+				<bottomPen lineWidth="0.25"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="28bc3977-0b33-4024-b1be-dd7afbb41c46" x="630" y="0" width="172" height="30" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Proemdio total]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="aa4848ca-8fa2-44ff-bbfd-8a9b14ef1ed6"/>
+			<box leftPadding="2" rightPadding="2">
+				<bottomPen lineWidth="0.25"/>
+			</box>
+		</element>
+	</columnHeader>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<element kind="textField" uuid="b25d53c9-5543-4bac-8807-901fac8c2479" x="0" y="0" width="114" height="30" hTextAlign="Center" vTextAlign="Middle">
+				<expression><![CDATA[$F{cola}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1e058348-caf7-4419-96c7-c09a48ac53fa"/>
+			</element>
+			<element kind="textField" uuid="22af8814-b303-4a78-a2f4-0df2c4bacada" x="114" y="0" width="114" height="30" hTextAlign="Center" vTextAlign="Middle">
+				<expression><![CDATA[$F{detalle}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a5a2ab4d-30f8-46d9-b77a-d3cc1bf57694"/>
+			</element>
+			<element kind="textField" uuid="38e0963c-ba6c-4ef1-b410-f020ab8a43fa" x="228" y="0" width="114" height="30" hTextAlign="Center" vTextAlign="Middle">
+				<expression><![CDATA[$F{estado}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0afd3555-4c47-471b-9414-023c1ae49454"/>
+			</element>
+			<element kind="textField" uuid="fca570a8-9732-4cbb-ae45-336ce5e134d2" x="342" y="0" width="114" height="30" hTextAlign="Center" vTextAlign="Middle">
+				<expression><![CDATA[$F{turnos}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="95b1eaae-d30c-428e-80a3-d3a26c42732b"/>
+			</element>
+			<element kind="textField" uuid="499c53b8-6771-4d87-b73f-1fb929066844" x="456" y="0" width="174" height="30" hTextAlign="Center" vTextAlign="Middle">
+				<expression><![CDATA[$F{promedio_llamada}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="24e97f6c-24f1-4945-9904-1285e327d97e"/>
+			</element>
+			<element kind="textField" uuid="281122da-ec1c-417e-8c8c-d2498a4f85a8" x="630" y="0" width="172" height="30" hTextAlign="Center" vTextAlign="Middle">
+				<expression><![CDATA[$F{promedio_total}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="aa4848ca-8fa2-44ff-bbfd-8a9b14ef1ed6"/>
+			</element>
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
+		</band>
+	</detail>
+	<columnFooter height="45" splitType="Stretch"/>
+	<pageFooter height="54" splitType="Stretch"/>
+	<summary height="42" splitType="Stretch"/>
+</jasperReport>

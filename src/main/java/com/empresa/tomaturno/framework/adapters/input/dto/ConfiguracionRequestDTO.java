@@ -1,6 +1,5 @@
 package com.empresa.tomaturno.framework.adapters.input.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -16,7 +15,6 @@ public class ConfiguracionRequestDTO extends AuditRequestDTO {
     @NotNull(message = "La sucursal es obligatoria")
     public Long idSucursal;
 
-    @NotBlank(message = "El nombre de la configuración es obligatorio")
     @Size(max = 100)
     public String nombre;
 
