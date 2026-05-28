@@ -129,8 +129,10 @@ public class TurnoController {
         LocalDateTime fechaCreacion = LocalDateTime.parse(fechaCreacionStr);
         Turno nuevoTurno = turnoCommandInputPort.reasignar(idSucursal, fechaCreacion, codigoTurno,
                 dto.getIdSucursalDestino(), dto.getIdColaDestino(), dto.getIdDetalleDestino());
+        TurnoResponseDTO responseDTO = turnoInputMapper.toResponse(nuevoTurno);
+        turnoWebSocket.enviarTurno(wsPayload("TURNO_CREADO", dto.getIdSucursalDestino(), responseDTO));
         return Response.status(Response.Status.CREATED)
-                .entity(turnoInputMapper.toResponse(nuevoTurno)).build();
+                .entity(responseDTO).build();
     }
 
     @PUT
