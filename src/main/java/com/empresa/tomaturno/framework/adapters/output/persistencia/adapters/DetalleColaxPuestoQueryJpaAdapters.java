@@ -8,6 +8,7 @@ import com.empresa.tomaturno.detallecolaxpuesto.application.query.port.output.De
 import com.empresa.tomaturno.detallecolaxpuesto.dominio.entity.DetalleColaxPuesto;
 import com.empresa.tomaturno.framework.adapters.output.mapper.DetalleColaxPuestoOutputMapper;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.ColaJpaEntity;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.ColaJpaEntityPK;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaJpaEntity;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaxPuestoJpaEntity;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaxPuestoPK;
@@ -53,20 +54,26 @@ public class DetalleColaxPuestoQueryJpaAdapters implements DetalleColaxPuestoQue
         return repository.existeAsignacion(idPuesto, idSucursalPuesto, idCola, idDetalle, idSucursalCola);
     }
 
-    private List<DetalleColaxPuesto> enriquecerConNombres(List<DetalleColaxPuesto> asignaciones) {
-        List<Long> idsColas = asignaciones.stream()
-                .map(DetalleColaxPuesto::getIdCola).distinct().toList();
+    // El id de una cola no es único globalmente: la clave real es (id, idSucursal),
+    // así que hay que resolver el nombre por el par completo, no solo por id.
+    private record ColaKey(Long idCola, Long idSucursalCola) {}
 
-        Map<Long, String> nombresColas = colaJpaRespository
-                .list("idpk.id in ?1", idsColas).stream()
+    private List<DetalleColaxPuesto> enriquecerConNombres(List<DetalleColaxPuesto> asignaciones) {
+        Map<ColaKey, String> nombresColas = asignaciones.stream()
+                .map(a -> new ColaKey(a.getIdCola(), a.getIdSucursalCola()))
+                .distinct()
                 .collect(Collectors.toMap(
-                        c -> c.getIdpk().getId(),
-                        ColaJpaEntity::getNombre,
-                        (a, b) -> a));
+                        k -> k,
+                        k -> {
+                            ColaJpaEntity cola = colaJpaRespository
+                                    .findById(new ColaJpaEntityPK(k.idCola(), k.idSucursalCola()));
+                            return cola != null ? cola.getNombre() : "";
+                        }));
 
         return asignaciones.stream()
                 .map(a -> {
-                    String nombreCola = nombresColas.getOrDefault(a.getIdCola(), "");
+                    String nombreCola = nombresColas.getOrDefault(
+                            new ColaKey(a.getIdCola(), a.getIdSucursalCola()), "");
                     DetalleColaJpaEntity detalle = colaDetalleRepository.buscarPorId(
                             a.getIdCola(), a.getIdSucursalCola().intValue(), a.getIdDetalle());
                     String nombreDetalle = detalle != null ? detalle.getNombre() : null;
@@ -84,7 +91,7 @@ public class DetalleColaxPuestoQueryJpaAdapters implements DetalleColaxPuestoQue
 
         DetalleColaxPuesto asignacion = mapper.toDomain(entity);
 
-        ColaJpaEntity cola = colaJpaRespository.find("idpk.id = ?1", idCola).firstResult();
+        ColaJpaEntity cola = colaJpaRespository.findById(new ColaJpaEntityPK(idCola, idSucursalCola));
         String nombreCola = cola != null ? cola.getNombre() : "";
 
         DetalleColaJpaEntity detalle = colaDetalleRepository.buscarPorId(idCola, idSucursalCola.intValue(), idDetalle);
