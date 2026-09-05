@@ -73,7 +73,7 @@ public class TurnoController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"PUBLICO"})
+    @RolesAllowed({"ADMIN", "SUBADMIN", "PUBLICO"})
     public Response crear(@Valid CrearTurnoRequestDTO dto) {
         Turno turno = turnoCommandInputPort.crear(dto.getIdSucursal(), dto.getIdCola(), dto.getIdDetalle(),
                 dto.getIdPersona(), dto.getTipoCasoEspecial());
