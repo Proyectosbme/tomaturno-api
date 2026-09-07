@@ -37,13 +37,12 @@ public class TurnoJpaRepository implements PanacheRepositoryBase<TurnoJpaEntity,
         return count + 1;
     }
 
-    /** Siguiente id global de referencia */
+    /** Siguiente id global de referencia, vía secuencia de Postgres (atómico) */
     public Long obtenerSiguienteId() {
-        Long maxId = findAll().stream()
-                .mapToLong(t -> t.getId() != null ? t.getId() : 0L)
-                .max()
-                .orElse(0L);
-        return maxId + 1;
+        Number siguiente = (Number) getEntityManager()
+                .createNativeQuery("SELECT nextval('tomaturno.seq_turno_id')")
+                .getSingleResult();
+        return siguiente.longValue();
     }
 
     public boolean existeTurnoLlamadoPorPuesto(Long idPuesto, Long idSucursal, LocalDate fecha) {
