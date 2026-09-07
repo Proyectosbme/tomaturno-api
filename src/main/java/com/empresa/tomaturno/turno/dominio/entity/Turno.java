@@ -61,7 +61,7 @@ public class Turno {
                 .fechaCreacion(LocalDateTime.now())
                 .estado(new CatalogoDetalle(CatalogoEstado.ESTADO_TURNO.getValor(), DetalleEstado.CREADO.getValor()))
                 .idPersona(idPersona)
-                .tipoCasoEspecial(tipoCasoEspecial==null?0:tipoCasoEspecial)
+                .tipoCasoEspecial(tipoCasoEspecial == null ? 0 : tipoCasoEspecial)
                 .idCatalogo(CatalogoEnum.ESTADOS_TURNOS.getCodigo().longValue())
                 .build();
         turno.validarCreacion();
@@ -102,10 +102,10 @@ public class Turno {
                 .build();
     }
 
-    public static String generarCodigoTurno(String base, Long numero){
-        if(base == null)
-           throw new  TurnoValidationException("La base del turno no puede estar null");
-        if(numero == null)
+    public static String generarCodigoTurno(String base, Long numero) {
+        if (base == null)
+            throw new TurnoValidationException("La base del turno no puede estar null");
+        if (numero == null)
             throw new TurnoValidationException("EL numero para generar el turno no puede estar null");
         return base + "-" + String.format("%03d", numero);
     }
@@ -128,6 +128,14 @@ public class Turno {
             throw new TurnoValidationException(
                     "Solo se puede marcar sin atender un turno en estado LLAMADO. Estado actual: " + detalle);
         this.estado = new CatalogoDetalle(CatalogoEstado.ESTADO_TURNO.getValor(), DetalleEstado.SIN_ATENDER.getValor());
+    }
+
+    public void enEspera() {
+        long detalle = estado != null ? estado.detalle() : -1L;
+        if (detalle != DetalleEstado.LLAMADO.getValor())
+            throw new TurnoValidationException(
+                    "Solo se puede marcar en espera un turno en estado LLAMADO. Estado actual: " + detalle);
+        this.estado = new CatalogoDetalle(CatalogoEstado.ESTADO_TURNO.getValor(), DetalleEstado.EN_ESPERA.getValor());
     }
 
     public void finalizar() {
@@ -153,9 +161,10 @@ public class Turno {
 
     private void validarTransicionLlamar(Long idPuesto, Long idSucursalPuesto) {
         long detalle = estado != null ? estado.detalle() : -1L;
-        if (detalle != DetalleEstado.CREADO.getValor() && detalle != DetalleEstado.SIN_ATENDER.getValor())
+        if (detalle != DetalleEstado.CREADO.getValor() && detalle != DetalleEstado.SIN_ATENDER.getValor()
+                && detalle != DetalleEstado.EN_ESPERA.getValor())
             throw new TurnoValidationException(
-                    "Solo se puede llamar un turno en estado CREADO. Estado actual: " + detalle);
+                    "Solo se puede llamar un turno en estado Creado, Sin atender, en espera. Estado actual: " + detalle);
         if (idPuesto == null)
             throw new TurnoValidationException("idPuesto es obligatorio para llamar un turno");
         if (idSucursalPuesto == null)

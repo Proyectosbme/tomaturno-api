@@ -6,6 +6,7 @@ import com.empresa.tomaturno.usuario.application.command.port.output.UsuarioComm
 import com.empresa.tomaturno.usuario.application.query.port.output.UsuarioQueryRepository;
 import com.empresa.tomaturno.usuario.dominio.entity.Usuario;
 import com.empresa.tomaturno.usuario.dominio.exceptions.UsuarioNotFoundException;
+import com.empresa.tomaturno.shared.clases.Estado;
 
 public class ModificarUsuarioUseCase {
 
@@ -39,7 +40,8 @@ public class ModificarUsuarioUseCase {
                 datosNuevos.getContrasena(),
                 usuario.getPerfil(),
                 idSucursal,
-                usuario.getCorreo()));
+                usuario.getCorreo(),
+                usuario.getEstado() == Estado.ACTIVO));
 
         return commandRepository.modificar(usuario);
     }

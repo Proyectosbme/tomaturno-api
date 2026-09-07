@@ -5,11 +5,16 @@ public enum DetalleEstado {
     LLAMADO(2L),
     TRASLADO(3L),
     FINALIZADO(4L),
-    SIN_ATENDER(5L);
+    SIN_ATENDER(5L),
+    EN_ESPERA(6L);
 
     private final long valor;
 
-    DetalleEstado(long valor) { this.valor = valor; }
+    DetalleEstado(long valor) {
+        this.valor = valor;
+    }
 
-    public long getValor() { return valor; }
+    public long getValor() {
+        return valor;
+    }
 }

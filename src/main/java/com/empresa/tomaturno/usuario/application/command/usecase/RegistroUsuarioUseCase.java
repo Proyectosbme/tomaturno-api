@@ -35,7 +35,8 @@ public class RegistroUsuarioUseCase {
                 usuario.getContrasena(),
                 usuario.getPerfil(),
                 usuario.getIdSucursal(),
-                usuario.getCorreo()));
+                usuario.getCorreo(),
+                true));
         usuario.asignarKeycloakId(keycloakId);
 
         

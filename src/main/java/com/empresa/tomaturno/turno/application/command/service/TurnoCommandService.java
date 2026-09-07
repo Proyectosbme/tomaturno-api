@@ -9,6 +9,7 @@ import com.empresa.tomaturno.turno.application.command.port.output.TurnoCommandR
 import com.empresa.tomaturno.turno.application.command.usecase.CrearTurnoUseCase;
 import com.empresa.tomaturno.turno.application.command.usecase.FinalizarTurnoUseCase;
 import com.empresa.tomaturno.turno.application.command.usecase.LlamarTurnoUseCase;
+import com.empresa.tomaturno.turno.application.command.usecase.MarcarEnEsperaUseCase;
 import com.empresa.tomaturno.turno.application.command.usecase.ReasignarTurnoUseCase;
 import com.empresa.tomaturno.turno.application.command.usecase.LlamarSiguienteTurnoUseCase;
 import com.empresa.tomaturno.turno.application.command.usecase.MarcarSinAtenderUseCase;
@@ -26,18 +27,23 @@ public class TurnoCommandService implements TurnoCommandInputPort, LlamarTurnoIn
     private final ReasignarTurnoUseCase reasignarTurnoUseCase;
     private final FinalizarTurnoUseCase finalizarTurnoUseCase;
     private final RellamarTurnoUseCase rellamarTurnoUseCase;
+    private final MarcarEnEsperaUseCase marcarEnEsperaUseCase;
 
     public TurnoCommandService(TurnoCommandRepository turnoCommandRepository,
             TurnoQueryRepository turnoQueryRepository,
             TurnoColaPort turnoColaPort,
             TurnoConfiguracionPort turnoConfiguracionPort) {
         this.crearTurnoUseCase = new CrearTurnoUseCase(turnoCommandRepository, turnoQueryRepository);
-        this.llamarTurnoUseCase = new LlamarTurnoUseCase(turnoCommandRepository, turnoQueryRepository, turnoConfiguracionPort);
+        this.llamarTurnoUseCase = new LlamarTurnoUseCase(turnoCommandRepository, turnoQueryRepository,
+                turnoConfiguracionPort);
         this.llamarSiguienteTurnoUseCase = new LlamarSiguienteTurnoUseCase(turnoQueryRepository, this);
         this.marcarSinAtenderUseCase = new MarcarSinAtenderUseCase(turnoCommandRepository, turnoQueryRepository);
-        this.reasignarTurnoUseCase = new ReasignarTurnoUseCase(turnoCommandRepository, turnoQueryRepository, turnoColaPort);
+        this.reasignarTurnoUseCase = new ReasignarTurnoUseCase(turnoCommandRepository, turnoQueryRepository,
+                turnoColaPort);
         this.finalizarTurnoUseCase = new FinalizarTurnoUseCase(turnoCommandRepository, turnoQueryRepository);
-        this.rellamarTurnoUseCase = new RellamarTurnoUseCase(turnoCommandRepository, turnoQueryRepository, turnoConfiguracionPort);
+        this.rellamarTurnoUseCase = new RellamarTurnoUseCase(turnoCommandRepository, turnoQueryRepository,
+                turnoConfiguracionPort);
+        this.marcarEnEsperaUseCase = new MarcarEnEsperaUseCase(turnoCommandRepository, turnoQueryRepository);
     }
 
     @Override
@@ -46,14 +52,17 @@ public class TurnoCommandService implements TurnoCommandInputPort, LlamarTurnoIn
     }
 
     @Override
-    public Turno llamar(Long idSucursal, LocalDateTime fechaCreacion, String codigoTurno, Long idPuesto, Long idSucursalPuesto, Long idUsuario) {
-        return llamarTurnoUseCase.ejecutar(idSucursal, fechaCreacion, codigoTurno, idPuesto, idSucursalPuesto, idUsuario);
+    public Turno llamar(Long idSucursal, LocalDateTime fechaCreacion, String codigoTurno, Long idPuesto,
+            Long idSucursalPuesto, Long idUsuario) {
+        return llamarTurnoUseCase.ejecutar(idSucursal, fechaCreacion, codigoTurno, idPuesto, idSucursalPuesto,
+                idUsuario);
     }
 
     @Override
     public Turno reasignar(Long idSucursal, LocalDateTime fechaCreacion, String codigoTurno,
             Long idSucursalDestino, Long idColaDestino, Long idDetalleDestino) {
-        return reasignarTurnoUseCase.ejecutar(idSucursal, fechaCreacion, codigoTurno, idSucursalDestino, idColaDestino, idDetalleDestino);
+        return reasignarTurnoUseCase.ejecutar(idSucursal, fechaCreacion, codigoTurno, idSucursalDestino, idColaDestino,
+                idDetalleDestino);
     }
 
     @Override
@@ -74,6 +83,12 @@ public class TurnoCommandService implements TurnoCommandInputPort, LlamarTurnoIn
     @Override
     public Turno rellamar(Long idSucursal, LocalDateTime fechaCreacion, String codigoTurno,
             Long idPuesto, Long idSucursalPuesto, Long idUsuario) {
-        return rellamarTurnoUseCase.ejecutar(idSucursal, fechaCreacion, codigoTurno, idPuesto, idSucursalPuesto, idUsuario);
+        return rellamarTurnoUseCase.ejecutar(idSucursal, fechaCreacion, codigoTurno, idPuesto, idSucursalPuesto,
+                idUsuario);
+    }
+
+    @Override
+    public Turno enEspera(Long idSucursal, LocalDateTime fechaCreacion, String codigoTurno) {
+       return marcarEnEsperaUseCase.ejecutar(idSucursal, fechaCreacion, codigoTurno);
     }
 }

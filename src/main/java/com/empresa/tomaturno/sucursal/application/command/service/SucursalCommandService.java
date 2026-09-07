@@ -9,18 +9,17 @@ import com.empresa.tomaturno.sucursal.application.command.usecase.ModificarSucur
 import com.empresa.tomaturno.sucursal.application.query.port.output.SucursalQueryRepository;
 import com.empresa.tomaturno.sucursal.dominio.entity.Sucursal;
 
-
 public class SucursalCommandService implements SucursalCommandInputPort {
     private final CrearSucursalCaseUse crearSucursalCaseUse;
     private final ModificarSucursalUseCase modificarSucursalUseCase;
 
     public SucursalCommandService(SucursalCommandRepository sucursalCommandRepository,
-                                  SucursalQueryRepository sucursalQueryRepository,
-                                  SucursalEventPublisher eventPublisher) {
+            SucursalQueryRepository sucursalQueryRepository,
+            SucursalEventPublisher eventPublisher) {
         this.crearSucursalCaseUse = new CrearSucursalCaseUse(sucursalCommandRepository, eventPublisher);
-        this.modificarSucursalUseCase = new ModificarSucursalUseCase(sucursalCommandRepository, sucursalQueryRepository);
+        this.modificarSucursalUseCase = new ModificarSucursalUseCase(sucursalCommandRepository,
+                sucursalQueryRepository);
     }
-
 
     @Override
     public Sucursal crear(Sucursal sucursal, String usuario) {

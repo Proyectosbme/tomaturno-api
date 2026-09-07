@@ -36,6 +36,7 @@ public class CrearUsuarioUseCase {
                 usuario.getContrasena(),
                 usuario.getPerfil(),
                 usuario.getIdSucursal(),
-                usuario.getCorreo());
+                usuario.getCorreo(),
+                true);
     }
 }

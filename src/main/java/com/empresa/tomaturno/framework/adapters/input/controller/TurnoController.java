@@ -26,163 +26,181 @@ import jakarta.ws.rs.core.Response;
 @Path("/turnos")
 public class TurnoController {
 
-    private final TurnoCommandInputPort turnoCommandInputPort;
-    private final TurnoQueryInputPort turnoQueryInputPort;
-    private final TurnoInputMapper turnoInputMapper;
-    private final TurnoWebSocket turnoWebSocket;
-    private final Jsonb jsonb;
-    private final String TURNO_LLAMADO = "TURNO_LLAMADO";
+        private final TurnoCommandInputPort turnoCommandInputPort;
+        private final TurnoQueryInputPort turnoQueryInputPort;
+        private final TurnoInputMapper turnoInputMapper;
+        private final TurnoWebSocket turnoWebSocket;
+        private final Jsonb jsonb;
+        private final String TURNO_LLAMADO = "TURNO_LLAMADO";
 
-    public TurnoController(TurnoCommandInputPort turnoCommandInputPort,
-            TurnoQueryInputPort turnoQueryInputPort,
-            TurnoInputMapper turnoInputMapper,
-            TurnoWebSocket turnoWebSocket,
-            Jsonb jsonb) {
-        this.turnoCommandInputPort = turnoCommandInputPort;
-        this.turnoQueryInputPort = turnoQueryInputPort;
-        this.turnoInputMapper = turnoInputMapper;
-        this.turnoWebSocket = turnoWebSocket;
-        this.jsonb = jsonb;
-    }
+        public TurnoController(TurnoCommandInputPort turnoCommandInputPort,
+                        TurnoQueryInputPort turnoQueryInputPort,
+                        TurnoInputMapper turnoInputMapper,
+                        TurnoWebSocket turnoWebSocket,
+                        Jsonb jsonb) {
+                this.turnoCommandInputPort = turnoCommandInputPort;
+                this.turnoQueryInputPort = turnoQueryInputPort;
+                this.turnoInputMapper = turnoInputMapper;
+                this.turnoWebSocket = turnoWebSocket;
+                this.jsonb = jsonb;
+        }
 
-    private String wsPayload(String event, Long idSucursal, TurnoResponseDTO dto) {
-        return "{\"event\":\"" + event + "\",\"idSucursal\":" + idSucursal + ",\"turno\":" + jsonb.toJson(dto) + "}";
-    }
+        private String wsPayload(String event, Long idSucursal, TurnoResponseDTO dto) {
+                return "{\"event\":\"" + event + "\",\"idSucursal\":" + idSucursal + ",\"turno\":" + jsonb.toJson(dto)
+                                + "}";
+        }
 
-    @GET
-    @Path("/buscar")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Authenticated
-    public List<TurnoResponseDTO> buscar(
-            @QueryParam("idSucursal") Long idSucursal,
-            @QueryParam("idCola") Long idCola,
-            @QueryParam("idDetalle") Long idDetalle,
-            @QueryParam("estado") Integer estado,
-            @QueryParam("fecha") String fecha,
-            @QueryParam("idPuesto") Long idPuesto,
-            @QueryParam("idSucursalPuesto") Long idSucursalPuesto) {
-        LocalDate localDate = fecha != null ? LocalDate.parse(fecha) : null;
+        @GET
+        @Path("/buscar")
+        @Produces(MediaType.APPLICATION_JSON)
+        @Authenticated
+        public List<TurnoResponseDTO> buscar(
+                        @QueryParam("idSucursal") Long idSucursal,
+                        @QueryParam("idCola") Long idCola,
+                        @QueryParam("idDetalle") Long idDetalle,
+                        @QueryParam("estado") Integer estado,
+                        @QueryParam("fecha") String fecha,
+                        @QueryParam("idPuesto") Long idPuesto,
+                        @QueryParam("idSucursalPuesto") Long idSucursalPuesto) {
+                LocalDate localDate = fecha != null ? LocalDate.parse(fecha) : null;
 
-        List<Turno> turnos = turnoQueryInputPort.buscarPorFiltro(idSucursal, idCola, idDetalle, estado, localDate,
-                idPuesto, idSucursalPuesto);
-        return turnos.stream().map(turnoInputMapper::toResponse).toList();
-    }
+                List<Turno> turnos = turnoQueryInputPort.buscarPorFiltro(idSucursal, idCola, idDetalle, estado,
+                                localDate,
+                                idPuesto, idSucursalPuesto);
+                return turnos.stream().map(turnoInputMapper::toResponse).toList();
+        }
 
-    @POST
-    @Path("/crear")
-    @Transactional
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"ADMIN", "SUBADMIN", "PUBLICO"})
-    public Response crear(@Valid CrearTurnoRequestDTO dto) {
-        Turno turno = turnoCommandInputPort.crear(dto.getIdSucursal(), dto.getIdCola(), dto.getIdDetalle(),
-                dto.getIdPersona(), dto.getTipoCasoEspecial());
-        turnoWebSocket.enviarTurno("{\"event\":\"TURNO_CREADO\",\"idSucursal\":" + dto.getIdSucursal() + "}");
-        return Response.status(Response.Status.CREATED)
-                .entity(turnoInputMapper.toResponse(turno)).build();
-    }
+        @POST
+        @Path("/crear")
+        @Transactional
+        @Produces(MediaType.APPLICATION_JSON)
+        @Consumes(MediaType.APPLICATION_JSON)
+        @RolesAllowed({ "ADMIN", "SUBADMIN", "PUBLICO" })
+        public Response crear(@Valid CrearTurnoRequestDTO dto) {
+                Turno turno = turnoCommandInputPort.crear(dto.getIdSucursal(), dto.getIdCola(), dto.getIdDetalle(),
+                                dto.getIdPersona(), dto.getTipoCasoEspecial());
+                turnoWebSocket.enviarTurno("{\"event\":\"TURNO_CREADO\",\"idSucursal\":" + dto.getIdSucursal() + "}");
+                return Response.status(Response.Status.CREATED)
+                                .entity(turnoInputMapper.toResponse(turno)).build();
+        }
 
-    @PUT
-    @Path("/llamar-siguiente")
-    @Transactional
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({ "OPERADOR", "ADMIN" })
-    public Response llamarSiguiente(@Valid LlamarSiguienteTurnoRequestDTO dto) {
-        Turno turno = turnoCommandInputPort.llamarSiguiente(
-                dto.getIdSucursal(), dto.getIdPuesto(), dto.getIdSucursalPuesto(), dto.getIdUsuario());
-        TurnoResponseDTO responseDTO = turnoInputMapper.toResponse(turno);
-        turnoWebSocket.enviarTurno(wsPayload(TURNO_LLAMADO, dto.getIdSucursal(), responseDTO));
-        return Response.ok(responseDTO).build();
-    }
+        @PUT
+        @Path("/llamar-siguiente")
+        @Transactional
+        @Produces(MediaType.APPLICATION_JSON)
+        @Consumes(MediaType.APPLICATION_JSON)
+        @RolesAllowed({ "OPERADOR", "ADMIN" })
+        public Response llamarSiguiente(@Valid LlamarSiguienteTurnoRequestDTO dto) {
+                Turno turno = turnoCommandInputPort.llamarSiguiente(
+                                dto.getIdSucursal(), dto.getIdPuesto(), dto.getIdSucursalPuesto(), dto.getIdUsuario());
+                TurnoResponseDTO responseDTO = turnoInputMapper.toResponse(turno);
+                turnoWebSocket.enviarTurno(wsPayload(TURNO_LLAMADO, dto.getIdSucursal(), responseDTO));
+                return Response.ok(responseDTO).build();
+        }
 
-    @PUT
-    @Path("/{idSucursal}/{codigoTurno}/llamar")
-    @Transactional
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({ "OPERADOR", "ADMIN", "SUBADMIN" })
-    public Response llamar(
-            @PathParam("idSucursal") Long idSucursal,
-            @PathParam("codigoTurno") String codigoTurno,
-            @QueryParam("fechaCreacion") String fechaCreacionStr,
-            @Valid LlamarTurnoRequestDTO dto) {
-        LocalDateTime fechaCreacion = LocalDateTime.parse(fechaCreacionStr);
-        Turno turno = turnoCommandInputPort.llamar(idSucursal, fechaCreacion, codigoTurno,
-                dto.getIdPuesto(), dto.getIdSucursalPuesto(), dto.getIdUsuario());
-        TurnoResponseDTO responseDTO = turnoInputMapper.toResponse(turno);
-        turnoWebSocket.enviarTurno(wsPayload(TURNO_LLAMADO, idSucursal, responseDTO));
-        return Response.ok(responseDTO).build();
-    }
+        @PUT
+        @Path("/{idSucursal}/{codigoTurno}/llamar")
+        @Transactional
+        @Produces(MediaType.APPLICATION_JSON)
+        @Consumes(MediaType.APPLICATION_JSON)
+        @RolesAllowed({ "OPERADOR", "ADMIN", "SUBADMIN" })
+        public Response llamar(
+                        @PathParam("idSucursal") Long idSucursal,
+                        @PathParam("codigoTurno") String codigoTurno,
+                        @QueryParam("fechaCreacion") String fechaCreacionStr,
+                        @Valid LlamarTurnoRequestDTO dto) {
+                LocalDateTime fechaCreacion = LocalDateTime.parse(fechaCreacionStr);
+                Turno turno = turnoCommandInputPort.llamar(idSucursal, fechaCreacion, codigoTurno,
+                                dto.getIdPuesto(), dto.getIdSucursalPuesto(), dto.getIdUsuario());
+                TurnoResponseDTO responseDTO = turnoInputMapper.toResponse(turno);
+                turnoWebSocket.enviarTurno(wsPayload(TURNO_LLAMADO, idSucursal, responseDTO));
+                return Response.ok(responseDTO).build();
+        }
 
-    @POST
-    @Path("/{idSucursal}/{codigoTurno}/reasignar")
-    @Transactional
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({ "OPERADOR", "ADMIN", "SUBADMIN" })
-    public Response reasignar(
-            @PathParam("idSucursal") Long idSucursal,
-            @PathParam("codigoTurno") String codigoTurno,
-            @QueryParam("fechaCreacion") String fechaCreacionStr,
-            @Valid ReasignarTurnoRequestDTO dto) {
-        LocalDateTime fechaCreacion = LocalDateTime.parse(fechaCreacionStr);
-        Turno nuevoTurno = turnoCommandInputPort.reasignar(idSucursal, fechaCreacion, codigoTurno,
-                dto.getIdSucursalDestino(), dto.getIdColaDestino(), dto.getIdDetalleDestino());
-        TurnoResponseDTO responseDTO = turnoInputMapper.toResponse(nuevoTurno);
-        turnoWebSocket.enviarTurno(wsPayload("TURNO_CREADO", dto.getIdSucursalDestino(), responseDTO));
-        return Response.status(Response.Status.CREATED)
-                .entity(responseDTO).build();
-    }
+        @POST
+        @Path("/{idSucursal}/{codigoTurno}/reasignar")
+        @Transactional
+        @Produces(MediaType.APPLICATION_JSON)
+        @Consumes(MediaType.APPLICATION_JSON)
+        @RolesAllowed({ "OPERADOR", "ADMIN", "SUBADMIN" })
+        public Response reasignar(
+                        @PathParam("idSucursal") Long idSucursal,
+                        @PathParam("codigoTurno") String codigoTurno,
+                        @QueryParam("fechaCreacion") String fechaCreacionStr,
+                        @Valid ReasignarTurnoRequestDTO dto) {
+                LocalDateTime fechaCreacion = LocalDateTime.parse(fechaCreacionStr);
+                Turno nuevoTurno = turnoCommandInputPort.reasignar(idSucursal, fechaCreacion, codigoTurno,
+                                dto.getIdSucursalDestino(), dto.getIdColaDestino(), dto.getIdDetalleDestino());
+                TurnoResponseDTO responseDTO = turnoInputMapper.toResponse(nuevoTurno);
+                turnoWebSocket.enviarTurno(wsPayload("TURNO_CREADO", dto.getIdSucursalDestino(), responseDTO));
+                return Response.status(Response.Status.CREATED)
+                                .entity(responseDTO).build();
+        }
 
-    @PUT
-    @Path("/{idSucursal}/{codigoTurno}/sin-atender")
-    @Transactional
-    @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({ "OPERADOR", "ADMIN", "SUBADMIN" })
-    public Response sinAtender(
-            @PathParam("idSucursal") Long idSucursal,
-            @PathParam("codigoTurno") String codigoTurno,
-            @QueryParam("fechaCreacion") String fechaCreacionStr) {
-        LocalDateTime fechaCreacion = LocalDateTime.parse(fechaCreacionStr);
-        Turno turno = turnoCommandInputPort.sinAtender(idSucursal, fechaCreacion, codigoTurno);
-        TurnoResponseDTO responseDTO = turnoInputMapper.toResponse(turno);
-        turnoWebSocket.enviarTurno(wsPayload("TURNO_SIN_ATENDER", idSucursal, responseDTO));
-        return Response.ok(responseDTO).build();
-    }
+        @PUT
+        @Path("/{idSucursal}/{codigoTurno}/sin-atender")
+        @Transactional
+        @Produces(MediaType.APPLICATION_JSON)
+        @RolesAllowed({ "OPERADOR", "ADMIN", "SUBADMIN" })
+        public Response sinAtender(
+                        @PathParam("idSucursal") Long idSucursal,
+                        @PathParam("codigoTurno") String codigoTurno,
+                        @QueryParam("fechaCreacion") String fechaCreacionStr) {
+                LocalDateTime fechaCreacion = LocalDateTime.parse(fechaCreacionStr);
+                Turno turno = turnoCommandInputPort.sinAtender(idSucursal, fechaCreacion, codigoTurno);
+                TurnoResponseDTO responseDTO = turnoInputMapper.toResponse(turno);
+                turnoWebSocket.enviarTurno(wsPayload("TURNO_SIN_ATENDER", idSucursal, responseDTO));
+                return Response.ok(responseDTO).build();
+        }
 
-    @PUT
-    @Path("/{idSucursal}/{codigoTurno}/finalizar")
-    @Transactional
-    @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"OPERADOR", "ADMIN" , "SUBADMIN"})
-    public Response finalizar(
-            @PathParam("idSucursal") Long idSucursal,
-            @PathParam("codigoTurno") String codigoTurno,
-            @QueryParam("fechaCreacion") String fechaCreacionStr) {
-        LocalDateTime fechaCreacion = LocalDateTime.parse(fechaCreacionStr);
-        Turno turno = turnoCommandInputPort.finalizar(idSucursal, fechaCreacion, codigoTurno);
-        TurnoResponseDTO responseDTO = turnoInputMapper.toResponse(turno);
-        turnoWebSocket.enviarTurno(wsPayload("TURNO_FINALIZADO", idSucursal, responseDTO));
-        return Response.ok(responseDTO).build();
-    }
+        @PUT
+        @Path("/{idSucursal}/{codigoTurno}/en-espera")
+        @Transactional
+        @Produces(MediaType.APPLICATION_JSON)
+        @RolesAllowed({ "OPERADOR", "ADMIN", "SUBADMIN" })
+        public Response enEspera(
+                        @PathParam("idSucursal") Long idSucursal,
+                        @PathParam("codigoTurno") String codigoTurno,
+                        @QueryParam("fechaCreacion") String fechaCreacionStr) {
+                LocalDateTime fechaCreacion = LocalDateTime.parse(fechaCreacionStr);
+                Turno turno = turnoCommandInputPort.enEspera(idSucursal, fechaCreacion, codigoTurno);
+                TurnoResponseDTO responseDTO = turnoInputMapper.toResponse(turno);
+                turnoWebSocket.enviarTurno(wsPayload("TURNO_EN_ESPERA", idSucursal, responseDTO));
+                return Response.ok(responseDTO).build();
+        }
 
-    @PUT
-    @Path("/{idSucursal}/{codigoTurno}/re-llamar")
-    @Transactional
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"OPERADOR", "ADMIN" , "SUBADMIN"})
-    public Response rellamar(
-            @PathParam("idSucursal") Long idSucursal,
-            @PathParam("codigoTurno") String codigoTurno,
-            @QueryParam("fechaCreacion") String fechaCreacionStr,
-            @Valid LlamarTurnoRequestDTO dto) {
-        LocalDateTime fechaCreacion = LocalDateTime.parse(fechaCreacionStr);
-        Turno turno = turnoCommandInputPort.rellamar(idSucursal, fechaCreacion, codigoTurno,
-                dto.getIdPuesto(), dto.getIdSucursalPuesto(), dto.getIdUsuario());
-        TurnoResponseDTO responseDTO = turnoInputMapper.toResponse(turno);
-        turnoWebSocket.enviarTurno(wsPayload(TURNO_LLAMADO, idSucursal, responseDTO));
-        return Response.ok(responseDTO).build();
-    }
+        @PUT
+        @Path("/{idSucursal}/{codigoTurno}/finalizar")
+        @Transactional
+        @Produces(MediaType.APPLICATION_JSON)
+        @RolesAllowed({ "OPERADOR", "ADMIN", "SUBADMIN" })
+        public Response finalizar(
+                        @PathParam("idSucursal") Long idSucursal,
+                        @PathParam("codigoTurno") String codigoTurno,
+                        @QueryParam("fechaCreacion") String fechaCreacionStr) {
+                LocalDateTime fechaCreacion = LocalDateTime.parse(fechaCreacionStr);
+                Turno turno = turnoCommandInputPort.finalizar(idSucursal, fechaCreacion, codigoTurno);
+                TurnoResponseDTO responseDTO = turnoInputMapper.toResponse(turno);
+                turnoWebSocket.enviarTurno(wsPayload("TURNO_FINALIZADO", idSucursal, responseDTO));
+                return Response.ok(responseDTO).build();
+        }
+
+        @PUT
+        @Path("/{idSucursal}/{codigoTurno}/re-llamar")
+        @Transactional
+        @Produces(MediaType.APPLICATION_JSON)
+        @Consumes(MediaType.APPLICATION_JSON)
+        @RolesAllowed({ "OPERADOR", "ADMIN", "SUBADMIN" })
+        public Response rellamar(
+                        @PathParam("idSucursal") Long idSucursal,
+                        @PathParam("codigoTurno") String codigoTurno,
+                        @QueryParam("fechaCreacion") String fechaCreacionStr,
+                        @Valid LlamarTurnoRequestDTO dto) {
+                LocalDateTime fechaCreacion = LocalDateTime.parse(fechaCreacionStr);
+                Turno turno = turnoCommandInputPort.rellamar(idSucursal, fechaCreacion, codigoTurno,
+                                dto.getIdPuesto(), dto.getIdSucursalPuesto(), dto.getIdUsuario());
+                TurnoResponseDTO responseDTO = turnoInputMapper.toResponse(turno);
+                turnoWebSocket.enviarTurno(wsPayload(TURNO_LLAMADO, idSucursal, responseDTO));
+                return Response.ok(responseDTO).build();
+        }
 }

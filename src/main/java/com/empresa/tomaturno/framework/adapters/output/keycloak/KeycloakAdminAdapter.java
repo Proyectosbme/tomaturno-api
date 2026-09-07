@@ -38,7 +38,7 @@ public class KeycloakAdminAdapter implements KeycloakAdminPort {
         user.setUsername(cmd.username());
         user.setFirstName(cmd.nombres());
         user.setLastName(cmd.apellidos());
-        user.setEnabled(true);
+        user.setEnabled(cmd.enabled());
         if (cmd.correo() != null && !cmd.correo().isBlank()) {
             user.setEmail(cmd.correo());
             user.setEmailVerified(false);
@@ -155,6 +155,7 @@ public class KeycloakAdminAdapter implements KeycloakAdminPort {
         UserRepresentation user = encontrados.get(0);
         user.setFirstName(command.nombres());
         user.setLastName(command.apellidos());
+        user.setEnabled(command.enabled());
         if (command.correo() != null && !command.correo().isBlank()) {
             user.setEmail(command.correo());
             user.setEmailVerified(false);
