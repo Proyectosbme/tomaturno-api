@@ -20,7 +20,7 @@ public interface DetalleColaxPuestoInputMapper {
                 dto.getPrioridad());
     }
 
-    @Mapping(target = "userCreacion", source = "auditoria.usuarioCreacion")
-    @Mapping(target = "fechaCreacion", source = "auditoria.fechaCreacion")
+    @Mapping(target = "userCreacion", source = "auditoria.usuario")
+    @Mapping(target = "fechaCreacion", source = "auditoria.fecha")
     DetalleColaxPuestoResponseDTO toResponse(DetalleColaxPuesto domain);
 }

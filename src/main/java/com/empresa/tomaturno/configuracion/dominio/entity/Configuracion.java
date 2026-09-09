@@ -1,29 +1,114 @@
 package com.empresa.tomaturno.configuracion.dominio.entity;
 
-import java.time.LocalDateTime;
-
 import com.empresa.tomaturno.configuracion.dominio.exceptions.ConfiguracionValidationException;
-import com.empresa.tomaturno.shared.clases.Auditoria;
-import com.empresa.tomaturno.shared.clases.Estado;
+import com.empresa.tomaturno.configuracion.dominio.validador.ValidadorNulosVacios;
+import com.empresa.tomaturno.configuracion.dominio.vo.Auditoria;
+import com.empresa.tomaturno.configuracion.dominio.vo.Estado;
 
-public class Configuracion {
+public final class Configuracion {
 
-    private Long idConfiguracion;
-    private Long idSucursal;
+    private final Long idConfiguracion;
+    private final Long idSucursal;
     private String nombre;
     private Integer parametro;
     private String descripcion;
     private Estado estado;
-    private Auditoria auditoria;
-    private String nombreSucursal;
+    private Auditoria auditoriaCreacion;
+    private Auditoria auditoriaModificacion;
+    private final String nombreSucursal;
 
-    private Configuracion() {
+    private Configuracion(Builder builder) {
+        this.idConfiguracion = builder.idConfiguracion;
+        this.idSucursal = builder.idSucursal;
+        this.nombre = builder.nombre;
+        this.parametro = builder.parametro;
+        this.descripcion = builder.descripcion;
+        this.estado = builder.estado;
+        this.auditoriaCreacion = builder.auditoriaCreacion;
+        this.auditoriaModificacion = builder.auditoriaModificacion;
+        this.nombreSucursal = builder.nombreSucursal;
     }
 
     // ─── Builder ──────────────────────────────────────────────────────────
 
-    public static Builder builder() {
-        return new Builder();
+    /** Único punto de creación/reconstitución: valida el builder antes de construir. */
+    public static Configuracion of(Builder builder) {
+        validarCreacion(builder);
+        return builder.build();
+    }
+
+    // ─── Comportamiento ───────────────────────────────────────────────────
+
+    /** auditoriaModificacion ya viene construida (Auditoria.of(usuario, fecha)); esta entidad no la arma. */
+    public void modificar(Integer parametro, String descripcion, Estado estado, Auditoria auditoriaModificacion) {
+        this.parametro = parametro;
+        this.descripcion = descripcion;
+        if (estado != null) {
+            this.estado = estado;
+        }
+        aplicarAuditoriaModificacion(auditoriaModificacion);
+    }
+
+    private void aplicarAuditoriaModificacion(Auditoria auditoriaModificacion) {
+        ValidadorNulosVacios
+                .variable(auditoriaModificacion, "La auditoria de modificacion de la configuracion",
+                        ConfiguracionValidationException::new)
+                .noNulo();
+        this.auditoriaModificacion = auditoriaModificacion;
+    }
+
+    /**
+     * Valida el builder antes de construir: el objeto nunca existe en un estado inválido.
+     */
+    private static void validarCreacion(Builder builder) {
+        ValidadorNulosVacios.variable(builder.nombre, "El nombre de la configuracion", ConfiguracionValidationException::new)
+                .noNuloNoVacio();
+        ValidadorNulosVacios.variable(builder.idSucursal, "La sucursal de la configuracion", ConfiguracionValidationException::new)
+                .noNulo();
+        ValidadorNulosVacios.variable(builder.estado, "El estado de la configuracion", ConfiguracionValidationException::new)
+                .noNulo();
+        ValidadorNulosVacios
+                .variable(builder.auditoriaCreacion, "La auditoria de creacion de la configuracion",
+                        ConfiguracionValidationException::new)
+                .noNulo();
+    }
+
+    // ─── Getters ──────────────────────────────────────────────────────────
+
+    public Long getIdConfiguracion() {
+        return idConfiguracion;
+    }
+
+    public Long getIdSucursal() {
+        return idSucursal;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public Integer getParametro() {
+        return parametro;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public Estado getEstado() {
+        return estado;
+    }
+
+    public Auditoria getAuditoriaCreacion() {
+        return auditoriaCreacion;
+    }
+
+    public Auditoria getAuditoriaModificacion() {
+        return auditoriaModificacion;
+    }
+
+    public String getNombreSucursal() {
+        return nombreSucursal;
     }
 
     public static class Builder {
@@ -33,7 +118,8 @@ public class Configuracion {
         private Integer parametro;
         private String descripcion;
         private Estado estado;
-        private Auditoria auditoria;
+        private Auditoria auditoriaCreacion;
+        private Auditoria auditoriaModificacion;
         private String nombreSucursal;
 
         public Builder idConfiguracion(Long idConfiguracion) {
@@ -66,8 +152,13 @@ public class Configuracion {
             return this;
         }
 
-        public Builder auditoria(Auditoria auditoria) {
-            this.auditoria = auditoria;
+        public Builder auditoriaCreacion(Auditoria auditoriaCreacion) {
+            this.auditoriaCreacion = auditoriaCreacion;
+            return this;
+        }
+
+        public Builder auditoriaModificacion(Auditoria auditoriaModificacion) {
+            this.auditoriaModificacion = auditoriaModificacion;
             return this;
         }
 
@@ -76,103 +167,8 @@ public class Configuracion {
             return this;
         }
 
-        /** Para configuraciones nuevas: sin id ni auditoría. */
-        public Configuracion inicializar() {
-            Configuracion c = new Configuracion();
-            c.idSucursal = this.idSucursal;
-            c.nombre = this.nombre;
-            c.parametro = this.parametro;
-            c.descripcion = this.descripcion;
-            c.estado = this.estado;
-            return c;
+        private Configuracion build() {
+            return new Configuracion(this);
         }
-
-        /** Para reconstituir desde la base de datos: todos los campos. */
-        public Configuracion reconstituir() {
-            Configuracion c = new Configuracion();
-            c.idConfiguracion = this.idConfiguracion;
-            c.idSucursal = this.idSucursal;
-            c.nombre = this.nombre;
-            c.parametro = this.parametro;
-            c.descripcion = this.descripcion;
-            c.estado = this.estado;
-            c.auditoria = this.auditoria;
-            c.nombreSucursal = this.nombreSucursal;
-            return c;
-        }
-    }
-
-    // ─── Comportamiento ───────────────────────────────────────────────────
-
-    public void crear(String usuario) {
-        this.auditoria = Auditoria.deCreacion(usuario, LocalDateTime.now());
-        validarCreacion();
-    }
-
-    public void modificar(Integer parametro,
-            String descripcion, Estado estado, String usuario) {
-        this.parametro = parametro;
-        this.descripcion = descripcion;
-        this.estado = estado;
-        this.auditoria = this.auditoria.conModificacion(usuario, LocalDateTime.now());
-        validarModificacion();
-    }
-
-    private void validarCreacion() {
-        if (this.nombre == null || this.nombre.isBlank()) {
-            throw new ConfiguracionValidationException("El nombre de la configuración es obligatorio");
-        }
-        if (this.idSucursal == null) {
-            throw new ConfiguracionValidationException("La sucursal es obligatoria");
-        }
-        if (this.estado == null) {
-            throw new ConfiguracionValidationException("El estado es obligatorio");
-        }
-    }
-
-    private void validarModificacion() {
-        if (this.idConfiguracion == null) {
-            throw new ConfiguracionValidationException("El identificador de la configuración es obligatorio");
-        }
-        if (this.nombre == null || this.nombre.isBlank()) {
-            throw new ConfiguracionValidationException("El nombre de la configuración es obligatorio");
-        }
-        if (this.estado == null) {
-            throw new ConfiguracionValidationException("El estado es obligatorio");
-        }
-    }
-
-    // ─── Getters ──────────────────────────────────────────────────────────
-
-    public Long getIdConfiguracion() {
-        return idConfiguracion;
-    }
-
-    public Long getIdSucursal() {
-        return idSucursal;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public Integer getParametro() {
-        return parametro;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public Estado getEstado() {
-        return estado;
-    }
-
-    public Auditoria getAuditoria() {
-        return auditoria;
-    }
-
-    public String getNombreSucursal() {
-        return nombreSucursal;
     }
 }

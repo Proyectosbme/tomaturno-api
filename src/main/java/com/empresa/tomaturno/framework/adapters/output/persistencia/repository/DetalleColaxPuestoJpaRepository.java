@@ -16,6 +16,12 @@ public class DetalleColaxPuestoJpaRepository
         return list("id.idPuesto = ?1 and id.idSucursalPuesto = ?2", idPuesto, idSucursalPuesto);
     }
 
+    public List<DetalleColaxPuestoJpaEntity> buscarPorCola(Long idCola, Long idDetalle, Long idSucursalCola) {
+        return list("id.idCola = ?1 and ((?2 is null and id.idDetalle is null) or id.idDetalle = ?2) " +
+                "and id.idSucursalCola = ?3",
+                idCola, idDetalle, idSucursalCola);
+    }
+
     public boolean existeAsignacion(Long idPuesto, Long idSucursalPuesto,
                                      Long idCola, Long idDetalle, Long idSucursalCola) {
         return count("id.idPuesto = ?1 and id.idSucursalPuesto = ?2 and id.idCola = ?3 " +

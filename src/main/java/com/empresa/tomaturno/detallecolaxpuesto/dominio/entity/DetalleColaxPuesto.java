@@ -3,7 +3,7 @@ package com.empresa.tomaturno.detallecolaxpuesto.dominio.entity;
 import java.time.LocalDateTime;
 
 import com.empresa.tomaturno.detallecolaxpuesto.dominio.exceptions.DetalleColaxPuestoValidationException;
-import com.empresa.tomaturno.shared.clases.Auditoria;
+import com.empresa.tomaturno.detallecolaxpuesto.dominio.vo.Auditoria;
 
 public class DetalleColaxPuesto {
 
@@ -45,7 +45,7 @@ public class DetalleColaxPuesto {
     }
 
     public void asignar(String usuario) {
-        this.auditoria = Auditoria.deCreacion(usuario, LocalDateTime.now());
+        this.auditoria = Auditoria.of(usuario, LocalDateTime.now());
         this.validarAsignacion();
     }
 

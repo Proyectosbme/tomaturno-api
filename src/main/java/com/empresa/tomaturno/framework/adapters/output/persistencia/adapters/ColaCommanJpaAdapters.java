@@ -1,11 +1,13 @@
 package com.empresa.tomaturno.framework.adapters.output.persistencia.adapters;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.empresa.tomaturno.cola.application.command.port.output.ColaCommandRepository;
 import com.empresa.tomaturno.cola.dominio.entity.Cola;
 import com.empresa.tomaturno.cola.dominio.entity.Detalle;
+import com.empresa.tomaturno.cola.dominio.vo.Auditoria;
 import com.empresa.tomaturno.cola.dominio.vo.Sucursal;
 import com.empresa.tomaturno.framework.adapters.exceptions.NotFoundException;
 import com.empresa.tomaturno.framework.adapters.output.mapper.ColaOutputMapper;
@@ -75,13 +77,12 @@ public class ColaCommanJpaAdapters implements ColaCommandRepository {
     public Cola replicarCola(Cola colaOrigen, Long idSucursalDestino, String usuario) {
         Long nextIdCola = colaJpaRepository.obtenerSiguienteId(idSucursalDestino);
 
-        Cola colaDestino = Cola.builder()
+        Cola colaDestino = Cola.of(new Cola.Builder()
                 .nombre(colaOrigen.getNombre())
                 .codigo(colaOrigen.getCodigo())
                 .estado(colaOrigen.getEstado())
                 .sucursal(new Sucursal(idSucursalDestino, null))
-                .inicializar();
-        colaDestino.crear(usuario);
+                .auditoriaCreacion(Auditoria.of(usuario, LocalDateTime.now())));
 
         ColaJpaEntity colaEntity = colaOutputMapper.toColaJpaEntity(colaDestino);
         colaEntity.getIdpk().setId(nextIdCola);
@@ -94,11 +95,14 @@ public class ColaCommanJpaAdapters implements ColaCommandRepository {
                 Long nextIdDetalle = colaDetalleRepository.obtenerSiguienteIdDetalle(
                         nextIdCola, idSucursalDestino.intValue());
 
-                Detalle detalleNuevo = Detalle.inicializar(
-                        detalleOrigen.getNombre(),
-                        detalleOrigen.getCodigo(),
-                        detalleOrigen.getEstado());
-                detalleNuevo.crear(usuario);
+                // El código origen ya trae la letra de colaOrigen; como colaDestino tiene la
+                // misma letra, solo se necesita la letra propia del detalle para recomponerlo.
+                Detalle.Builder detalleBuilder = new Detalle.Builder()
+                        .nombre(detalleOrigen.getNombre())
+                        .codigo(detalleOrigen.getCodigo().substring(1))
+                        .estado(detalleOrigen.getEstado());
+                Detalle detalleNuevo = colaDestino.crearDetalle(detalleBuilder,
+                        Auditoria.of(usuario, LocalDateTime.now()));
 
                 DetalleColaJpaEntity detalleEntity = colaOutputMapper.toDetalleJpaEntity(
                         nextIdCola, idSucursalDestino.intValue(), detalleNuevo);

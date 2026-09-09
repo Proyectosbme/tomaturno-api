@@ -49,6 +49,11 @@ public class LlamarTurnoUseCase {
             return turnoCommandRepository.actualizar(turno);
         }
 
+        // Llamada nueva: no se puede llamar un turno si el operador no está activo (cerrado/en descanso)
+        if (idUsuario != null && !turnoConfiguracionPort.operadorActivo(idUsuario, idSucursal)) {
+            throw new TurnoValidationException("No se puede llamar un turno: el operador no está activo. Actívate primero.");
+        }
+
         // Llamada nueva: verificar LLAMAR_CON_ACTIVO
         if (turnoConfiguracionPort.debeVerificarTurnoActivo(idSucursal)) {
             boolean tieneActivo = (idUsuario != null)

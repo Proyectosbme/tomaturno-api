@@ -1,30 +1,31 @@
 package com.empresa.tomaturno.cola.application.command.usecase;
 
 import com.empresa.tomaturno.cola.application.command.port.output.ColaCommandRepository;
-import com.empresa.tomaturno.cola.application.query.port.output.ColaQueryRepository;
+import com.empresa.tomaturno.cola.application.command.port.output.ColaGatewayPort;
 import com.empresa.tomaturno.cola.dominio.entity.Cola;
 import com.empresa.tomaturno.cola.dominio.exceptions.ColaNotFoundException;
+import com.empresa.tomaturno.cola.dominio.vo.Auditoria;
+import com.empresa.tomaturno.cola.dominio.vo.Estado;
 
 public class ModificarColaUseCase {
 
     private final ColaCommandRepository colaCommandRepository;
-    private final ColaQueryRepository colaQueryRepository;
+    private final ColaGatewayPort colaGatewayPort;
 
     public ModificarColaUseCase(ColaCommandRepository colaCommandRepository,
-            ColaQueryRepository colaQueryRepository) {
+            ColaGatewayPort colaGatewayPort) {
         this.colaCommandRepository = colaCommandRepository;
-        this.colaQueryRepository = colaQueryRepository;
+        this.colaGatewayPort = colaGatewayPort;
     }
 
-    public Cola ejecutar(Long idCola, Long idSucursal, Cola datosNuevos, String usuario) {
-        Cola cola = colaQueryRepository.buscarPorIdColaYSucursal(idCola, idSucursal);
+    public Cola ejecutar(Long idCola, Long idSucursal, String nombre, String codigo, Estado estado,
+            Auditoria auditoriaModificacion) {
+        Cola cola = colaGatewayPort.buscarPorIdColaYSucursal(idCola, idSucursal);
         if (cola == null) {
             throw new ColaNotFoundException(idCola,
                     "Cola (idCola=" + idCola + ", idSucursal=" + idSucursal + ")");
         }
-        cola.modificar(datosNuevos.getNombre(),
-                datosNuevos.getCodigo(),
-                datosNuevos.getEstado(), usuario);
+        cola.modificar(nombre, codigo, estado, auditoriaModificacion);
         return colaCommandRepository.modificar(cola);
     }
 }

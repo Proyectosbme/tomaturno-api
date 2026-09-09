@@ -14,10 +14,12 @@ public class TurnoQueryService implements TurnoQueryInputPort {
 
     private final BuscarTurnoPorPKUseCase buscarTurnoPorPKUseCase;
     private final BuscarTurnosPorFiltrosUseCase buscarTurnosPorFiltrosUseCase;
+    private final TurnoQueryRepository turnoQueryRepository;
 
     public TurnoQueryService(TurnoQueryRepository turnoQueryRepository) {
         this.buscarTurnoPorPKUseCase = new BuscarTurnoPorPKUseCase(turnoQueryRepository);
         this.buscarTurnosPorFiltrosUseCase = new BuscarTurnosPorFiltrosUseCase(turnoQueryRepository);
+        this.turnoQueryRepository = turnoQueryRepository;
     }
 
     @Override
@@ -30,5 +32,15 @@ public class TurnoQueryService implements TurnoQueryInputPort {
             Long idPuesto, Long idSucursalPuesto) {
         return buscarTurnosPorFiltrosUseCase.ejecutar(idSucursal, idCola, idDetalle, estado, fecha,
                 idPuesto, idSucursalPuesto);
+    }
+
+    @Override
+    public boolean existeTurnoLlamadoPorUsuario(Long idUsuario, Long idSucursal, LocalDate fecha) {
+        return turnoQueryRepository.existeTurnoLlamadoPorUsuario(idUsuario, idSucursal, fecha);
+    }
+
+    @Override
+    public LocalDateTime obtenerUltimaFechaLlamadaPorUsuario(Long idUsuario, Long idSucursal) {
+        return turnoQueryRepository.obtenerUltimaFechaLlamadaPorUsuario(idUsuario, idSucursal);
     }
 }

@@ -111,6 +111,11 @@ public class TurnoQueryJpaAdapters implements TurnoQueryRepository {
     }
 
     @Override
+    public LocalDateTime obtenerUltimaFechaLlamadaPorUsuario(Long idUsuario, Long idSucursal) {
+        return turnoJpaRepository.obtenerUltimaFechaLlamadaPorUsuario(idUsuario, idSucursal);
+    }
+
+    @Override
     public String obtenerCodigoBaseTurno(Long idSucursal, Long idCola, Long idDetalle) {
         ColaJpaEntity entity = colaJpaRepository.buscarPorIdColaYSucursal(idCola, idSucursal);
         Cola cola = null;

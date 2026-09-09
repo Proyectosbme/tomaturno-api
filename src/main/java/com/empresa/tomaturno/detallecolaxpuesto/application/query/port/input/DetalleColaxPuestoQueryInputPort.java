@@ -6,4 +6,5 @@ import com.empresa.tomaturno.detallecolaxpuesto.dominio.entity.DetalleColaxPuest
 
 public interface DetalleColaxPuestoQueryInputPort {
     List<DetalleColaxPuesto> listarPorPuesto(Long idPuesto, Long idSucursalPuesto);
+    List<DetalleColaxPuesto> buscarPorCola(Long idCola, Long idDetalle, Long idSucursalCola);
 }

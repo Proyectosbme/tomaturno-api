@@ -1,16 +1,18 @@
 package com.empresa.tomaturno.cola.application.command.service;
 
-import com.empresa.tomaturno.cola.DTO.ResultadoReplicacion;
+import com.empresa.tomaturno.cola.application.command.dto.ResultadoReplicacion;
 import com.empresa.tomaturno.cola.application.command.port.input.ColaCommandInputPort;
 import com.empresa.tomaturno.cola.application.command.port.output.ColaCommandRepository;
+import com.empresa.tomaturno.cola.application.command.port.output.ColaGatewayPort;
 import com.empresa.tomaturno.cola.application.command.usecase.CrearColaCaseUse;
 import com.empresa.tomaturno.cola.application.command.usecase.CrearDetalleDeColaUseCase;
 import com.empresa.tomaturno.cola.application.command.usecase.ModificarColaUseCase;
 import com.empresa.tomaturno.cola.application.command.usecase.ModificarDetalleDeColaUseCase;
 import com.empresa.tomaturno.cola.application.command.usecase.ReplicarColasUseCase;
-import com.empresa.tomaturno.cola.application.query.port.output.ColaQueryRepository;
 import com.empresa.tomaturno.cola.dominio.entity.Cola;
 import com.empresa.tomaturno.cola.dominio.entity.Detalle;
+import com.empresa.tomaturno.cola.dominio.vo.Auditoria;
+import com.empresa.tomaturno.cola.dominio.vo.Estado;
 
 public class ColaCommandService implements ColaCommandInputPort {
 
@@ -21,36 +23,40 @@ public class ColaCommandService implements ColaCommandInputPort {
     private final ModificarDetalleDeColaUseCase modificarDetalleDeColaUseCase;
 
     public ColaCommandService(ColaCommandRepository colaCommandRepository,
-            ColaQueryRepository colaQueryRepository) {
-        this.crearColaCaseUse = new CrearColaCaseUse(colaCommandRepository, colaQueryRepository);
-        this.modificarColaUseCase = new ModificarColaUseCase(colaCommandRepository, colaQueryRepository);
-        this.crearDetalleDeColaUseCase = new CrearDetalleDeColaUseCase(colaCommandRepository, colaQueryRepository);
-        this.replicarColasUseCase = new ReplicarColasUseCase(colaCommandRepository, colaQueryRepository);
-        this.modificarDetalleDeColaUseCase = new ModificarDetalleDeColaUseCase(colaCommandRepository, colaQueryRepository);
+            ColaGatewayPort colaGatewayPort) {
+        this.crearColaCaseUse = new CrearColaCaseUse(colaCommandRepository, colaGatewayPort);
+        this.modificarColaUseCase = new ModificarColaUseCase(colaCommandRepository, colaGatewayPort);
+        this.crearDetalleDeColaUseCase = new CrearDetalleDeColaUseCase(colaCommandRepository, colaGatewayPort);
+        this.replicarColasUseCase = new ReplicarColasUseCase(colaCommandRepository, colaGatewayPort);
+        this.modificarDetalleDeColaUseCase = new ModificarDetalleDeColaUseCase(colaCommandRepository, colaGatewayPort);
     }
 
     @Override
-    public Cola crear(Cola cola ,String usuario) {
-        return crearColaCaseUse.ejecutar(cola, usuario);
+    public Cola crear(Cola cola) {
+        return crearColaCaseUse.ejecutar(cola);
     }
 
     @Override
-    public Cola actualizar(Long idCola, Long idSucursal, Cola datosActualizados, String usuario) {
-        return modificarColaUseCase.ejecutar(idCola, idSucursal, datosActualizados, usuario);
+    public Cola actualizar(Long idCola, Long idSucursal, String nombre, String codigo, Estado estado,
+            Auditoria auditoriaModificacion) {
+        return modificarColaUseCase.ejecutar(idCola, idSucursal, nombre, codigo, estado, auditoriaModificacion);
     }
 
     @Override
-    public Cola crearDetalle(Long idCola, Long idSucursal, Detalle detalle,String usuario) {
-        return crearDetalleDeColaUseCase.ejecutar(idCola, idSucursal, detalle, usuario);
+    public Cola crearDetalle(Long idCola, Long idSucursal, Detalle.Builder detalleBuilder,
+            Auditoria auditoriaCreacion) {
+        return crearDetalleDeColaUseCase.ejecutar(idCola, idSucursal, detalleBuilder, auditoriaCreacion);
     }
 
     @Override
-    public ResultadoReplicacion replicar(Long idSucursalOrigen, Long idSucursalDestino,String usuario) {
+    public ResultadoReplicacion replicar(Long idSucursalOrigen, Long idSucursalDestino, String usuario) {
         return replicarColasUseCase.ejecutar(idSucursalOrigen, idSucursalDestino, usuario);
     }
 
     @Override
-    public Cola editarDetalleCola(Long idCola, Long idSucursal, Long idDetalle, Detalle detalleActualizado, String usuario) {
-       return modificarDetalleDeColaUseCase.ejecutar(idCola, idSucursal, idDetalle, detalleActualizado, usuario);
+    public Cola editarDetalleCola(Long idCola, Long idSucursal, Long idDetalle, String nombre, String codigo,
+            Estado estado, Auditoria auditoriaModificacion) {
+        return modificarDetalleDeColaUseCase.ejecutar(idCola, idSucursal, idDetalle, nombre, codigo, estado,
+                auditoriaModificacion);
     }
 }

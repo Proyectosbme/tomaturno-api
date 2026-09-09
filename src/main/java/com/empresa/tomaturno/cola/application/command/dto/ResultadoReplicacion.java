@@ -1,4 +1,4 @@
-package com.empresa.tomaturno.cola.DTO;
+package com.empresa.tomaturno.cola.application.command.dto;
 
 import java.util.List;
 

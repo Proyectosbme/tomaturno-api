@@ -1,25 +1,29 @@
 package com.empresa.tomaturno.cola.application.command.usecase;
 
+import java.util.List;
+
 import com.empresa.tomaturno.cola.application.command.port.output.ColaCommandRepository;
-import com.empresa.tomaturno.cola.application.query.port.output.ColaQueryRepository;
+import com.empresa.tomaturno.cola.application.command.port.output.ColaGatewayPort;
 import com.empresa.tomaturno.cola.dominio.entity.Cola;
+import com.empresa.tomaturno.cola.dominio.especificacion.CodigoColaUnicoEspec;
+import com.empresa.tomaturno.cola.dominio.especificacion.NombreColaUnicoEspec;
 
 public class CrearColaCaseUse {
 
     private final ColaCommandRepository colaCommandRepository;
-    private final ColaQueryRepository colaQueryRepository;
+    private final ColaGatewayPort colaGatewayPort;
 
     public CrearColaCaseUse(ColaCommandRepository colaCommandRepository,
-            ColaQueryRepository colaQueryRepository) {
+            ColaGatewayPort colaGatewayPort) {
         this.colaCommandRepository = colaCommandRepository;
-        this.colaQueryRepository = colaQueryRepository;
+        this.colaGatewayPort = colaGatewayPort;
     }
 
-    public Cola ejecutar(Cola cola, String usuario) {
-        cola.crear(usuario);
-        boolean existeNombre = colaQueryRepository.existeNombreEnSucursal(
-                cola.getSucursal().getIdentificador(), cola.getNombre());
-        cola.validarNombreUnico(existeNombre);
+    public Cola ejecutar(Cola cola) {
+        List<Cola> colasExistentes = colaGatewayPort
+                .buscarConDetallesPorSucursal(cola.getSucursal().getIdentificador());
+        new NombreColaUnicoEspec(colasExistentes).verificar(cola.getNombre());
+        new CodigoColaUnicoEspec(colasExistentes).verificar(cola.getCodigo());
         return colaCommandRepository.save(cola);
     }
 }

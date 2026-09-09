@@ -11,8 +11,7 @@ public class CrearConfiguracionUseCase {
         this.commandRepository = commandRepository;
     }
 
-    public Configuracion ejecutar(Configuracion configuracion, String usuario) {
-        configuracion.crear(usuario);
+    public Configuracion ejecutar(Configuracion configuracion) {
         return commandRepository.save(configuracion);
     }
 }

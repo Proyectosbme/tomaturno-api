@@ -49,6 +49,18 @@ public class DetalleColaxPuestoQueryJpaAdapters implements DetalleColaxPuestoQue
     }
 
     @Override
+    public List<DetalleColaxPuesto> buscarPorCola(Long idCola, Long idDetalle, Long idSucursalCola) {
+        List<DetalleColaxPuestoJpaEntity> entities = repository.buscarPorCola(idCola, idDetalle, idSucursalCola);
+        if (entities.isEmpty()) return List.of();
+
+        // No se enriquece con nombres: este método se usa para el algoritmo de
+        // asignación automática, que solo necesita idPuesto/idSucursalPuesto.
+        return entities.stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
+
+    @Override
     public boolean existeAsignacion(Long idPuesto, Long idSucursalPuesto,
                                      Long idCola, Long idDetalle, Long idSucursalCola) {
         return repository.existeAsignacion(idPuesto, idSucursalPuesto, idCola, idDetalle, idSucursalCola);

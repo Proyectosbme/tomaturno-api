@@ -5,6 +5,8 @@ import java.util.List;
 import com.empresa.tomaturno.configuracion.application.command.port.input.ConfiguracionCommandInputPort;
 import com.empresa.tomaturno.configuracion.application.query.port.input.ConfiguracionQueryInputPort;
 import com.empresa.tomaturno.configuracion.dominio.entity.Configuracion;
+import com.empresa.tomaturno.configuracion.dominio.vo.Auditoria;
+import com.empresa.tomaturno.configuracion.dominio.vo.Estado;
 import com.empresa.tomaturno.framework.adapters.input.dto.ConfiguracionRequestDTO;
 import com.empresa.tomaturno.framework.adapters.input.dto.ConfiguracionResponseDTO;
 import com.empresa.tomaturno.framework.adapters.input.mapper.ConfiguracionInputMapper;
@@ -71,8 +73,8 @@ public class ConfiguracionController {
     @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed({"ADMIN","SUBADMIN"})
     public Response crear(@Valid ConfiguracionRequestDTO dto) {
-        Configuracion configuracion = mapper.toDomain(dto);
-        configuracion = commandPort.crear(configuracion, usuarioActual());
+        Configuracion configuracion = mapper.toDomain(dto, usuarioActual());
+        configuracion = commandPort.crear(configuracion);
         return Response.status(Response.Status.CREATED).entity(mapper.toResponse(configuracion)).build();
     }
 
@@ -86,8 +88,10 @@ public class ConfiguracionController {
             @PathParam("idConfiguracion") Long idConfiguracion,
             @PathParam("idSucursal") Long idSucursal,
             @Valid ConfiguracionRequestDTO dto) {
-        Configuracion datosNuevos = mapper.toDomain(dto);
-        Configuracion actualizado = commandPort.actualizar(idConfiguracion, idSucursal, datosNuevos, usuarioActual());
+        Auditoria auditoriaModificacion = Auditoria.of(usuarioActual(), java.time.LocalDateTime.now());
+        Configuracion actualizado = commandPort.actualizar(idConfiguracion, idSucursal,
+                dto.getParametro(), dto.getDescripcion(), Estado.fromCodigo(dto.getEstado()),
+                auditoriaModificacion);
         return Response.ok(mapper.toResponse(actualizado)).build();
     }
 }

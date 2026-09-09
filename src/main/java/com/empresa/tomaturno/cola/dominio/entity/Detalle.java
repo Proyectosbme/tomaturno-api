@@ -1,79 +1,69 @@
 package com.empresa.tomaturno.cola.dominio.entity;
 
-import java.time.LocalDateTime;
-
 import com.empresa.tomaturno.cola.dominio.exceptions.ColaValidationException;
-import com.empresa.tomaturno.shared.clases.Auditoria;
-import com.empresa.tomaturno.shared.clases.Estado;
+import com.empresa.tomaturno.cola.dominio.validador.ValidadorNulosVacios;
+import com.empresa.tomaturno.cola.dominio.vo.Auditoria;
+import com.empresa.tomaturno.cola.dominio.vo.Estado;
 
-public class Detalle {
+public final class Detalle {
 
-    private Long correlativo;
+    private final Long correlativo;
     private String nombre;
     private String codigo;
     private Estado estado;
-    private Auditoria auditoria;
+    private Auditoria auditoriaCreacion;
+    private Auditoria auditoriaModificacion;
 
-    private Detalle() {
+    private Detalle(Builder builder) {
+        this.correlativo = builder.correlativo;
+        this.nombre = builder.nombre != null ? builder.nombre.trim().toUpperCase() : null;
+        this.codigo = builder.codigo != null ? builder.codigo.trim().toUpperCase() : null;
+        this.estado = builder.estado;
+        this.auditoriaCreacion = builder.auditoriaCreacion;
+        this.auditoriaModificacion = builder.auditoriaModificacion;
     }
 
-    public static Detalle inicializar(String nombre, String codigo, Estado estado) {
-        Detalle d = new Detalle();
-        d.nombre = nombre != null ? nombre.trim().toUpperCase() : null;
-        d.codigo = codigo != null ? codigo.trim().toUpperCase() : null;
-        d.estado = estado;
-        return d;
+    /** Único punto de creación/reconstitución: valida el builder antes de construir. Solo Cola lo invoca. */
+    protected static Detalle crear(Builder builder) {
+        validarCreacion(builder);
+        return builder.build();
     }
 
-    public static Detalle reconstituir(Long correlativo, String nombre, String codigo,
-            Estado estado, Auditoria auditoria) {
-        Detalle d = new Detalle();
-        d.correlativo = correlativo;
-        d.nombre = nombre;
-        d.codigo = codigo;
-        d.estado = estado;
-        d.auditoria = auditoria;
-        return d;
-    }
-
-    public void crear(String usuario) {
-        this.auditoria = Auditoria.deCreacion(usuario, LocalDateTime.now());
-        validarCreacion();
-    }
-
-    public void modificar(String nombre, String codigo, Estado estado, String usuario) {
-        if(nombre != null) {
+    protected void modificar(String nombre, String codigo, Estado estado, Auditoria auditoriaModificacion) {
+        if (nombre != null) {
             this.nombre = nombre.trim().toUpperCase();
         }
-        if(codigo != null) {
+        if (codigo != null) {
             this.codigo = codigo.trim().toUpperCase();
-        }   
-        if(estado != null) {
+        }
+        if (estado != null) {
             this.estado = estado;
         }
-        if(this.auditoria != null) {
-            this.auditoria = this.auditoria.conModificacion(usuario, LocalDateTime.now());
-        } 
-        validarModificacion();
+        aplicarAuditoriaModificacion(auditoriaModificacion);
     }
 
-    private void validarCreacion() {
-        if (this.nombre == null || this.nombre.isEmpty()) {
-            throw new ColaValidationException("El nombre del detalle es obligatorio");
-        }
-        if (this.codigo == null || this.codigo.isEmpty()) {
-            throw new ColaValidationException("El codigo del detalle es obligatorio");
-        }
-        if (this.estado == null) {
-            throw new ColaValidationException("El estado del detalle es obligatorio");
-        }
+    private void aplicarAuditoriaModificacion(Auditoria auditoriaModificacion) {
+        ValidadorNulosVacios
+                .variable(auditoriaModificacion, "La auditoria de modificacion del detalle",
+                        ColaValidationException::new)
+                .noNulo();
+        this.auditoriaModificacion = auditoriaModificacion;
     }
 
-    private void validarModificacion() {
-        if (this.correlativo == null) {
-            throw new ColaValidationException("El correlativo del detalle es obligatorio");
+    private static void validarCreacion(Builder builder) {
+        ValidadorNulosVacios.variable(builder.nombre, "El nombre del detalle", ColaValidationException::new)
+                .noNuloNoVacio();
+        ValidadorNulosVacios.variable(builder.codigo, "El codigo del detalle", ColaValidationException::new)
+                .noNuloNoVacio();
+        if (!builder.codigo.trim().matches("[A-Za-z]{2}")) {
+            throw new ColaValidationException("El codigo del detalle debe tener exactamente dos letras");
         }
-        validarCreacion();
+        ValidadorNulosVacios.variable(builder.estado, "El estado del detalle", ColaValidationException::new)
+                .noNulo();
+        ValidadorNulosVacios
+                .variable(builder.auditoriaCreacion, "La auditoria de creacion del detalle",
+                        ColaValidationException::new)
+                .noNulo();
     }
 
     public Long getCorrelativo() {
@@ -92,7 +82,58 @@ public class Detalle {
         return estado;
     }
 
-    public Auditoria getAuditoria() {
-        return auditoria;
+    public Auditoria getAuditoriaCreacion() {
+        return auditoriaCreacion;
+    }
+
+    public Auditoria getAuditoriaModificacion() {
+        return auditoriaModificacion;
+    }
+
+    public static class Builder {
+        private Long correlativo;
+        private String nombre;
+        private String codigo;
+        private Estado estado;
+        private Auditoria auditoriaCreacion;
+        private Auditoria auditoriaModificacion;
+
+        public Builder correlativo(Long correlativo) {
+            this.correlativo = correlativo;
+            return this;
+        }
+
+        public Builder nombre(String nombre) {
+            this.nombre = nombre;
+            return this;
+        }
+
+        public Builder codigo(String codigo) {
+            this.codigo = codigo;
+            return this;
+        }
+
+        public Builder estado(Estado estado) {
+            this.estado = estado;
+            return this;
+        }
+
+        public Builder auditoriaCreacion(Auditoria auditoriaCreacion) {
+            this.auditoriaCreacion = auditoriaCreacion;
+            return this;
+        }
+
+        public Builder auditoriaModificacion(Auditoria auditoriaModificacion) {
+            this.auditoriaModificacion = auditoriaModificacion;
+            return this;
+        }
+
+        public String getCodigo() {
+            return codigo;
+        }
+
+        private Detalle build() {
+            return new Detalle(this);
+        }
     }
 }

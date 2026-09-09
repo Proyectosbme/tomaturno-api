@@ -3,67 +3,66 @@ package com.empresa.tomaturno.cola.application.command.usecase;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.empresa.tomaturno.cola.DTO.ResultadoReplicacion;
+import com.empresa.tomaturno.cola.application.command.dto.ResultadoReplicacion;
 import com.empresa.tomaturno.cola.application.command.port.output.ColaCommandRepository;
-import com.empresa.tomaturno.cola.application.query.port.output.ColaQueryRepository;
+import com.empresa.tomaturno.cola.application.command.port.output.ColaGatewayPort;
 import com.empresa.tomaturno.cola.dominio.entity.Cola;
 import com.empresa.tomaturno.cola.dominio.entity.Detalle;
+import com.empresa.tomaturno.cola.dominio.especificacion.NombreColaUnicoEspec;
 
 public class ReplicarColasUseCase {
 
     private final ColaCommandRepository colaCommandRepository;
-    private final ColaQueryRepository colaQueryRepository;
+    private final ColaGatewayPort colaGatewayPort;
 
     public ReplicarColasUseCase(ColaCommandRepository colaCommandRepository,
-            ColaQueryRepository colaQueryRepository) {
+            ColaGatewayPort colaGatewayPort) {
         this.colaCommandRepository = colaCommandRepository;
-        this.colaQueryRepository = colaQueryRepository;
+        this.colaGatewayPort = colaGatewayPort;
     }
 
     public ResultadoReplicacion ejecutar(Long idSucursalOrigen, Long idSucursalDestino , String usuario) {
         List<String> detallesCopiados = new ArrayList<>();
-        // Traer todas las colas con detalles de la sucursal origen
-        List<Cola> colasOrigen = colaQueryRepository.buscarConDetallesPorSucursal(idSucursalOrigen);
+        List<Cola> colasOrigen = colaGatewayPort.buscarConDetallesPorSucursal(idSucursalOrigen);
+        List<Cola> colasDestino = colaGatewayPort.buscarConDetallesPorSucursal(idSucursalDestino);
+        NombreColaUnicoEspec nombreColaUnicoEnDestino = new NombreColaUnicoEspec(colasDestino);
 
         List<String> copiadas = new ArrayList<>();
         List<String> saltadas = new ArrayList<>();
 
         for (Cola cola : colasOrigen) {
             // Si ya existe una cola con el mismo nombre en destino → saltar
-            boolean existeNombre = colaQueryRepository.existeNombreEnSucursal(
-                    idSucursalDestino, cola.getNombre());
-
-            if (existeNombre) {
-               String detalleCopiados = replicarDetallesFaltantes(cola, idSucursalDestino);
-               if(detalleCopiados != null) {
-                   detallesCopiados.add(detalleCopiados);
-               }
+            if (!nombreColaUnicoEnDestino.esSatisfechaPor(cola.getNombre())) {
+                String detalleCopiados = replicarDetallesFaltantes(cola, colasDestino, idSucursalDestino);
+                if (detalleCopiados != null) {
+                    detallesCopiados.add(detalleCopiados);
+                }
                 saltadas.add(cola.getNombre());
                 continue;
             }
 
-            colaCommandRepository.replicarCola(cola, idSucursalDestino,usuario);
+            colaCommandRepository.replicarCola(cola, idSucursalDestino, usuario);
             copiadas.add(cola.getNombre());
         }
 
         return new ResultadoReplicacion(copiadas, saltadas, detallesCopiados);
     }
 
-    private String replicarDetallesFaltantes(Cola colaOrigen, Long idSucursalDestino) {
+    private String replicarDetallesFaltantes(Cola colaOrigen, List<Cola> colasDestino, Long idSucursalDestino) {
         StringBuilder response = new StringBuilder(colaOrigen.getNombre());
         Integer contador = 0;
-        List<Cola> colasDestino = colaQueryRepository.buscarPorFiltro(null, idSucursalDestino, colaOrigen.getNombre());
-        if (colasDestino.isEmpty() || colaOrigen.getDetalles() == null) return null;
-        Cola colaDestino = colasDestino.get(0);
+        Cola colaDestino = colasDestino.stream()
+                .filter(c -> c.getNombre().equalsIgnoreCase(colaOrigen.getNombre()))
+                .findFirst()
+                .orElse(null);
+        if (colaDestino == null || colaOrigen.getDetalles() == null) return null;
         for (Detalle detalle : colaOrigen.getDetalles()) {
-            boolean existeDetalle = colaQueryRepository.existeNombreDetalleEnCola(
-                    colaDestino.getIdentificador(), idSucursalDestino, detalle.getNombre());
-            if (!existeDetalle) {
+            if (!colaDestino.existeDetalleConNombre(detalle.getNombre())) {
                 response.append(" - Detalle: ").append(detalle.getNombre());
                 contador++;
                 colaCommandRepository.guardarDetalle(colaDestino.getIdentificador(), idSucursalDestino, detalle);
             }
         }
-        return contador>0 ? response.toString() : null;
+        return contador > 0 ? response.toString() : null;
     }
 }

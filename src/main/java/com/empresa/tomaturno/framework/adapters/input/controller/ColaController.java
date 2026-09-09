@@ -11,12 +11,14 @@ import jakarta.ws.rs.core.SecurityContext;
 
 import java.util.List;
 
-import com.empresa.tomaturno.cola.DTO.ResultadoReplicacion;
+import com.empresa.tomaturno.cola.application.command.dto.ResultadoReplicacion;
 import com.empresa.tomaturno.cola.application.command.port.input.ColaCommandInputPort;
 
 import com.empresa.tomaturno.cola.application.query.port.input.ColaQueryInputPort;
 import com.empresa.tomaturno.cola.dominio.entity.Cola;
 import com.empresa.tomaturno.cola.dominio.entity.Detalle;
+import com.empresa.tomaturno.cola.dominio.vo.Auditoria;
+import com.empresa.tomaturno.cola.dominio.vo.Estado;
 import com.empresa.tomaturno.framework.adapters.input.dto.ColaRequestDTO;
 import com.empresa.tomaturno.framework.adapters.input.dto.ColaResponseDTO;
 import com.empresa.tomaturno.framework.adapters.input.dto.DetalleRequestDTO;
@@ -99,8 +101,8 @@ public class ColaController {
     @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed({ "ADMIN", "SUBADMIN" })
     public Response crearCola(@Valid ColaRequestDTO colaRequestDTO) {
-        Cola cola = colaInputMapper.toDomain(colaRequestDTO);
-        cola = colaCommandInputPort.crear(cola, usuarioActual());
+        Cola cola = colaInputMapper.toDomain(colaRequestDTO, usuarioActual());
+        cola = colaCommandInputPort.crear(cola);
         return Response.status(Response.Status.CREATED)
                 .entity(colaInputMapper.toResponse(cola)).build();
     }
@@ -115,8 +117,10 @@ public class ColaController {
             @PathParam("idCola") Long idCola,
             @PathParam("idSucursal") Long idSucursal,
             @Valid ColaRequestDTO colaRequestDTO) {
-        Cola colaDatosNuevos = colaInputMapper.toDomain(colaRequestDTO);
-        Cola colaModificada = colaCommandInputPort.actualizar(idCola, idSucursal, colaDatosNuevos, usuarioActual());
+        Auditoria auditoriaModificacion = Auditoria.of(usuarioActual(), java.time.LocalDateTime.now());
+        Cola colaModificada = colaCommandInputPort.actualizar(idCola, idSucursal,
+                colaRequestDTO.getNombre(), colaRequestDTO.getCodigo(), Estado.fromCodigo(colaRequestDTO.getEstado()),
+                auditoriaModificacion);
         return Response.ok(colaInputMapper.toResponse(colaModificada)).build();
     }
 
@@ -130,8 +134,9 @@ public class ColaController {
             @PathParam("idCola") Long idCola,
             @PathParam("idSucursal") Long idSucursal,
             @Valid DetalleRequestDTO request) {
-        Detalle detalle = colaInputMapper.toDetalleDomain(request);
-        Cola cola = colaCommandInputPort.crearDetalle(idCola, idSucursal, detalle, usuarioActual());
+        Detalle.Builder detalleBuilder = colaInputMapper.toDetalleBuilder(request);
+        Auditoria auditoriaCreacion = Auditoria.of(usuarioActual(), java.time.LocalDateTime.now());
+        Cola cola = colaCommandInputPort.crearDetalle(idCola, idSucursal, detalleBuilder, auditoriaCreacion);
         return Response.status(Response.Status.CREATED)
                 .entity(colaInputMapper.toResponse(cola)).build();
     }
@@ -147,8 +152,10 @@ public class ColaController {
             @PathParam("idSucursal") Long idSucursal,
             @PathParam("idDetalle") Long idDetalle,
             @Valid DetalleRequestDTO request) {
-        Detalle detalle = colaInputMapper.toDetalleDomain(request);
-        Cola cola = colaCommandInputPort.editarDetalleCola(idCola, idSucursal, idDetalle, detalle, usuarioActual());
+        Auditoria auditoriaModificacion = Auditoria.of(usuarioActual(), java.time.LocalDateTime.now());
+        Cola cola = colaCommandInputPort.editarDetalleCola(idCola, idSucursal, idDetalle,
+                request.getNombre(), request.getCodigo(), Estado.fromCodigo(request.getEstado()),
+                auditoriaModificacion);
         return Response.status(Response.Status.CREATED)
                 .entity(colaInputMapper.toResponse(cola)).build();
     }

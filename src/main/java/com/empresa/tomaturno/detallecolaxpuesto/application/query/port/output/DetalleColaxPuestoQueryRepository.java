@@ -6,6 +6,7 @@ import com.empresa.tomaturno.detallecolaxpuesto.dominio.entity.DetalleColaxPuest
 
 public interface DetalleColaxPuestoQueryRepository {
     List<DetalleColaxPuesto> buscarPorPuesto(Long idPuesto, Long idSucursalPuesto);
+    List<DetalleColaxPuesto> buscarPorCola(Long idCola, Long idDetalle, Long idSucursalCola);
     boolean existeAsignacion(Long idPuesto, Long idSucursalPuesto, Long idCola, Long idDetalle, Long idSucursalCola);
 
     DetalleColaxPuesto obtenerDetalleColaXPuesto(Long idPuesto, Long idSucursalPuesto, Long idCola, Long idDetalle, Long idSucursalCola);

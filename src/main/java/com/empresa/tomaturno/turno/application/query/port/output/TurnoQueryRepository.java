@@ -18,6 +18,8 @@ public interface TurnoQueryRepository {
     boolean existeTurnoLlamadoPorPuesto(Long idPuesto, Long idSucursal, java.time.LocalDate fecha);
     /** Verifica si el usuario ya tiene un turno en estado LLAMADO (2) hoy */
     boolean existeTurnoLlamadoPorUsuario(Long idUsuario, Long idSucursal, java.time.LocalDate fecha);
+    /** MAX(fechaLlamada) histórico del usuario en la sucursal (sin filtrar por fecha ni estado), o null si nunca recibió un turno */
+    LocalDateTime obtenerUltimaFechaLlamadaPorUsuario(Long idUsuario, Long idSucursal);
 
     String obtenerCodigoBaseTurno( Long idSucursal,Long idCola, Long idDetalle);
     Long obtenerCorreltivoDetalle (Long idSucursal, Long idCola,Long idDetalle );

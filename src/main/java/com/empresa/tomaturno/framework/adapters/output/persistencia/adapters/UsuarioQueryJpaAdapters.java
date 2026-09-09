@@ -62,6 +62,19 @@ public class UsuarioQueryJpaAdapters implements UsuarioQueryRepository {
         return usuarios;
     }
 
+    @Override
+    public List<Usuario> buscarPorPuesto(Long idPuesto, Long idSucursal) {
+        List<UsuarioJpaEntity> entities = usuarioJpaRepository.buscarPorPuesto(idPuesto, idSucursal);
+        if (entities.isEmpty())
+            return List.of();
+
+        // No se enriquece con nombres/keycloak: se usa para el algoritmo de
+        // asignación automática, que solo necesita el identificador del usuario.
+        return entities.stream()
+                .map(usuarioOutputMapper::toDomain)
+                .toList();
+    }
+
     
     @Override
     public String generaCodigoUsuario(String codigoUsuario) {

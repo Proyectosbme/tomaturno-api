@@ -16,17 +16,24 @@ public class UsuarioQueryService implements UsuarioQueryInputPort {
     private final BuscarUsuarioPorIdUseCase buscarPorIdUseCase;
     private final BuscarUsuarioPorCodigoUseCase buscarPorCodigoUseCase;
     private final ObtenerFotoUseCase obtenerFotoUseCase;
+    private final UsuarioQueryRepository queryRepository;
 
     public UsuarioQueryService(UsuarioQueryRepository queryRepository) {
         this.buscarPorFiltrosUseCase = new BuscarUsuarioPorFiltrosUseCase(queryRepository);
         this.buscarPorIdUseCase = new BuscarUsuarioPorIdUseCase(queryRepository);
         this.buscarPorCodigoUseCase = new BuscarUsuarioPorCodigoUseCase(queryRepository);
         this.obtenerFotoUseCase = new ObtenerFotoUseCase(queryRepository);
+        this.queryRepository = queryRepository;
     }
 
     @Override
     public List<Usuario> buscarPorFiltro(Long idSucursal, String codigoUsuario) {
         return buscarPorFiltrosUseCase.ejecutar(idSucursal, codigoUsuario);
+    }
+
+    @Override
+    public List<Usuario> buscarPorPuesto(Long idPuesto, Long idSucursal) {
+        return queryRepository.buscarPorPuesto(idPuesto, idSucursal);
     }
 
     @Override

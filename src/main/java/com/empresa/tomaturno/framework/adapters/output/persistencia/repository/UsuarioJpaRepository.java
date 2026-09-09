@@ -25,6 +25,11 @@ public class UsuarioJpaRepository implements PanacheRepositoryBase<UsuarioJpaEnt
         return find("idpk.id = ?1 and idpk.idSucursal = ?2", idUsuario, idSucursal).firstResult();
     }
 
+    /** Usuarios habilitados (estado = ACTIVO) asignados a un puesto, para el algoritmo de asignación automática. */
+    public List<UsuarioJpaEntity> buscarPorPuesto(Long idPuesto, Long idSucursal) {
+        return list("idPuesto = ?1 and idpk.idSucursal = ?2 and estado = 1", idPuesto, idSucursal);
+    }
+
     public String obtenerCorrelativo(Long idUsuario, Long idSucursal) {
         UsuarioJpaEntity usuario = buscarPorIdUsuarioYSucursal(idUsuario, idSucursal);
         return (usuario != null && usuario.getCorrelativoPuesto() != null)

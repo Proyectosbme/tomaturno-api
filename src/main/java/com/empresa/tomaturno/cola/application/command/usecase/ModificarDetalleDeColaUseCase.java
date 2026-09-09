@@ -1,27 +1,31 @@
 package com.empresa.tomaturno.cola.application.command.usecase;
 
 import com.empresa.tomaturno.cola.application.command.port.output.ColaCommandRepository;
-import com.empresa.tomaturno.cola.application.query.port.output.ColaQueryRepository;
+import com.empresa.tomaturno.cola.application.command.port.output.ColaGatewayPort;
 import com.empresa.tomaturno.cola.dominio.entity.Cola;
 import com.empresa.tomaturno.cola.dominio.entity.Detalle;
 import com.empresa.tomaturno.cola.dominio.exceptions.ColaNotFoundException;
+import com.empresa.tomaturno.cola.dominio.vo.Auditoria;
+import com.empresa.tomaturno.cola.dominio.vo.Estado;
 
 public class ModificarDetalleDeColaUseCase {
 
     private final ColaCommandRepository colaCommandRepository;
-    private final ColaQueryRepository colaQueryRepository;
+    private final ColaGatewayPort colaGatewayPort;
 
     public ModificarDetalleDeColaUseCase(ColaCommandRepository colaCommandRepository,
-            ColaQueryRepository colaQueryRepository) {
+            ColaGatewayPort colaGatewayPort) {
         this.colaCommandRepository = colaCommandRepository;
-        this.colaQueryRepository = colaQueryRepository;
+        this.colaGatewayPort = colaGatewayPort;
     }
 
-    public Cola ejecutar(Long idCola, Long idSucursal, Long idDetalle, Detalle detalle, String usuario) {
-        Detalle modificado = colaQueryRepository.obtenerDetalle(idCola, idSucursal, idDetalle);
-        if (modificado == null)
-            throw new ColaNotFoundException(idCola, "Detalle no encontrado");
-        modificado.modificar(detalle.getNombre(), detalle.getCodigo(), detalle.getEstado(), usuario);
+    public Cola ejecutar(Long idCola, Long idSucursal, Long idDetalle, String nombre, String codigo, Estado estado,
+            Auditoria auditoriaModificacion) {
+        Cola cola = colaGatewayPort.buscarConDetallesPorIdYSucursal(idCola, idSucursal);
+        if (cola == null) {
+            throw new ColaNotFoundException(idCola, "Cola no encontrada");
+        }
+        Detalle modificado = cola.modificarDetalle(idDetalle, nombre, codigo, estado, auditoriaModificacion);
         return colaCommandRepository.modificarDetalle(idCola, idSucursal, modificado);
     }
 }

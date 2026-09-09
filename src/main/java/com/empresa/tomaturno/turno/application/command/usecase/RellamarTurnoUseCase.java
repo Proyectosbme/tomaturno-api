@@ -32,6 +32,10 @@ public class RellamarTurnoUseCase {
             throw new TurnoNotFoundException("Turno no encontrado: " + codigoTurno);
         }
 
+        if (idUsuario != null && !turnoConfiguracionPort.operadorActivo(idUsuario, idSucursal)) {
+            throw new TurnoValidationException("No se puede llamar un turno: el operador no está activo. Actívate primero.");
+        }
+
         if (turnoConfiguracionPort.debeVerificarTurnoActivo(idSucursal)) {
             boolean tieneActivo = (idUsuario != null)
                     ? turnoQueryRepository.existeTurnoLlamadoPorUsuario(idUsuario, idSucursal, LocalDate.now())

@@ -8,10 +8,15 @@ import com.empresa.tomaturno.framework.adapters.input.dto.CrearTurnoRequestDTO;
 import com.empresa.tomaturno.framework.adapters.input.dto.LlamarSiguienteTurnoRequestDTO;
 import com.empresa.tomaturno.framework.adapters.input.dto.LlamarTurnoRequestDTO;
 import com.empresa.tomaturno.framework.adapters.input.dto.ReasignarTurnoRequestDTO;
+import com.empresa.tomaturno.framework.adapters.input.dto.TurnoHoyResponseDTO;
 import com.empresa.tomaturno.framework.adapters.input.dto.TurnoResponseDTO;
+import com.empresa.tomaturno.framework.adapters.input.mapper.TurnoHoyInputMapper;
 import com.empresa.tomaturno.framework.adapters.input.mapper.TurnoInputMapper;
+import com.empresa.tomaturno.framework.adapters.config.TurnoAutomaticoOrquestador;
 import com.empresa.tomaturno.turno.application.command.port.input.TurnoCommandInputPort;
 import com.empresa.tomaturno.turno.application.query.port.input.TurnoQueryInputPort;
+import com.empresa.tomaturno.turno.application.query.dto.TurnoHoyDTO;
+import com.empresa.tomaturno.turno.application.query.port.input.TurnoHoyQueryInputPort;
 import com.empresa.tomaturno.turno.dominio.entity.Turno;
 
 import io.quarkus.security.Authenticated;
@@ -31,18 +36,27 @@ public class TurnoController {
         private final TurnoInputMapper turnoInputMapper;
         private final TurnoWebSocket turnoWebSocket;
         private final Jsonb jsonb;
+        private final TurnoAutomaticoOrquestador turnoAutomaticoOrquestador;
+        private final TurnoHoyQueryInputPort turnoHoyQueryInputPort;
+        private final TurnoHoyInputMapper turnoHoyInputMapper;
         private final String TURNO_LLAMADO = "TURNO_LLAMADO";
 
         public TurnoController(TurnoCommandInputPort turnoCommandInputPort,
                         TurnoQueryInputPort turnoQueryInputPort,
                         TurnoInputMapper turnoInputMapper,
                         TurnoWebSocket turnoWebSocket,
-                        Jsonb jsonb) {
+                        Jsonb jsonb,
+                        TurnoAutomaticoOrquestador turnoAutomaticoOrquestador,
+                        TurnoHoyQueryInputPort turnoHoyQueryInputPort,
+                        TurnoHoyInputMapper turnoHoyInputMapper) {
                 this.turnoCommandInputPort = turnoCommandInputPort;
                 this.turnoQueryInputPort = turnoQueryInputPort;
                 this.turnoInputMapper = turnoInputMapper;
                 this.turnoWebSocket = turnoWebSocket;
                 this.jsonb = jsonb;
+                this.turnoAutomaticoOrquestador = turnoAutomaticoOrquestador;
+                this.turnoHoyQueryInputPort = turnoHoyQueryInputPort;
+                this.turnoHoyInputMapper = turnoHoyInputMapper;
         }
 
         private String wsPayload(String event, Long idSucursal, TurnoResponseDTO dto) {
@@ -70,6 +84,24 @@ public class TurnoController {
                 return turnos.stream().map(turnoInputMapper::toResponse).toList();
         }
 
+        /**
+         * Turnos creados hoy (tomaturno.vwturnoshoy), ya resueltos con nombres de sucursal,
+         * usuario, puesto, cola, detalle y estado. Sin idUsuario devuelve todos los de la
+         * sucursal (para Monitoreo); con idUsuario, solo los de ese operador (para Operador).
+         */
+        @GET
+        @Path("/hoy")
+        @Produces(MediaType.APPLICATION_JSON)
+        @RolesAllowed({ "OPERADOR", "ADMIN", "SUBADMIN" })
+        public List<TurnoHoyResponseDTO> buscarHoy(
+                        @QueryParam("idSucursal") Long idSucursal,
+                        @QueryParam("idUsuario") Long idUsuario) {
+                List<TurnoHoyDTO> turnos = idUsuario != null
+                                ? turnoHoyQueryInputPort.buscarPorUsuario(idUsuario, idSucursal)
+                                : turnoHoyQueryInputPort.buscarTodos(idSucursal);
+                return turnos.stream().map(turnoHoyInputMapper::toResponse).toList();
+        }
+
         @POST
         @Path("/crear")
         @Transactional
@@ -80,6 +112,7 @@ public class TurnoController {
                 Turno turno = turnoCommandInputPort.crear(dto.getIdSucursal(), dto.getIdCola(), dto.getIdDetalle(),
                                 dto.getIdPersona(), dto.getTipoCasoEspecial());
                 turnoWebSocket.enviarTurno("{\"event\":\"TURNO_CREADO\",\"idSucursal\":" + dto.getIdSucursal() + "}");
+                turnoAutomaticoOrquestador.intentarAsignarTurnoNuevo(turno);
                 return Response.status(Response.Status.CREATED)
                                 .entity(turnoInputMapper.toResponse(turno)).build();
         }
@@ -133,6 +166,16 @@ public class TurnoController {
                                 dto.getIdSucursalDestino(), dto.getIdColaDestino(), dto.getIdDetalleDestino());
                 TurnoResponseDTO responseDTO = turnoInputMapper.toResponse(nuevoTurno);
                 turnoWebSocket.enviarTurno(wsPayload("TURNO_CREADO", dto.getIdSucursalDestino(), responseDTO));
+                // El turno reasignado llega como CREADO a la cola destino: igual que un turno nuevo,
+                // si hay un operador libre asignado a esa cola/detalle se le asigna automáticamente.
+                turnoAutomaticoOrquestador.intentarAsignarTurnoNuevo(nuevoTurno);
+                // El turno original (misma PK) queda en TRASLADO conservando idPuesto/idUsuario:
+                // se usa para liberar a ese operador y disparar el llamado automático si corresponde.
+                Turno turnoOriginal = turnoQueryInputPort.buscarPorPK(idSucursal, fechaCreacion, codigoTurno);
+                if (turnoOriginal != null) {
+                        turnoAutomaticoOrquestador.intentarLlamadoAutomatico(idSucursal, turnoOriginal.getIdPuesto(),
+                                        turnoOriginal.getIdSucursalPuesto(), turnoOriginal.getIdUsuario());
+                }
                 return Response.status(Response.Status.CREATED)
                                 .entity(responseDTO).build();
         }
@@ -150,6 +193,8 @@ public class TurnoController {
                 Turno turno = turnoCommandInputPort.sinAtender(idSucursal, fechaCreacion, codigoTurno);
                 TurnoResponseDTO responseDTO = turnoInputMapper.toResponse(turno);
                 turnoWebSocket.enviarTurno(wsPayload("TURNO_SIN_ATENDER", idSucursal, responseDTO));
+                turnoAutomaticoOrquestador.intentarLlamadoAutomatico(idSucursal, turno.getIdPuesto(),
+                                turno.getIdSucursalPuesto(), turno.getIdUsuario());
                 return Response.ok(responseDTO).build();
         }
 
@@ -166,6 +211,8 @@ public class TurnoController {
                 Turno turno = turnoCommandInputPort.enEspera(idSucursal, fechaCreacion, codigoTurno);
                 TurnoResponseDTO responseDTO = turnoInputMapper.toResponse(turno);
                 turnoWebSocket.enviarTurno(wsPayload("TURNO_EN_ESPERA", idSucursal, responseDTO));
+                turnoAutomaticoOrquestador.intentarLlamadoAutomatico(idSucursal, turno.getIdPuesto(),
+                                turno.getIdSucursalPuesto(), turno.getIdUsuario());
                 return Response.ok(responseDTO).build();
         }
 
@@ -182,6 +229,8 @@ public class TurnoController {
                 Turno turno = turnoCommandInputPort.finalizar(idSucursal, fechaCreacion, codigoTurno);
                 TurnoResponseDTO responseDTO = turnoInputMapper.toResponse(turno);
                 turnoWebSocket.enviarTurno(wsPayload("TURNO_FINALIZADO", idSucursal, responseDTO));
+                turnoAutomaticoOrquestador.intentarLlamadoAutomatico(idSucursal, turno.getIdPuesto(),
+                                turno.getIdSucursalPuesto(), turno.getIdUsuario());
                 return Response.ok(responseDTO).build();
         }
 

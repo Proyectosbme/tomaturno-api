@@ -9,12 +9,12 @@ import org.mapstruct.Named;
 
 import com.empresa.tomaturno.cola.dominio.entity.Cola;
 import com.empresa.tomaturno.cola.dominio.entity.Detalle;
+import com.empresa.tomaturno.cola.dominio.vo.Auditoria;
+import com.empresa.tomaturno.cola.dominio.vo.Estado;
 import com.empresa.tomaturno.cola.dominio.vo.Sucursal;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.ColaJpaEntity;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaJpaEntity;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.SucursalJpaEntity;
-import com.empresa.tomaturno.shared.clases.Auditoria;
-import com.empresa.tomaturno.shared.clases.Estado;
 
 @Mapper(componentModel = "cdi")
 public interface ColaOutputMapper {
@@ -25,20 +25,20 @@ public interface ColaOutputMapper {
     @Mapping(target = "idpk.idSucursal", source = "sucursal.identificador")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "idSucursal", ignore = true)
-    @Mapping(target = "userCreacion", source = "auditoria.usuarioCreacion")
-    @Mapping(target = "fechaCreacion", source = "auditoria.fechaCreacion")
-    @Mapping(target = "userModificacion", source = "auditoria.usuarioModificacion")
-    @Mapping(target = "fechaModificacion", source = "auditoria.fechaModificacion")
+    @Mapping(target = "userCreacion", source = "auditoriaCreacion.usuario")
+    @Mapping(target = "fechaCreacion", source = "auditoriaCreacion.fecha")
+    @Mapping(target = "userModificacion", source = "auditoriaModificacion.usuario")
+    @Mapping(target = "fechaModificacion", source = "auditoriaModificacion.fecha")
     @Mapping(target = "estado", source = "estado", qualifiedByName = "estadoToCodigo")
     ColaJpaEntity toColaJpaEntity(Cola cola);
 
     @Mapping(target = "idpk", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "idSucursal", ignore = true)
-    @Mapping(target = "userCreacion", source = "auditoria.usuarioCreacion")
-    @Mapping(target = "fechaCreacion", source = "auditoria.fechaCreacion")
-    @Mapping(target = "userModificacion", source = "auditoria.usuarioModificacion")
-    @Mapping(target = "fechaModificacion", source = "auditoria.fechaModificacion")
+    @Mapping(target = "userCreacion", source = "auditoriaCreacion.usuario")
+    @Mapping(target = "fechaCreacion", source = "auditoriaCreacion.fecha")
+    @Mapping(target = "userModificacion", source = "auditoriaModificacion.usuario")
+    @Mapping(target = "fechaModificacion", source = "auditoriaModificacion.fecha")
     @Mapping(target = "estado", source = "estado", qualifiedByName = "estadoToCodigo")
     void updateEntityFromDomain(Cola cola, @MappingTarget ColaJpaEntity entity);
 
@@ -48,8 +48,8 @@ public interface ColaOutputMapper {
     @Mapping(target = "estado", source = "estado", qualifiedByName = "estadoToCodigo")
     @Mapping(target = "userCreacion", ignore = true)
     @Mapping(target = "fechaCreacion", ignore = true)
-    @Mapping(target = "userModificacion", source = "auditoria.usuarioModificacion")
-    @Mapping(target = "fechaModificacion", source = "auditoria.fechaModificacion")
+    @Mapping(target = "userModificacion", source = "auditoriaModificacion.usuario")
+    @Mapping(target = "fechaModificacion", source = "auditoriaModificacion.fecha")
     void updateDetalleEntityFromDomain(Detalle detalle, @MappingTarget DetalleColaJpaEntity entity);
 
     @Mapping(target = "id.idCola", source = "idCola")
@@ -58,10 +58,10 @@ public interface ColaOutputMapper {
     @Mapping(target = "nombre", source = "detalle.nombre")
     @Mapping(target = "codigo", source = "detalle.codigo")
     @Mapping(target = "estado", source = "detalle.estado", qualifiedByName = "estadoToCodigo")
-    @Mapping(target = "userCreacion", source = "detalle.auditoria.usuarioCreacion")
-    @Mapping(target = "fechaCreacion", source = "detalle.auditoria.fechaCreacion")
-    @Mapping(target = "userModificacion", source = "detalle.auditoria.usuarioModificacion")
-    @Mapping(target = "fechaModificacion", source = "detalle.auditoria.fechaModificacion")
+    @Mapping(target = "userCreacion", source = "detalle.auditoriaCreacion.usuario")
+    @Mapping(target = "fechaCreacion", source = "detalle.auditoriaCreacion.fecha")
+    @Mapping(target = "userModificacion", source = "detalle.auditoriaModificacion.usuario")
+    @Mapping(target = "fechaModificacion", source = "detalle.auditoriaModificacion.fecha")
     DetalleColaJpaEntity toDetalleJpaEntity(Long idCola, Integer idSucursal, Detalle detalle);
 
     // ─── JPA → Dominio ────────────────────────────────────────────────────
@@ -89,35 +89,35 @@ public interface ColaOutputMapper {
                 ? new Sucursal(sucursal.getId(), sucursal.getNombre())
                 : new Sucursal(e.getIdpk().getIdSucursal(), null);
 
-        Auditoria auditoria = Auditoria.reconstituir(
-                e.getUserCreacion(), e.getFechaCreacion(),
-                e.getUserModificacion(), e.getFechaModificacion());
+        Auditoria auditoriaCreacion = Auditoria.reconstituir(e.getUserCreacion(), e.getFechaCreacion());
+        Auditoria auditoriaModificacion = Auditoria.reconstituir(e.getUserModificacion(), e.getFechaModificacion());
 
         List<Detalle> detallesDomain = detalles != null
                 ? detalles.stream().map(this::toDomainDetalle).toList()
                 : null;
-                
-        return Cola.builder()
+
+        return Cola.of(new Cola.Builder()
                 .identificador(e.getIdpk().getId())
                 .nombre(e.getNombre())
                 .codigo(e.getCodigo())
                 .estado(Estado.fromCodigo(e.getEstado()))
                 .sucursal(sucursalVo)
-                .auditoria(auditoria)
-                .detalles(detallesDomain)
-                .reconstituir();
+                .auditoriaCreacion(auditoriaCreacion)
+                .auditoriaModificacion(auditoriaModificacion)
+                .detalles(detallesDomain));
     }
 
+    /** Reconstitución de un Detalle ya persistido: no recompone código ni valida unicidad. */
     default Detalle toDomainDetalle(DetalleColaJpaEntity e) {
-        Auditoria auditoria = Auditoria.reconstituir(
-                e.getUserCreacion(), e.getFechaCreacion(),
-                e.getUserModificacion(), e.getFechaModificacion());
-        return Detalle.reconstituir(
-                e.getId().getIdDetalle(),
-                e.getNombre(),
-                e.getCodigo(),
-                Estado.fromCodigo(e.getEstado()),
-                auditoria);
+        Auditoria auditoriaCreacion = Auditoria.reconstituir(e.getUserCreacion(), e.getFechaCreacion());
+        Auditoria auditoriaModificacion = Auditoria.reconstituir(e.getUserModificacion(), e.getFechaModificacion());
+        return Cola.reconstituirDetalle(new Detalle.Builder()
+                .correlativo(e.getId().getIdDetalle())
+                .nombre(e.getNombre())
+                .codigo(e.getCodigo())
+                .estado(Estado.fromCodigo(e.getEstado()))
+                .auditoriaCreacion(auditoriaCreacion)
+                .auditoriaModificacion(auditoriaModificacion));
     }
 
     @Named("estadoToCodigo")
