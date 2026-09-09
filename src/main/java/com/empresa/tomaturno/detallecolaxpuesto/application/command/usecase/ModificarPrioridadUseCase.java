@@ -1,23 +1,23 @@
 package com.empresa.tomaturno.detallecolaxpuesto.application.command.usecase;
 
 import com.empresa.tomaturno.detallecolaxpuesto.application.command.port.output.DetalleColaxPuestoCommandRepository;
-import com.empresa.tomaturno.detallecolaxpuesto.application.query.port.output.DetalleColaxPuestoQueryRepository;
+import com.empresa.tomaturno.detallecolaxpuesto.application.command.port.output.DetalleColaxPuestoGatewayPort;
 import com.empresa.tomaturno.detallecolaxpuesto.dominio.entity.DetalleColaxPuesto;
 import com.empresa.tomaturno.detallecolaxpuesto.dominio.exceptions.DetalleColaxPuestoNotFoundException;
 
 public class ModificarPrioridadUseCase {
 
     private final DetalleColaxPuestoCommandRepository commandRepository;
-    private final DetalleColaxPuestoQueryRepository queryRepository;
+    private final DetalleColaxPuestoGatewayPort gatewayPort;
 
     public ModificarPrioridadUseCase(DetalleColaxPuestoCommandRepository commandRepository,
-            DetalleColaxPuestoQueryRepository queryRepository) {
+            DetalleColaxPuestoGatewayPort gatewayPort) {
         this.commandRepository = commandRepository;
-        this.queryRepository = queryRepository;
+        this.gatewayPort = gatewayPort;
     }
 
     public DetalleColaxPuesto ejecutar(Long idPuesto, Long idSucursalPuesto, Long idCola, Long idDetalle, Long idSucursalCola,Long prioridad) {
-        DetalleColaxPuesto detalle = queryRepository.obtenerDetalleColaXPuesto(idPuesto, idSucursalPuesto, idCola,
+        DetalleColaxPuesto detalle = gatewayPort.obtenerDetalleColaXPuesto(idPuesto, idSucursalPuesto, idCola,
                 idDetalle,
                 idSucursalCola);
         if (detalle == null) {

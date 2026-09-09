@@ -4,7 +4,7 @@ import com.empresa.tomaturno.detallecolaxpuesto.dominio.entity.DetalleColaxPuest
 
 public interface DetalleColaxPuestoCommandInputPort {
 
-    DetalleColaxPuesto asignar(DetalleColaxPuesto asignacion, String usuario);
+    DetalleColaxPuesto asignar(DetalleColaxPuesto asignacion);
 
     void desasignar(Long idPuesto, Long idSucursalPuesto, Long idCola, Long idDetalle, Long idSucursalCola);
 

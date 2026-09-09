@@ -2,10 +2,10 @@ package com.empresa.tomaturno.detallecolaxpuesto.application.command.service;
 
 import com.empresa.tomaturno.detallecolaxpuesto.application.command.port.input.DetalleColaxPuestoCommandInputPort;
 import com.empresa.tomaturno.detallecolaxpuesto.application.command.port.output.DetalleColaxPuestoCommandRepository;
+import com.empresa.tomaturno.detallecolaxpuesto.application.command.port.output.DetalleColaxPuestoGatewayPort;
 import com.empresa.tomaturno.detallecolaxpuesto.application.command.usecase.AsignarDetalleColaPuestoUseCase;
 import com.empresa.tomaturno.detallecolaxpuesto.application.command.usecase.DesasignarDetalleColaPuestoUseCase;
 import com.empresa.tomaturno.detallecolaxpuesto.application.command.usecase.ModificarPrioridadUseCase;
-import com.empresa.tomaturno.detallecolaxpuesto.application.query.port.output.DetalleColaxPuestoQueryRepository;
 import com.empresa.tomaturno.detallecolaxpuesto.dominio.entity.DetalleColaxPuesto;
 
 public class DetalleColaxPuestoCommandService implements DetalleColaxPuestoCommandInputPort {
@@ -15,15 +15,15 @@ public class DetalleColaxPuestoCommandService implements DetalleColaxPuestoComma
     private final ModificarPrioridadUseCase modificarPrioridadUseCase;
 
     public DetalleColaxPuestoCommandService(DetalleColaxPuestoCommandRepository commandRepository,
-                                             DetalleColaxPuestoQueryRepository queryRepository) {
-        this.asignarUseCase = new AsignarDetalleColaPuestoUseCase(commandRepository, queryRepository);
-        this.desasignarUseCase = new DesasignarDetalleColaPuestoUseCase(commandRepository, queryRepository);
-        this.modificarPrioridadUseCase = new ModificarPrioridadUseCase(commandRepository, queryRepository);
+                                             DetalleColaxPuestoGatewayPort gatewayPort) {
+        this.asignarUseCase = new AsignarDetalleColaPuestoUseCase(commandRepository, gatewayPort);
+        this.desasignarUseCase = new DesasignarDetalleColaPuestoUseCase(commandRepository, gatewayPort);
+        this.modificarPrioridadUseCase = new ModificarPrioridadUseCase(commandRepository, gatewayPort);
     }
 
     @Override
-    public DetalleColaxPuesto asignar(DetalleColaxPuesto asignacion, String usuario) {
-        return asignarUseCase.ejecutar(asignacion, usuario);
+    public DetalleColaxPuesto asignar(DetalleColaxPuesto asignacion) {
+        return asignarUseCase.ejecutar(asignacion);
     }
 
     @Override

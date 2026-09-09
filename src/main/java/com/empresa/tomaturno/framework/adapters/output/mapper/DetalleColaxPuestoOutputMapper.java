@@ -23,13 +23,13 @@ public interface DetalleColaxPuestoOutputMapper {
     default DetalleColaxPuesto toDomain(DetalleColaxPuestoJpaEntity entity) {
         Auditoria auditoria = Auditoria.reconstituir(
                 entity.getUserCreacion(), entity.getFechaCreacion());
-        return DetalleColaxPuesto.reconstituir(
-                entity.getId().getIdPuesto(),
-                entity.getId().getIdSucursalPuesto(),
-                entity.getId().getIdCola(),
-                entity.getId().getIdDetalle(),
-                entity.getId().getIdSucursalCola(),
-                entity.getPrioridad(),
-                auditoria);
+        return DetalleColaxPuesto.of(new DetalleColaxPuesto.Builder()
+                .idPuesto(entity.getId().getIdPuesto())
+                .idSucursalPuesto(entity.getId().getIdSucursalPuesto())
+                .idCola(entity.getId().getIdCola())
+                .idDetalle(entity.getId().getIdDetalle())
+                .idSucursalCola(entity.getId().getIdSucursalCola())
+                .prioridad(entity.getPrioridad())
+                .auditoria(auditoria));
     }
 }
