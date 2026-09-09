@@ -14,7 +14,7 @@ public interface PersonaMapper {
     PersonaJpaEntity toEntity(Persona persona);
 
     default Persona toDomain(PersonaJpaEntity e) {
-        return Persona.builder()
+        return Persona.of(new Persona.Builder()
                 .id(e.getId())
                 .dui(e.getDui())
                 .nombres(e.getNombres())
@@ -22,8 +22,7 @@ public interface PersonaMapper {
                 .fechaNacimiento(e.getFechaNacimiento())
                 .sexo(e.getSexo())
                 .fechaCreacion(e.getFechaCreacion())
-                .fechaModificacion(e.getFechaModificacion())
-                .build();
+                .fechaModificacion(e.getFechaModificacion()));
     }
 
     @Mapping(target = "id", ignore = true)

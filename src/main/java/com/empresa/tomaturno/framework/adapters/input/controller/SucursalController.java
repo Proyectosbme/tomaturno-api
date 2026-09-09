@@ -5,9 +5,12 @@ import java.util.List;
 import com.empresa.tomaturno.framework.adapters.input.dto.SucursalRequestDTO;
 import com.empresa.tomaturno.framework.adapters.input.dto.SucursalResponseDTO;
 import com.empresa.tomaturno.framework.adapters.input.mapper.SucursalInputMapper;
+import com.empresa.tomaturno.shared.clases.Estado;
 import com.empresa.tomaturno.sucursal.application.command.port.input.SucursalCommandInputPort;
 import com.empresa.tomaturno.sucursal.application.query.port.input.SucursalQueryInputPort;
 import com.empresa.tomaturno.sucursal.dominio.entity.Sucursal;
+import com.empresa.tomaturno.sucursal.dominio.vo.Auditoria;
+import com.empresa.tomaturno.sucursal.dominio.vo.Contacto;
 
 import io.quarkus.security.Authenticated;
 
@@ -66,8 +69,8 @@ public class SucursalController {
     @RolesAllowed({"ADMIN","SUBADMIN"})
     public Response crearSucursal(@Valid SucursalRequestDTO sucursalRequestDTO) {
         String usuarioActual = usuarioActual();
-        Sucursal sucursal = sucursalInputMapper.toSucursal(sucursalRequestDTO);
-        Sucursal sucursalCreada = sucursalCommandInputPort.crear(sucursal, usuarioActual);
+        Sucursal sucursal = sucursalInputMapper.toSucursal(sucursalRequestDTO, usuarioActual);
+        Sucursal sucursalCreada = sucursalCommandInputPort.crear(sucursal);
         if (turnoWebSocket != null) {
             turnoWebSocket.enviarTurno("Se ha creado una nueva sucursal");
         }
@@ -88,9 +91,11 @@ public class SucursalController {
     public Response modificarSucursal(
             @Parameter(description = "ID de la sucursal a modificar", required = true) @QueryParam("id") Long id,
             @Valid SucursalRequestDTO sucursalRequestDTO) {
-        String usuarioActual = usuarioActual();
-        Sucursal sucursalDatosNuevos = sucursalInputMapper.toSucursal(sucursalRequestDTO);
-        Sucursal sucursalModificada = sucursalCommandInputPort.actualizar(id, sucursalDatosNuevos, usuarioActual);
+        Contacto contacto = Contacto.crear(sucursalRequestDTO.getTelefono(), sucursalRequestDTO.getCorreo(),
+                sucursalRequestDTO.getDireccion());
+        Auditoria auditoriaModificacion = Auditoria.of(usuarioActual(), java.time.LocalDateTime.now());
+        Sucursal sucursalModificada = sucursalCommandInputPort.actualizar(id, sucursalRequestDTO.getNombre(),
+                contacto, Estado.fromCodigo(sucursalRequestDTO.getEstado()), auditoriaModificacion);
         SucursalResponseDTO responseDTO = sucursalInputMapper.toSucursalResponseDTO(sucursalModificada);
         return Response.ok(responseDTO).build();
     }

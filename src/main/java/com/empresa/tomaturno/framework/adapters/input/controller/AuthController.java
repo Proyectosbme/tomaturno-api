@@ -64,8 +64,8 @@ public class AuthController {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response registro(@Valid UsuarioRegistroRequestDTO dto) {
-        Usuario usuario = mapper.toRegistrarDomain(dto);
-        usuario = commandPort.registro(usuario);
+        Usuario.Builder builder = mapper.toRegistrarBuilder(dto);
+        Usuario usuario = commandPort.registro(builder);
         return Response.status(Response.Status.CREATED).entity(mapper.toResponse(usuario)).build();
     }
 

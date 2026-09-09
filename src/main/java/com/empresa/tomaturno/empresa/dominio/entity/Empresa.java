@@ -1,10 +1,13 @@
 package com.empresa.tomaturno.empresa.dominio.entity;
 
-public class Empresa {
+import com.empresa.tomaturno.empresa.dominio.exceptions.EmpresaValidationException;
+import com.empresa.tomaturno.empresa.dominio.validador.ValidadorNulosVacios;
+
+public final class Empresa {
 
     private static final Long ID_FIJO = 1L;
 
-    private Long id;
+    private final Long id;
     private String nombre;
     private byte[] banner;
     private byte[] logo;
@@ -16,17 +19,12 @@ public class Empresa {
         this.logo = builder.logo;
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
+    // ─── Builder ──────────────────────────────────────────────────────────
 
-    public static Empresa reconstituir(Long id, String nombre, byte[] banner, byte[] logo) {
-        return builder()
-                .id(id)
-                .nombre(nombre)
-                .banner(banner)
-                .logo(logo)
-                .build();
+    /** Único punto de creación/reconstitución: valida el builder antes de construir. */
+    public static Empresa of(Builder builder) {
+        validarCreacion(builder);
+        return builder.build();
     }
 
     public static Long idFijo() {
@@ -45,6 +43,16 @@ public class Empresa {
 
     public void actualizarLogo(byte[] logo) {
         this.logo = logo;
+    }
+
+    /**
+     * Valida el builder antes de construir: el objeto nunca existe en un estado
+     * inválido. Empresa es un registro único (id fijo); nombre/banner/logo pueden
+     * no estar definidos aún (antes de la primera actualización).
+     */
+    private static void validarCreacion(Builder builder) {
+        ValidadorNulosVacios.variable(builder.id, "El identificador de la empresa", EmpresaValidationException::new)
+                .noNulo();
     }
 
     /* ── Getters ──────────────────────────────────────────────────────── */
@@ -74,9 +82,6 @@ public class Empresa {
         private byte[] banner;
         private byte[] logo;
 
-        private Builder() {
-        }
-
         public Builder id(Long id) {
             this.id = id;
             return this;
@@ -97,7 +102,7 @@ public class Empresa {
             return this;
         }
 
-        public Empresa build() {
+        private Empresa build() {
             return new Empresa(this);
         }
     }

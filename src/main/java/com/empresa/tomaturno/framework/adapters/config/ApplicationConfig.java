@@ -49,8 +49,14 @@ import com.empresa.tomaturno.sucursal.application.query.port.output.SucursalQuer
 import com.empresa.tomaturno.sucursal.application.query.service.SucursalQueryService;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.adapters.ColaGatewayAdapter;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.adapters.ConfiguracionGatewayAdapter;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.adapters.DetalleColaxPuestoGatewayAdapter;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.adapters.EmpresaGatewayAdapter;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.adapters.PersonaGatewayAdapter;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.adapters.PuestoGatewayAdapter;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.adapters.SucursalGatewayAdapter;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.adapters.TurnoColaAdapter;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.adapters.TurnoConfiguracionAdapter;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.adapters.UsuarioGatewayAdapter;
 import com.empresa.tomaturno.turno.application.command.port.input.TurnoCommandInputPort;
 import com.empresa.tomaturno.turno.application.command.port.output.TurnoCommandRepository;
 import com.empresa.tomaturno.turno.application.command.service.TurnoCommandService;
@@ -147,7 +153,7 @@ public class ApplicationConfig {
     @Produces
     @ApplicationScoped
     public PersonaCommandInputPort personaCommandService() {
-        return new PersonaCommandService(personaCommandRepository, personaQueryRepository);
+        return new PersonaCommandService(personaCommandRepository, new PersonaGatewayAdapter(personaQueryRepository));
     }
 
     @Produces
@@ -165,7 +171,7 @@ public class ApplicationConfig {
     @Produces
     @ApplicationScoped
     public PuestoCommandInputPort puestoCommandService() {
-        return new PuestoCommandService(puestoCommandRepository, puestoQueryRepository);
+        return new PuestoCommandService(puestoCommandRepository, new PuestoGatewayAdapter(puestoQueryRepository));
     }
 
     @Produces
@@ -177,7 +183,8 @@ public class ApplicationConfig {
     @Produces
     @ApplicationScoped
     public DetalleColaxPuestoCommandInputPort detalleColaxPuestoCommandService() {
-        return new DetalleColaxPuestoCommandService(detalleColaxPuestoCommandRepository, detalleColaxPuestoQueryRepository);
+        return new DetalleColaxPuestoCommandService(detalleColaxPuestoCommandRepository,
+                new DetalleColaxPuestoGatewayAdapter(detalleColaxPuestoQueryRepository));
     }
 
     @Produces
@@ -189,7 +196,8 @@ public class ApplicationConfig {
     @Produces
     @ApplicationScoped
     public UsuarioCommandInputPort usuarioCommandService() {
-        return new UsuarioCommandService(usuarioCommandRepository, usuarioQueryRepository, keycloakAdminPort);
+        return new UsuarioCommandService(usuarioCommandRepository,
+                new UsuarioGatewayAdapter(usuarioQueryRepository), keycloakAdminPort);
     }
 
     @Produces
@@ -231,7 +239,7 @@ public class ApplicationConfig {
     public SucursalCommandInputPort sucursalCommandService(SucursalEventPublisher sucursalEventPublisher) {
         return new SucursalCommandService(
             sucursalCommandRepository,
-             sucursalQueryRepository, 
+            new SucursalGatewayAdapter(sucursalQueryRepository),
              sucursalEventPublisher);
     }
 
@@ -244,7 +252,7 @@ public class ApplicationConfig {
     @Produces
     @ApplicationScoped
     public EmpresaCommandInputPort empresaCommandService() {
-        return new EmpresaCommandService(empresaCommandRepository, empresaQueryRepository);
+        return new EmpresaCommandService(empresaCommandRepository, new EmpresaGatewayAdapter(empresaQueryRepository));
     }
 
     @Produces

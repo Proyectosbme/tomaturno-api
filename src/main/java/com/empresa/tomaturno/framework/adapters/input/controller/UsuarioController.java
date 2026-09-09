@@ -77,8 +77,8 @@ public class UsuarioController {
     @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed({ "ADMIN", "SUBADMIN" })
     public Response crear(@Valid UsuarioRequestDTO dto) {
-        Usuario usuario = mapper.toDomain(dto);
-        usuario = commandPort.crear(usuario, usuarioActual());
+        Usuario.Builder builder = mapper.toBuilder(dto);
+        Usuario usuario = commandPort.crear(builder, usuarioActual());
         return Response.status(Response.Status.CREATED).entity(mapper.toResponse(usuario)).build();
     }
 
@@ -92,8 +92,10 @@ public class UsuarioController {
             @PathParam("idUsuario") Long idUsuario,
             @PathParam("idSucursal") Long idSucursal,
             @Valid UsuarioRequestDTO dto) {
-        Usuario datosNuevos = mapper.toDomain(dto);
-        Usuario actualizado = commandPort.actualizar(idUsuario, idSucursal, datosNuevos, usuarioActual());
+        Usuario.Builder datosNuevos = mapper.toBuilder(dto);
+        Usuario actualizado = commandPort.actualizar(idUsuario, idSucursal,
+                datosNuevos.getIdPuesto(), datosNuevos.getEstado(), datosNuevos.getDatosPersonales(),
+                datosNuevos.getConfiguracion(), datosNuevos.getContrasena(), usuarioActual());
         return Response.ok(mapper.toResponse(actualizado)).build();
     }
 

@@ -15,31 +15,38 @@ import com.empresa.tomaturno.usuario.dominio.vo.DatosPersonales;
 @Mapper(componentModel = "cdi")
 public interface UsuarioInputMapper {
 
-    default Usuario toDomain(UsuarioRequestDTO dto) {
+    /**
+     * Builder parcial: sin código de usuario ni auditoría de creación todavía — los
+     * resuelve el caso de uso (CrearUsuarioUseCase/ModificarUsuarioUseCase) antes de
+     * llamar a Usuario.of.
+     */
+    default Usuario.Builder toBuilder(UsuarioRequestDTO dto) {
         DatosPersonales datos = DatosPersonales.crear(
                 dto.getNombres(), dto.getApellidos(), dto.getDui(), dto.getTelefono(), dto.getCorreo());
         ConfiguracionOperador config = ConfiguracionOperador.crear(
                 dto.getPerfil(), dto.getIp(), dto.getCorrelativo(), dto.getAtenderCasosEspeciales());
-        Usuario usuario = Usuario.inicializar(
-                dto.getIdSucursal(), dto.getIdPuesto(), null,
-                dto.getEstado() != null ? Estado.fromCodigo(dto.getEstado()) : null,
-                datos, config);
+        Usuario.Builder builder = new Usuario.Builder()
+                .idSucursal(dto.getIdSucursal())
+                .idPuesto(dto.getIdPuesto())
+                .estado(dto.getEstado() != null ? Estado.fromCodigo(dto.getEstado()) : null)
+                .datosPersonales(datos)
+                .configuracion(config);
         if (dto.getPerfilCreador() != null && !dto.getPerfilCreador().isBlank())
-            usuario.asignarPerfilCreador(dto.getPerfilCreador());
-        return usuario;
+            builder.perfilCreador(dto.getPerfilCreador());
+        return builder;
     }
 
-    default Usuario toRegistrarDomain(UsuarioRegistroRequestDTO dto) {
+    default Usuario.Builder toRegistrarBuilder(UsuarioRegistroRequestDTO dto) {
         DatosPersonales datos = DatosPersonales.crear(
                 dto.getNombres(), dto.getApellidos(), dto.getDui(), dto.getTelefono(), dto.getCorreo());
         ConfiguracionOperador config = ConfiguracionOperador.crear(
                 dto.getPerfil(), null, dto.getCorrelativo(), null);
-        Usuario usuario = Usuario.inicializar(
-                dto.getIdSucursal(), dto.getIdPuesto(), null,
-                Estado.ACTIVO,
-                datos, config);
-        usuario.asignarPerfilCreador(dto.getPerfil());
-        return usuario;
+        return new Usuario.Builder()
+                .idSucursal(dto.getIdSucursal())
+                .idPuesto(dto.getIdPuesto())
+                .estado(Estado.ACTIVO)
+                .datosPersonales(datos)
+                .configuracion(config);
     }
 
     @Mapping(source = "identificador",                          target = "id")
@@ -54,10 +61,10 @@ public interface UsuarioInputMapper {
     @Mapping(source = "configuracion.atenderCasosEspeciales",   target = "atenderCasosEspeciales")
     @Mapping(source = "nombreSucursal",                         target = "nombreSucursal")
     @Mapping(source = "nombrePuesto",                           target = "nombrePuesto")
-    @Mapping(source = "auditoria.usuarioCreacion",              target = "usuarioCreacion")
-    @Mapping(source = "auditoria.fechaCreacion",                target = "fechaCreacion")
-    @Mapping(source = "auditoria.usuarioModificacion",          target = "usuarioModificacion")
-    @Mapping(source = "auditoria.fechaModificacion",            target = "fechaModificacion")
+    @Mapping(source = "auditoriaCreacion.usuario",              target = "usuarioCreacion")
+    @Mapping(source = "auditoriaCreacion.fecha",                target = "fechaCreacion")
+    @Mapping(source = "auditoriaModificacion.usuario",          target = "usuarioModificacion")
+    @Mapping(source = "auditoriaModificacion.fecha",            target = "fechaModificacion")
     @Mapping(source = "estado",                                 target = "estado", qualifiedByName = "estadoToCodigo")
     @Mapping(source = "foto",                                   target = "foto")
     UsuarioResponseDTO toResponse(Usuario usuario);

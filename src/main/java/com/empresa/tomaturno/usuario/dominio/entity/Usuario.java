@@ -1,27 +1,26 @@
 package com.empresa.tomaturno.usuario.dominio.entity;
 
-import java.time.LocalDateTime;
-
-import com.empresa.tomaturno.shared.clases.Auditoria;
 import com.empresa.tomaturno.shared.clases.Estado;
 import com.empresa.tomaturno.usuario.dominio.exceptions.UsuarioValidationException;
+import com.empresa.tomaturno.usuario.dominio.validador.ValidadorNulosVacios;
+import com.empresa.tomaturno.usuario.dominio.vo.Auditoria;
 import com.empresa.tomaturno.usuario.dominio.vo.ConfiguracionOperador;
 import com.empresa.tomaturno.usuario.dominio.vo.DatosPersonales;
 
-public class Usuario {
+public final class Usuario {
 
     private Long identificador;
-    private Long idSucursal;
+    private final Long idSucursal;
     private Long idPuesto;
     private String codigoUsuario;
     private String contrasena;
     private String keycloakId;
     private Estado estado;
-    private Auditoria auditoria;
+    private Auditoria auditoriaCreacion;
+    private Auditoria auditoriaModificacion;
     private DatosPersonales datosPersonales;
     private ConfiguracionOperador configuracion;
     private byte[] foto;
-    private String perfilCreador;
     private String nombreSucursal;
     private String nombrePuesto;
 
@@ -33,14 +32,32 @@ public class Usuario {
         this.contrasena = builder.contrasena;
         this.keycloakId = builder.keycloakId;
         this.estado = builder.estado;
-        this.auditoria = builder.auditoria;
+        this.auditoriaCreacion = builder.auditoriaCreacion;
+        this.auditoriaModificacion = builder.auditoriaModificacion;
         this.datosPersonales = builder.datosPersonales;
         this.configuracion = builder.configuracion;
         this.foto = builder.foto;
+        this.nombreSucursal = builder.nombreSucursal;
+        this.nombrePuesto = builder.nombrePuesto;
     }
 
-    public void asignarDatosKeycloak(String codigoUsuario,
-            DatosPersonales datosPersonales, String perfil) {
+    // ─── Builder ──────────────────────────────────────────────────────────
+
+    /**
+     * Único punto de creación/reconstitución: valida el builder antes de construir.
+     * El código de usuario y la auditoría de creación deben venir ya resueltos en el
+     * builder (los resuelve el caso de uso antes de llamar a este método: el código
+     * requiere consultar unicidad contra el repositorio y la auditoría requiere el
+     * actor autenticado, ninguno de los dos es responsabilidad del agregado).
+     */
+    public static Usuario of(Builder builder) {
+        validarCreacion(builder);
+        return builder.build();
+    }
+
+    // ─── Comportamiento ───────────────────────────────────────────────────
+
+    public void asignarDatosKeycloak(String codigoUsuario, DatosPersonales datosPersonales, String perfil) {
         this.codigoUsuario = codigoUsuario;
         this.datosPersonales = datosPersonales;
         this.configuracion.asignarPerfil(perfil);
@@ -51,47 +68,50 @@ public class Usuario {
         this.datosPersonales = datosPersonales;
     }
 
-    public static Builder builder() {
-        return new Builder();
+    /**
+     * Deriva el código de usuario candidato (primera letra del nombre + primer
+     * apellido). El caso de uso pide luego al gateway un código único a partir de
+     * este candidato antes de estamparlo en el builder.
+     */
+    public static String generarCodigoUsuario(DatosPersonales datosPersonales) {
+        if (datosPersonales == null
+                || datosPersonales.getNombres() == null
+                || datosPersonales.getApellidos() == null) {
+            throw new UsuarioValidationException(
+                    "Los datos personales con nombres y apellidos son necesarios para crear el código de usuario");
+        }
+        String nombres = datosPersonales.getNombres().trim();
+        String apellidos = datosPersonales.getApellidos().trim();
+        // Primera letra del nombre (en minúscula)
+        String primeraLetraNombre = "";
+        if (!nombres.equalsIgnoreCase("usuario")) {
+            primeraLetraNombre = nombres.substring(0, 1).toLowerCase();
+        }
+        // Solo el primer apellido (antes del primer espacio)
+        String primerApellido = apellidos.split("\\s+")[0].toLowerCase();
+        return primeraLetraNombre + primerApellido;
     }
 
-    public void completarRegistro() {
-        this.crearCodigoUsuario();
-        this.verificarContrasena();
+    /**
+     * Regla de autorización de creación: solo ADMIN/SUBADMIN pueden crear usuarios.
+     * Se valida sobre el string crudo de la petición antes de construir el agregado;
+     * "perfilCreador" no es un dato persistido de Usuario, solo un dato transitorio
+     * de autorización que vive en el Builder mientras se resuelve la creación.
+     */
+    public static void validarPerfilCreador(String perfilCreador) {
+        if (perfilCreador == null || perfilCreador.isBlank()) {
+            throw new UsuarioValidationException("El perfil del usuario creador es obligatorio");
+        }
+        boolean creadorAutorizado = perfilCreador.equalsIgnoreCase("ADMIN")
+                || perfilCreador.equalsIgnoreCase("SUBADMIN");
+        if (!creadorAutorizado) {
+            throw new UsuarioValidationException("Solo usuarios con perfil ADMIN pueden crear usuarios");
+        }
     }
 
-    private void verificarContrasena() {
-        this.contrasena = this.getContrasena() != null && !this.getContrasena().isBlank()
-                ? this.getContrasena()
-                : this.getCodigoUsuario();
-    }
-    /* ── Factory methods ──────────────────────────────────────────────── */
-
-    public static Usuario inicializar(Long idSucursal, Long idPuesto, String codigoUsuario,
-            Estado estado, DatosPersonales datosPersonales,
-            ConfiguracionOperador configuracion) {
-        return builder()
-                .idSucursal(idSucursal)
-                .idPuesto(idPuesto)
-                .codigoUsuario(codigoUsuario)
-                .estado(estado)
-                .datosPersonales(datosPersonales)
-                .configuracion(configuracion)
-                .build();
-    }
-
-    /* ── Comportamiento ───────────────────────────────────────────────── */
-
-    public void crear(String usuarioCreador) {
-        this.crearCodigoUsuario();
-        this.verificarContrasena();
-        this.auditoria = Auditoria.deCreacion(usuarioCreador, LocalDateTime.now());
-        this.validarCreacion();
-    }
-
-    public void modificar(Long idPuesto,
-            Estado estado, DatosPersonales datosPersonales,
-            ConfiguracionOperador configuracion, String usuarioModificador) {
+    /** auditoriaModificacion ya viene construida (Auditoria.of(usuario, fecha)); esta entidad no la arma. */
+    public void modificar(Long idPuesto, Estado estado, DatosPersonales datosPersonales,
+            ConfiguracionOperador configuracion, Auditoria auditoriaModificacion) {
 
         if (idPuesto != null) {
             this.idPuesto = idPuesto;
@@ -99,19 +119,22 @@ public class Usuario {
         if (estado != null) {
             this.estado = estado;
         }
-
         if (datosPersonales != null) {
             this.datosPersonales = datosPersonales;
         }
-
         if (configuracion != null) {
             this.configuracion = configuracion;
         }
-
-        if (usuarioModificador != null) {
-            this.auditoria = this.auditoria.conModificacion(usuarioModificador, LocalDateTime.now());
-        }
+        aplicarAuditoriaModificacion(auditoriaModificacion);
         validarModificacion();
+    }
+
+    private void aplicarAuditoriaModificacion(Auditoria auditoriaModificacion) {
+        ValidadorNulosVacios
+                .variable(auditoriaModificacion, "La auditoria de modificacion del usuario",
+                        UsuarioValidationException::new)
+                .noNulo();
+        this.auditoriaModificacion = auditoriaModificacion;
     }
 
     public void asignarIdentificador(Long identificador) {
@@ -122,44 +145,17 @@ public class Usuario {
         this.keycloakId = keycloakId;
     }
 
-    private void crearCodigoUsuario() {
-        if (this.datosPersonales == null
-                || this.datosPersonales.getNombres() == null
-                || this.datosPersonales.getApellidos() == null) {
-            throw new UsuarioValidationException(
-                    "Los datos personales con nombres y apellidos son necesarios para crear el código de usuario");
-        }
-        // Quitar espacios al inicio y fin
-        String nombres = this.datosPersonales.getNombres().trim();
-        String apellidos = this.datosPersonales.getApellidos().trim();
-        // Primera letra del nombre (en minúscula)
-        String primeraLetraNombre = "";
-        if (!nombres.equalsIgnoreCase("usuario")) {
-            primeraLetraNombre = nombres.substring(0, 1).toLowerCase();
-        }
-        // Solo el primer apellido (antes del primer espacio)
-        String primerApellido = apellidos.split("\\s+")[0].toLowerCase();
-        // Construir el código
-        String codigo = primeraLetraNombre + primerApellido;
-        this.codigoUsuario = codigo;
-    }
-
     public void asignarCodigoUsuario(String codigoUsuario) {
         this.codigoUsuario = codigoUsuario;
-        if (this.auditoria == null)
-            this.auditoria = Auditoria.deCreacion(this.codigoUsuario, LocalDateTime.now());
     }
 
-    public void asignarFoto(byte[] foto) {
+    /** auditoriaModificacion ya viene construida; esta entidad no arma la fecha/actor. */
+    public void asignarFoto(byte[] foto, Auditoria auditoriaModificacion) {
         this.foto = foto;
-        this.auditoria = this.auditoria.conModificacion("SISTEMA", LocalDateTime.now());
+        aplicarAuditoriaModificacion(auditoriaModificacion);
     }
 
     /* ── Enriquecimiento ──────────────────────────────────────────────── */
-
-    public void asignarPerfilCreador(String perfilCreador) {
-        this.perfilCreador = perfilCreador;
-    }
 
     public void asignarNombreSucursal(String nombreSucursal) {
         this.nombreSucursal = nombreSucursal;
@@ -171,21 +167,22 @@ public class Usuario {
 
     /* ── Validaciones privadas ────────────────────────────────────────── */
 
-    private void validarCreacion() {
-        if (this.codigoUsuario == null || this.codigoUsuario.isBlank())
-            throw new UsuarioValidationException("El código de usuario es obligatorio");
-        if (this.idSucursal == null)
-            throw new UsuarioValidationException("La sucursal es obligatoria");
-        if (this.estado == null)
-            throw new UsuarioValidationException("El estado es obligatorio");
-        if (this.perfilCreador == null || this.perfilCreador.isBlank()) {
-            throw new UsuarioValidationException("El perfil del usuario creador es obligatorio");
-        }
-        boolean creadorAutorizado = this.perfilCreador.equalsIgnoreCase("ADMIN") ||
-                this.perfilCreador.equalsIgnoreCase("SUBADMIN");
-        if (!creadorAutorizado) {
-            throw new UsuarioValidationException("Solo usuarios con perfil ADMIN pueden crear usuarios");
-        }
+    /**
+     * Valida el builder antes de construir: el objeto nunca existe en un estado
+     * inválido. Se aplica tanto a la creación como a la reconstitución desde
+     * persistencia (ambas pasan por Usuario.of).
+     */
+    private static void validarCreacion(Builder builder) {
+        ValidadorNulosVacios.variable(builder.codigoUsuario, "El código de usuario", UsuarioValidationException::new)
+                .noNuloNoVacio();
+        ValidadorNulosVacios.variable(builder.idSucursal, "La sucursal del usuario", UsuarioValidationException::new)
+                .noNulo();
+        ValidadorNulosVacios.variable(builder.estado, "El estado del usuario", UsuarioValidationException::new)
+                .noNulo();
+        ValidadorNulosVacios
+                .variable(builder.auditoriaCreacion, "La auditoria de creacion del usuario",
+                        UsuarioValidationException::new)
+                .noNulo();
     }
 
     private void validarModificacion() {
@@ -227,8 +224,12 @@ public class Usuario {
         return estado;
     }
 
-    public Auditoria getAuditoria() {
-        return auditoria;
+    public Auditoria getAuditoriaCreacion() {
+        return auditoriaCreacion;
+    }
+
+    public Auditoria getAuditoriaModificacion() {
+        return auditoriaModificacion;
     }
 
     public DatosPersonales getDatosPersonales() {
@@ -241,10 +242,6 @@ public class Usuario {
 
     public byte[] getFoto() {
         return foto;
-    }
-
-    public String getPerfilCreador() {
-        return perfilCreador;
     }
 
     public String getNombreSucursal() {
@@ -304,13 +301,15 @@ public class Usuario {
         private String contrasena;
         private String keycloakId;
         private Estado estado;
-        private Auditoria auditoria;
+        private Auditoria auditoriaCreacion;
+        private Auditoria auditoriaModificacion;
         private DatosPersonales datosPersonales;
         private ConfiguracionOperador configuracion;
         private byte[] foto;
-
-        private Builder() {
-        }
+        private String nombreSucursal;
+        private String nombrePuesto;
+        /** Dato transitorio de autorización de creación: no forma parte del estado persistido de Usuario. */
+        private String perfilCreador;
 
         public Builder identificador(Long identificador) {
             this.identificador = identificador;
@@ -347,8 +346,13 @@ public class Usuario {
             return this;
         }
 
-        public Builder auditoria(Auditoria auditoria) {
-            this.auditoria = auditoria;
+        public Builder auditoriaCreacion(Auditoria auditoriaCreacion) {
+            this.auditoriaCreacion = auditoriaCreacion;
+            return this;
+        }
+
+        public Builder auditoriaModificacion(Auditoria auditoriaModificacion) {
+            this.auditoriaModificacion = auditoriaModificacion;
             return this;
         }
 
@@ -367,7 +371,50 @@ public class Usuario {
             return this;
         }
 
-        public Usuario build() {
+        public Builder nombreSucursal(String nombreSucursal) {
+            this.nombreSucursal = nombreSucursal;
+            return this;
+        }
+
+        public Builder nombrePuesto(String nombrePuesto) {
+            this.nombrePuesto = nombrePuesto;
+            return this;
+        }
+
+        public Builder perfilCreador(String perfilCreador) {
+            this.perfilCreador = perfilCreador;
+            return this;
+        }
+
+        public Long getIdPuesto() {
+            return idPuesto;
+        }
+
+        public String getCodigoUsuario() {
+            return codigoUsuario;
+        }
+
+        public String getContrasena() {
+            return contrasena;
+        }
+
+        public Estado getEstado() {
+            return estado;
+        }
+
+        public DatosPersonales getDatosPersonales() {
+            return datosPersonales;
+        }
+
+        public ConfiguracionOperador getConfiguracion() {
+            return configuracion;
+        }
+
+        public String getPerfilCreador() {
+            return perfilCreador;
+        }
+
+        private Usuario build() {
             return new Usuario(this);
         }
     }

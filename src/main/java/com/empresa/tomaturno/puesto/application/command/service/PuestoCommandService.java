@@ -2,10 +2,12 @@ package com.empresa.tomaturno.puesto.application.command.service;
 
 import com.empresa.tomaturno.puesto.application.command.port.input.PuestoCommandInputPort;
 import com.empresa.tomaturno.puesto.application.command.port.output.PuestoCommandRepository;
+import com.empresa.tomaturno.puesto.application.command.port.output.PuestoGatewayPort;
 import com.empresa.tomaturno.puesto.application.command.usecase.CrearPuestoUseCase;
 import com.empresa.tomaturno.puesto.application.command.usecase.ModificarPuestoUseCase;
-import com.empresa.tomaturno.puesto.application.query.port.output.PuestoQueryRepository;
 import com.empresa.tomaturno.puesto.dominio.entity.Puesto;
+import com.empresa.tomaturno.puesto.dominio.vo.Auditoria;
+import com.empresa.tomaturno.puesto.dominio.vo.Estado;
 
 public class PuestoCommandService implements PuestoCommandInputPort {
 
@@ -13,18 +15,20 @@ public class PuestoCommandService implements PuestoCommandInputPort {
     private final ModificarPuestoUseCase modificarPuestoUseCase;
 
     public PuestoCommandService(PuestoCommandRepository puestoCommandRepository,
-            PuestoQueryRepository puestoQueryRepository) {
-        this.crearPuestoUseCase = new CrearPuestoUseCase(puestoCommandRepository, puestoQueryRepository);
-        this.modificarPuestoUseCase = new ModificarPuestoUseCase(puestoCommandRepository, puestoQueryRepository);
+            PuestoGatewayPort puestoGatewayPort) {
+        this.crearPuestoUseCase = new CrearPuestoUseCase(puestoCommandRepository, puestoGatewayPort);
+        this.modificarPuestoUseCase = new ModificarPuestoUseCase(puestoCommandRepository, puestoGatewayPort);
     }
 
     @Override
-    public Puesto crear(Puesto puesto, String usuario) {
-        return crearPuestoUseCase.ejecutar(puesto, usuario);
+    public Puesto crear(Puesto puesto) {
+        return crearPuestoUseCase.ejecutar(puesto);
     }
 
     @Override
-    public Puesto actualizar(Long idPuesto, Long idSucursal, Puesto datosActualizados, String usuario   ) {
-        return modificarPuestoUseCase.ejecutar(idPuesto, idSucursal, datosActualizados, usuario);
+    public Puesto actualizar(Long idPuesto, Long idSucursal, String nombre, String nombreLlamada, Estado estado,
+            Auditoria auditoriaModificacion) {
+        return modificarPuestoUseCase.ejecutar(idPuesto, idSucursal, nombre, nombreLlamada, estado,
+                auditoriaModificacion);
     }
 }

@@ -1,23 +1,22 @@
 package com.empresa.tomaturno.puesto.application.command.usecase;
 
 import com.empresa.tomaturno.puesto.application.command.port.output.PuestoCommandRepository;
-import com.empresa.tomaturno.puesto.application.query.port.output.PuestoQueryRepository;
+import com.empresa.tomaturno.puesto.application.command.port.output.PuestoGatewayPort;
 import com.empresa.tomaturno.puesto.dominio.entity.Puesto;
 
 public class CrearPuestoUseCase {
 
     private final PuestoCommandRepository puestoCommandRepository;
-    private final PuestoQueryRepository puestoQueryRepository;
+    private final PuestoGatewayPort puestoGatewayPort;
 
     public CrearPuestoUseCase(PuestoCommandRepository puestoCommandRepository,
-            PuestoQueryRepository puestoQueryRepository) {
+            PuestoGatewayPort puestoGatewayPort) {
         this.puestoCommandRepository = puestoCommandRepository;
-        this.puestoQueryRepository = puestoQueryRepository;
+        this.puestoGatewayPort = puestoGatewayPort;
     }
 
-    public Puesto ejecutar(Puesto puesto, String usuario) {
-        puesto.crear(usuario);
-        boolean existeNombre = puestoQueryRepository.existeNombreEnSucursal(
+    public Puesto ejecutar(Puesto puesto) {
+        boolean existeNombre = puestoGatewayPort.existeNombreEnSucursal(
                 puesto.getSucursal().getIdentificador(), puesto.getNombre());
         puesto.validarNombreUnico(existeNombre);
 

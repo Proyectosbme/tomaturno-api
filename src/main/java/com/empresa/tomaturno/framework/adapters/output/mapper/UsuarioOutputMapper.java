@@ -6,9 +6,9 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.UsuarioJpaEntity;
-import com.empresa.tomaturno.shared.clases.Auditoria;
 import com.empresa.tomaturno.shared.clases.Estado;
 import com.empresa.tomaturno.usuario.dominio.entity.Usuario;
+import com.empresa.tomaturno.usuario.dominio.vo.Auditoria;
 import com.empresa.tomaturno.usuario.dominio.vo.ConfiguracionOperador;
 import com.empresa.tomaturno.usuario.dominio.vo.DatosPersonales;
 
@@ -19,10 +19,10 @@ public interface UsuarioOutputMapper {
     @Mapping(target = "idpk.idSucursal", source = "idSucursal")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "idSucursal", ignore = true)
-    @Mapping(target = "userCreacion", source = "auditoria.usuarioCreacion")
-    @Mapping(target = "fechaCreacion", source = "auditoria.fechaCreacion")
-    @Mapping(target = "userModificacion", source = "auditoria.usuarioModificacion")
-    @Mapping(target = "fechaModificacion", source = "auditoria.fechaModificacion")
+    @Mapping(target = "userCreacion", source = "auditoriaCreacion.usuario")
+    @Mapping(target = "fechaCreacion", source = "auditoriaCreacion.fecha")
+    @Mapping(target = "userModificacion", source = "auditoriaModificacion.usuario")
+    @Mapping(target = "fechaModificacion", source = "auditoriaModificacion.fecha")
     @Mapping(target = "estado", source = "estado", qualifiedByName = "estadoToCodigo")
     @Mapping(target = "foto", source = "foto")
     @Mapping(target = "nombreCompleto", source = ".", qualifiedByName = "nombreCompleto")
@@ -32,7 +32,9 @@ public interface UsuarioOutputMapper {
     UsuarioJpaEntity toJpaEntity(Usuario usuario);
 
     default Usuario toDomain(UsuarioJpaEntity e) {
-        return Usuario.builder()
+        Auditoria auditoriaCreacion = Auditoria.reconstituir(e.getUserCreacion(), e.getFechaCreacion());
+        Auditoria auditoriaModificacion = Auditoria.reconstituir(e.getUserModificacion(), e.getFechaModificacion());
+        return Usuario.of(new Usuario.Builder()
                 .identificador(e.getIdpk().getId())
                 .idSucursal(e.getIdpk().getIdSucursal())
                 .idPuesto(e.getIdPuesto())
@@ -42,20 +44,18 @@ public interface UsuarioOutputMapper {
                 .datosPersonales(DatosPersonales.reconstituir(null, null, e.getDui(), e.getTelefono()))
                 .configuracion(ConfiguracionOperador.reconstituir(
                         null, e.getIp(), e.getCorrelativoPuesto(), e.getAtenderCasosEspeciales()))
-                .auditoria(Auditoria.reconstituir(
-                        e.getUserCreacion(), e.getFechaCreacion(),
-                        e.getUserModificacion(), e.getFechaModificacion()))
-                .foto(e.getFoto())
-                .build();
+                .auditoriaCreacion(auditoriaCreacion)
+                .auditoriaModificacion(auditoriaModificacion)
+                .foto(e.getFoto()));
     }
 
     @Mapping(target = "idpk", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "idSucursal", ignore = true)
-    @Mapping(target = "userCreacion", source = "auditoria.usuarioCreacion")
-    @Mapping(target = "fechaCreacion", source = "auditoria.fechaCreacion")
-    @Mapping(target = "userModificacion", source = "auditoria.usuarioModificacion")
-    @Mapping(target = "fechaModificacion", source = "auditoria.fechaModificacion")
+    @Mapping(target = "userCreacion", source = "auditoriaCreacion.usuario")
+    @Mapping(target = "fechaCreacion", source = "auditoriaCreacion.fecha")
+    @Mapping(target = "userModificacion", source = "auditoriaModificacion.usuario")
+    @Mapping(target = "fechaModificacion", source = "auditoriaModificacion.fecha")
     @Mapping(target = "estado", source = "estado", qualifiedByName = "estadoToCodigo")
     @Mapping(target = "foto", source = "foto")
      @Mapping(target = "nombreCompleto", source = ".", qualifiedByName = "nombreCompleto")

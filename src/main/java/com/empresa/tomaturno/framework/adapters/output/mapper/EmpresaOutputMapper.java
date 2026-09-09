@@ -12,7 +12,11 @@ public interface EmpresaOutputMapper {
     EmpresaJpaEntity toJpaEntity(Empresa empresa);
 
     default Empresa toDomain(EmpresaJpaEntity e) {
-        return Empresa.reconstituir(e.getId(), e.getNombre(), e.getBanner(), e.getLogo());
+        return Empresa.of(new Empresa.Builder()
+                .id(e.getId())
+                .nombre(e.getNombre())
+                .banner(e.getBanner())
+                .logo(e.getLogo()));
     }
 
     void updateEntityFromDomain(Empresa empresa, @MappingTarget EmpresaJpaEntity entity);

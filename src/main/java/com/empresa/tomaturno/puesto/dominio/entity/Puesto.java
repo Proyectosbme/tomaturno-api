@@ -1,70 +1,66 @@
 package com.empresa.tomaturno.puesto.dominio.entity;
 
-import java.time.LocalDateTime;
-
 import com.empresa.tomaturno.puesto.dominio.exceptions.PuestoValidationException;
-import com.empresa.tomaturno.shared.clases.Auditoria;
-import com.empresa.tomaturno.shared.clases.Estado;
+import com.empresa.tomaturno.puesto.dominio.validador.ValidadorNulosVacios;
+import com.empresa.tomaturno.puesto.dominio.vo.Auditoria;
+import com.empresa.tomaturno.puesto.dominio.vo.Estado;
 import com.empresa.tomaturno.puesto.dominio.vo.Sucursal;
 
-public class Puesto {
+public final class Puesto {
 
-    private Long identificador;
+    private final Long identificador;
     private String nombre;
     private String nombreLlamada;
     private Estado estado;
-    private Sucursal sucursal;
-    private Auditoria auditoria;
+    private final Sucursal sucursal;
+    private Auditoria auditoriaCreacion;
+    private Auditoria auditoriaModificacion;
 
-    private Puesto() {
+    private Puesto(Builder builder) {
+        this.identificador = builder.identificador;
+        this.nombre = builder.nombre != null ? builder.nombre.trim().toUpperCase() : null;
+        this.nombreLlamada = builder.nombreLlamada != null ? builder.nombreLlamada.trim().toUpperCase() : null;
+        this.estado = builder.estado;
+        this.sucursal = builder.sucursal;
+        this.auditoriaCreacion = builder.auditoriaCreacion;
+        this.auditoriaModificacion = builder.auditoriaModificacion;
     }
 
-    // ─── Factory methods ──────────────────────────────────────────────────
+    // ─── Builder ──────────────────────────────────────────────────────────
 
-    public static Puesto inicializar(String nombre, String nombreLlamada, Estado estado, Sucursal sucursal) {
-        String nombreNormalizado = nombre != null ? nombre.trim().toUpperCase() : null;
-        String nombreLlamadaNormalizado = nombreLlamada != null ? nombreLlamada.trim().toUpperCase() : null;
-        Puesto p = new Puesto();
-        p.nombre = nombreNormalizado;
-        p.nombreLlamada = nombreLlamadaNormalizado;
-        p.estado = estado;
-        p.sucursal = sucursal;
-        return p;
-    }
-
-    public static Puesto reconstituir(Long identificador, String nombre, String nombreLlamada,
-            Estado estado, Sucursal sucursal, Auditoria auditoria) {
-        Puesto p = new Puesto();
-        p.identificador = identificador;
-        p.nombre = nombre;
-        p.nombreLlamada = nombreLlamada;
-        p.estado = estado;
-        p.sucursal = sucursal;
-        p.auditoria = auditoria;
-        return p;
+    /**
+     * Único punto de creación/reconstitución: valida el builder antes de construir.
+     */
+    public static Puesto of(Builder builder) {
+        validarCreacion(builder);
+        return builder.build();
     }
 
     // ─── Comportamiento ───────────────────────────────────────────────────
 
-    public void crear(String usuario) {
-        this.auditoria = Auditoria.deCreacion(usuario, LocalDateTime.now());
-        validarCreacion();
-    }
-
-    public void modificar(String nombre, String nombreLlamada, Estado estado, String usuario) {
-        if(nombre != null) {
+    /**
+     * auditoriaModificacion ya viene construida (Auditoria.of(usuario, fecha));
+     * esta entidad no la arma.
+     */
+    public void modificar(String nombre, String nombreLlamada, Estado estado, Auditoria auditoriaModificacion) {
+        if (nombre != null) {
             this.nombre = nombre.trim().toUpperCase();
         }
-        if(nombreLlamada != null) {
+        if (nombreLlamada != null) {
             this.nombreLlamada = nombreLlamada.trim().toUpperCase();
-        }   
-        if(estado != null) {    
-                    this.estado = estado;
         }
-        if(usuario != null) {
-            this.auditoria = this.auditoria.conModificacion(usuario, LocalDateTime.now());
+        if (estado != null) {
+            this.estado = estado;
         }
-        validarModificacion();
+        aplicarAuditoriaModificacion(auditoriaModificacion);
+    }
+
+    private void aplicarAuditoriaModificacion(Auditoria auditoriaModificacion) {
+        ValidadorNulosVacios
+                .variable(auditoriaModificacion, "La auditoria de modificacion del puesto",
+                        PuestoValidationException::new)
+                .noNulo();
+        this.auditoriaModificacion = auditoriaModificacion;
     }
 
     public void validarNombreUnico(boolean existeNombreEnSucursal) {
@@ -74,23 +70,21 @@ public class Puesto {
         }
     }
 
-    private void validarCreacion() {
-        if (this.nombre == null || this.nombre.isEmpty()) {
-            throw new PuestoValidationException("El nombre del puesto es obligatorio");
-        }
-        if (this.estado == null) {
-            throw new PuestoValidationException("El estado del puesto es obligatorio");
-        }
-        if (this.sucursal == null) {
-            throw new PuestoValidationException("La sucursal del puesto es obligatoria");
-        }
-    }
-
-    private void validarModificacion() {
-        if (this.identificador == null) {
-            throw new PuestoValidationException("El identificador del puesto es obligatorio");
-        }
-        validarCreacion();
+    /**
+     * Valida el builder antes de construir: el objeto nunca existe en un estado
+     * inválido.
+     */
+    private static void validarCreacion(Builder builder) {
+        ValidadorNulosVacios.variable(builder.nombre, "El nombre del puesto", PuestoValidationException::new)
+                .noNuloNoVacio();
+        ValidadorNulosVacios.variable(builder.estado, "El estado del puesto", PuestoValidationException::new)
+                .noNulo();
+        ValidadorNulosVacios.variable(builder.sucursal, "La sucursal del puesto", PuestoValidationException::new)
+                .noNulo();
+        ValidadorNulosVacios
+                .variable(builder.auditoriaCreacion, "La auditoria de creacion del puesto",
+                        PuestoValidationException::new)
+                .noNulo();
     }
 
     // ─── Getters ──────────────────────────────────────────────────────────
@@ -115,7 +109,60 @@ public class Puesto {
         return sucursal;
     }
 
-    public Auditoria getAuditoria() {
-        return auditoria;
+    public Auditoria getAuditoriaCreacion() {
+        return auditoriaCreacion;
+    }
+
+    public Auditoria getAuditoriaModificacion() {
+        return auditoriaModificacion;
+    }
+
+    public static class Builder {
+        private Long identificador;
+        private String nombre;
+        private String nombreLlamada;
+        private Estado estado;
+        private Sucursal sucursal;
+        private Auditoria auditoriaCreacion;
+        private Auditoria auditoriaModificacion;
+
+        public Builder identificador(Long identificador) {
+            this.identificador = identificador;
+            return this;
+        }
+
+        public Builder nombre(String nombre) {
+            this.nombre = nombre;
+            return this;
+        }
+
+        public Builder nombreLlamada(String nombreLlamada) {
+            this.nombreLlamada = nombreLlamada;
+            return this;
+        }
+
+        public Builder estado(Estado estado) {
+            this.estado = estado;
+            return this;
+        }
+
+        public Builder sucursal(Sucursal sucursal) {
+            this.sucursal = sucursal;
+            return this;
+        }
+
+        public Builder auditoriaCreacion(Auditoria auditoriaCreacion) {
+            this.auditoriaCreacion = auditoriaCreacion;
+            return this;
+        }
+
+        public Builder auditoriaModificacion(Auditoria auditoriaModificacion) {
+            this.auditoriaModificacion = auditoriaModificacion;
+            return this;
+        }
+
+        private Puesto build() {
+            return new Puesto(this);
+        }
     }
 }

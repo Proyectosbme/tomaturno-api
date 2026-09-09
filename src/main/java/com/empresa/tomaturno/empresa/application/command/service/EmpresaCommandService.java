@@ -2,10 +2,10 @@ package com.empresa.tomaturno.empresa.application.command.service;
 
 import com.empresa.tomaturno.empresa.application.command.port.input.EmpresaCommandInputPort;
 import com.empresa.tomaturno.empresa.application.command.port.output.EmpresaCommandRepository;
+import com.empresa.tomaturno.empresa.application.command.port.output.EmpresaGatewayPort;
 import com.empresa.tomaturno.empresa.application.command.usecase.ActualizarBannerEmpresaUseCase;
 import com.empresa.tomaturno.empresa.application.command.usecase.ActualizarLogoEmpresaUseCase;
 import com.empresa.tomaturno.empresa.application.command.usecase.ActualizarNombreEmpresaUseCase;
-import com.empresa.tomaturno.empresa.application.query.port.output.EmpresaQueryRepository;
 import com.empresa.tomaturno.empresa.dominio.entity.Empresa;
 
 public class EmpresaCommandService implements EmpresaCommandInputPort {
@@ -15,10 +15,10 @@ public class EmpresaCommandService implements EmpresaCommandInputPort {
     private final ActualizarLogoEmpresaUseCase actualizarLogoUseCase;
 
     public EmpresaCommandService(EmpresaCommandRepository commandRepository,
-                                  EmpresaQueryRepository queryRepository) {
-        this.actualizarNombreUseCase = new ActualizarNombreEmpresaUseCase(commandRepository, queryRepository);
-        this.actualizarBannerUseCase = new ActualizarBannerEmpresaUseCase(commandRepository, queryRepository);
-        this.actualizarLogoUseCase = new ActualizarLogoEmpresaUseCase(commandRepository, queryRepository);
+                                  EmpresaGatewayPort empresaGatewayPort) {
+        this.actualizarNombreUseCase = new ActualizarNombreEmpresaUseCase(commandRepository, empresaGatewayPort);
+        this.actualizarBannerUseCase = new ActualizarBannerEmpresaUseCase(commandRepository, empresaGatewayPort);
+        this.actualizarLogoUseCase = new ActualizarLogoEmpresaUseCase(commandRepository, empresaGatewayPort);
     }
 
     @Override

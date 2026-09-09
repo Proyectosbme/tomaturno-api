@@ -1,23 +1,23 @@
 package com.empresa.tomaturno.empresa.application.command.usecase;
 
 import com.empresa.tomaturno.empresa.application.command.port.output.EmpresaCommandRepository;
-import com.empresa.tomaturno.empresa.application.query.port.output.EmpresaQueryRepository;
+import com.empresa.tomaturno.empresa.application.command.port.output.EmpresaGatewayPort;
 import com.empresa.tomaturno.empresa.dominio.entity.Empresa;
 import com.empresa.tomaturno.empresa.dominio.exceptions.EmpresaNotFoundException;
 
 public class ActualizarLogoEmpresaUseCase {
 
     private final EmpresaCommandRepository commandRepository;
-    private final EmpresaQueryRepository queryRepository;
+    private final EmpresaGatewayPort empresaGatewayPort;
 
     public ActualizarLogoEmpresaUseCase(EmpresaCommandRepository commandRepository,
-                                         EmpresaQueryRepository queryRepository) {
+                                         EmpresaGatewayPort empresaGatewayPort) {
         this.commandRepository = commandRepository;
-        this.queryRepository = queryRepository;
+        this.empresaGatewayPort = empresaGatewayPort;
     }
 
     public Empresa ejecutar(byte[] logo) {
-        Empresa empresa = queryRepository.obtener();
+        Empresa empresa = empresaGatewayPort.obtener();
         if (empresa == null) {
             throw new EmpresaNotFoundException("No se encontró la configuración de la empresa");
         }

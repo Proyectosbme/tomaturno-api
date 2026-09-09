@@ -8,6 +8,8 @@ import com.empresa.tomaturno.framework.adapters.input.mapper.PuestoInputMapper;
 import com.empresa.tomaturno.puesto.application.command.port.input.PuestoCommandInputPort;
 import com.empresa.tomaturno.puesto.application.query.port.input.PuestoQueryInputPort;
 import com.empresa.tomaturno.puesto.dominio.entity.Puesto;
+import com.empresa.tomaturno.puesto.dominio.vo.Auditoria;
+import com.empresa.tomaturno.puesto.dominio.vo.Estado;
 
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
@@ -73,8 +75,8 @@ public class PuestoController {
     @Consumes(MediaType.APPLICATION_JSON)
    @RolesAllowed({"ADMIN","SUBADMIN"})
     public Response crearPuesto(@Valid PuestoRequestDTO dto) {
-        Puesto puesto = puestoInputMapper.toDomain(dto);
-        puesto = puestoCommandInputPort.crear(puesto, usuarioActual());
+        Puesto puesto = puestoInputMapper.toDomain(dto, usuarioActual());
+        puesto = puestoCommandInputPort.crear(puesto);
         return Response.status(Response.Status.CREATED)
                 .entity(puestoInputMapper.toResponse(puesto)).build();
     }
@@ -89,8 +91,10 @@ public class PuestoController {
             @PathParam("idPuesto") Long idPuesto,
             @PathParam("idSucursal") Long idSucursal,
             @Valid PuestoRequestDTO dto) {
-        Puesto datosNuevos = puestoInputMapper.toDomain(dto);
-        Puesto puestoModificado = puestoCommandInputPort.actualizar(idPuesto, idSucursal, datosNuevos, usuarioActual());
+        Auditoria auditoriaModificacion = Auditoria.of(usuarioActual(), java.time.LocalDateTime.now());
+        Puesto puestoModificado = puestoCommandInputPort.actualizar(idPuesto, idSucursal,
+                dto.getNombre(), dto.getNombreLlamada(), Estado.fromCodigo(dto.getEstado()),
+                auditoriaModificacion);
         return Response.ok(puestoInputMapper.toResponse(puestoModificado)).build();
     }
 }

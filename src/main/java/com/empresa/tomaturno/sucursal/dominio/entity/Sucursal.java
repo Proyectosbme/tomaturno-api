@@ -1,67 +1,46 @@
 package com.empresa.tomaturno.sucursal.dominio.entity;
 
-import java.time.LocalDateTime;
-
+import com.empresa.tomaturno.shared.clases.Estado;
 import com.empresa.tomaturno.sucursal.dominio.exceptions.SucursalValidationException;
-import com.empresa.tomaturno.shared.clases.*;
+import com.empresa.tomaturno.sucursal.dominio.validador.ValidadorNulosVacios;
+import com.empresa.tomaturno.sucursal.dominio.vo.Auditoria;
 import com.empresa.tomaturno.sucursal.dominio.vo.Contacto;
 
-public class Sucursal {
+public final class Sucursal {
 
-    private Long identificador;
+    private final Long identificador;
     private String nombre;
     private Contacto contacto;
     private Estado estado;
-    private Auditoria auditoria;
+    private Auditoria auditoriaCreacion;
+    private Auditoria auditoriaModificacion;
 
-    private Sucursal(Long identificador, String nombre, Contacto contacto, Estado estado, Auditoria auditoria) {
-        this.identificador = identificador;
-        this.nombre = nombre;
-        this.contacto = contacto;
-        this.estado = estado;
-        this.auditoria = auditoria;
-
+    private Sucursal(Builder builder) {
+        this.identificador = builder.identificador;
+        this.nombre = builder.nombre != null ? builder.nombre.trim().toUpperCase() : null;
+        this.contacto = builder.contacto;
+        this.estado = builder.estado;
+        this.auditoriaCreacion = builder.auditoriaCreacion;
+        this.auditoriaModificacion = builder.auditoriaModificacion;
     }
 
-    public static Sucursal inicializar(String nombre, Contacto contacto, Estado estado) {
+    // ─── Builder ──────────────────────────────────────────────────────────
 
-        String nombreNormalizado = nombre != null ? nombre.trim().toUpperCase() : null;
-        return new Sucursal(null, nombreNormalizado, contacto, estado, null);
+    /**
+     * Único punto de creación/reconstitución: valida el builder antes de construir.
+     */
+    public static Sucursal of(Builder builder) {
+        validarCreacion(builder);
+        return builder.build();
     }
 
-    public static Sucursal reconstituir(Long id, String nombre, Contacto contacto, Estado estado, Auditoria auditoria) {
-        return new Sucursal(id, nombre, contacto, estado, auditoria);
-    }
+    // ─── Comportamiento ───────────────────────────────────────────────────
 
-    public void crear(String usuario) {
-        this.auditoria = Auditoria.deCreacion(usuario, LocalDateTime.now());
-        this.validarCreacion();
-
-    }
-
-    private void validarCreacion() {
-        if (nombre == null || nombre.isBlank()) {
-            throw new SucursalValidationException("El nombre de la sucursal no puede ser nulo o vacío");
-        }
-        if (contacto == null) {
-            throw new SucursalValidationException("El contacto de la sucursal no puede ser nulo");
-        }
-        if (estado == null) {
-            throw new SucursalValidationException("El estado de la sucursal no puede ser nulo");
-        }
-        if (this.auditoria == null || this.auditoria.getUsuarioCreacion() == null
-                || this.auditoria.getFechaCreacion() == null) {
-            throw new SucursalValidationException("La sucursal debe tener auditoria de creación");
-        }
-    }
-
-    public void modificar(String nombre, Contacto contacto, Estado estado, String usuario) {
-        this.asignadatosModificacion(nombre, contacto, estado, usuario);
-        this.validarModificacion();
-
-    }
-
-    private void asignadatosModificacion(String nombre, Contacto contacto, Estado estado, String usuario) {
+    /**
+     * auditoriaModificacion ya viene construida (Auditoria.of(usuario, fecha));
+     * esta entidad no la arma.
+     */
+    public void modificar(String nombre, Contacto contacto, Estado estado, Auditoria auditoriaModificacion) {
         if (nombre != null) {
             this.nombre = nombre.trim().toUpperCase();
         }
@@ -71,30 +50,35 @@ public class Sucursal {
         if (estado != null) {
             this.estado = estado;
         }
-        if (usuario != null) {
-            this.auditoria = this.auditoria.conModificacion(usuario, LocalDateTime.now());
-        }
+        aplicarAuditoriaModificacion(auditoriaModificacion);
     }
 
-    private void validarModificacion() {
-        if (this.identificador == null) {
-            throw new SucursalValidationException("La sucursal debe tener un identificador para ser modificada");
-        }
-        if (this.nombre == null || nombre.isBlank()) {
-            throw new SucursalValidationException("El nombre de la sucursal no puede ser nulo o vacío");
-        }
-
-        if (this.contacto == null) {
-            throw new SucursalValidationException("El contacto de la sucursal no puede ser nulo");
-        }
-        if (this.estado == null) {
-            throw new SucursalValidationException("El estado de la sucursal no puede ser nulo");
-        }
-        if (this.auditoria == null || this.auditoria.getUsuarioCreacion() == null
-                || this.auditoria.getFechaCreacion() == null) {
-            throw new SucursalValidationException("La sucursal debe tener auditoria de creación para ser modificada");
-        }
+    private void aplicarAuditoriaModificacion(Auditoria auditoriaModificacion) {
+        ValidadorNulosVacios
+                .variable(auditoriaModificacion, "La auditoria de modificacion de la sucursal",
+                        SucursalValidationException::new)
+                .noNulo();
+        this.auditoriaModificacion = auditoriaModificacion;
     }
+
+    /**
+     * Valida el builder antes de construir: el objeto nunca existe en un estado
+     * inválido.
+     */
+    private static void validarCreacion(Builder builder) {
+        ValidadorNulosVacios.variable(builder.nombre, "El nombre de la sucursal", SucursalValidationException::new)
+                .noNuloNoVacio();
+        ValidadorNulosVacios.variable(builder.contacto, "El contacto de la sucursal", SucursalValidationException::new)
+                .noNulo();
+        ValidadorNulosVacios.variable(builder.estado, "El estado de la sucursal", SucursalValidationException::new)
+                .noNulo();
+        ValidadorNulosVacios
+                .variable(builder.auditoriaCreacion, "La auditoria de creacion de la sucursal",
+                        SucursalValidationException::new)
+                .noNulo();
+    }
+
+    // ─── Getters ──────────────────────────────────────────────────────────
 
     public Long getIdentificador() {
         return identificador;
@@ -112,7 +96,54 @@ public class Sucursal {
         return estado;
     }
 
-    public Auditoria getAuditoria() {
-        return auditoria;
+    public Auditoria getAuditoriaCreacion() {
+        return auditoriaCreacion;
+    }
+
+    public Auditoria getAuditoriaModificacion() {
+        return auditoriaModificacion;
+    }
+
+    public static class Builder {
+        private Long identificador;
+        private String nombre;
+        private Contacto contacto;
+        private Estado estado;
+        private Auditoria auditoriaCreacion;
+        private Auditoria auditoriaModificacion;
+
+        public Builder identificador(Long identificador) {
+            this.identificador = identificador;
+            return this;
+        }
+
+        public Builder nombre(String nombre) {
+            this.nombre = nombre;
+            return this;
+        }
+
+        public Builder contacto(Contacto contacto) {
+            this.contacto = contacto;
+            return this;
+        }
+
+        public Builder estado(Estado estado) {
+            this.estado = estado;
+            return this;
+        }
+
+        public Builder auditoriaCreacion(Auditoria auditoriaCreacion) {
+            this.auditoriaCreacion = auditoriaCreacion;
+            return this;
+        }
+
+        public Builder auditoriaModificacion(Auditoria auditoriaModificacion) {
+            this.auditoriaModificacion = auditoriaModificacion;
+            return this;
+        }
+
+        private Sucursal build() {
+            return new Sucursal(this);
+        }
     }
 }

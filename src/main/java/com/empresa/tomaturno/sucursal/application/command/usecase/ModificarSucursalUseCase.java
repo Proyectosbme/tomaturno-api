@@ -1,27 +1,30 @@
 package com.empresa.tomaturno.sucursal.application.command.usecase;
 
+import com.empresa.tomaturno.shared.clases.Estado;
 import com.empresa.tomaturno.sucursal.application.command.port.output.SucursalCommandRepository;
-import com.empresa.tomaturno.sucursal.application.query.port.output.SucursalQueryRepository;
+import com.empresa.tomaturno.sucursal.application.command.port.output.SucursalGatewayPort;
 import com.empresa.tomaturno.sucursal.dominio.entity.Sucursal;
 import com.empresa.tomaturno.sucursal.dominio.exceptions.SucursalNotFoundException;
+import com.empresa.tomaturno.sucursal.dominio.vo.Auditoria;
+import com.empresa.tomaturno.sucursal.dominio.vo.Contacto;
 
 public class ModificarSucursalUseCase {
 
     private final SucursalCommandRepository sucursalCommandRepository;
-    private final SucursalQueryRepository sucursalQueryRepository;
+    private final SucursalGatewayPort sucursalGatewayPort;
 
     public ModificarSucursalUseCase(SucursalCommandRepository sucursalCommandRepository,
-            SucursalQueryRepository sucursalQueryRepository) {
+            SucursalGatewayPort sucursalGatewayPort) {
         this.sucursalCommandRepository = sucursalCommandRepository;
-        this.sucursalQueryRepository = sucursalQueryRepository;
+        this.sucursalGatewayPort = sucursalGatewayPort;
     }
 
-    public Sucursal ejecutar(Long id, Sucursal datosNuevos, String usuario) {
-        Sucursal sucursal = sucursalQueryRepository.buscarPorId(id);
+    public Sucursal ejecutar(Long id, String nombre, Contacto contacto, Estado estado,
+            Auditoria auditoriaModificacion) {
+        Sucursal sucursal = sucursalGatewayPort.buscarPorId(id);
         if (sucursal == null)
             throw new SucursalNotFoundException(id, "Sucursal");
-        sucursal.modificar(datosNuevos.getNombre(), datosNuevos.getContacto(), datosNuevos.getEstado(), usuario);
+        sucursal.modificar(nombre, contacto, estado, auditoriaModificacion);
         return sucursalCommandRepository.modificar(sucursal);
-
     }
 }

@@ -8,9 +8,9 @@ import org.mapstruct.Named;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.PuestoJpaEntity;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.SucursalJpaEntity;
 import com.empresa.tomaturno.puesto.dominio.entity.Puesto;
+import com.empresa.tomaturno.puesto.dominio.vo.Auditoria;
+import com.empresa.tomaturno.puesto.dominio.vo.Estado;
 import com.empresa.tomaturno.puesto.dominio.vo.Sucursal;
-import com.empresa.tomaturno.shared.clases.Auditoria;
-import com.empresa.tomaturno.shared.clases.Estado;
 
 @Mapper(componentModel = "cdi")
 public interface PuestoOutputMapper {
@@ -21,20 +21,20 @@ public interface PuestoOutputMapper {
     @Mapping(target = "idpk.idSucursal", source = "sucursal.identificador")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "idSucursal", ignore = true)
-    @Mapping(target = "userCreacion", source = "auditoria.usuarioCreacion")
-    @Mapping(target = "fechaCreacion", source = "auditoria.fechaCreacion")
-    @Mapping(target = "userModificacion", source = "auditoria.usuarioModificacion")
-    @Mapping(target = "fechaModificacion", source = "auditoria.fechaModificacion")
+    @Mapping(target = "userCreacion", source = "auditoriaCreacion.usuario")
+    @Mapping(target = "fechaCreacion", source = "auditoriaCreacion.fecha")
+    @Mapping(target = "userModificacion", source = "auditoriaModificacion.usuario")
+    @Mapping(target = "fechaModificacion", source = "auditoriaModificacion.fecha")
     @Mapping(target = "estado", source = "estado", qualifiedByName = "estadoToCodigo")
     PuestoJpaEntity toJpaEntity(Puesto puesto);
 
     @Mapping(target = "idpk", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "idSucursal", ignore = true)
-    @Mapping(target = "userCreacion", source = "auditoria.usuarioCreacion")
-    @Mapping(target = "fechaCreacion", source = "auditoria.fechaCreacion")
-    @Mapping(target = "userModificacion", source = "auditoria.usuarioModificacion")
-    @Mapping(target = "fechaModificacion", source = "auditoria.fechaModificacion")
+    @Mapping(target = "userCreacion", source = "auditoriaCreacion.usuario")
+    @Mapping(target = "fechaCreacion", source = "auditoriaCreacion.fecha")
+    @Mapping(target = "userModificacion", source = "auditoriaModificacion.usuario")
+    @Mapping(target = "fechaModificacion", source = "auditoriaModificacion.fecha")
     @Mapping(target = "estado", source = "estado", qualifiedByName = "estadoToCodigo")
     void updateEntityFromDomain(Puesto puesto, @MappingTarget PuestoJpaEntity entity);
 
@@ -48,16 +48,16 @@ public interface PuestoOutputMapper {
         Sucursal sucursalVo = sucursal != null
                 ? new Sucursal(sucursal.getId(), sucursal.getNombre())
                 : new Sucursal(e.getIdpk().getIdSucursal(), null);
-        Auditoria auditoria = Auditoria.reconstituir(
-                e.getUserCreacion(), e.getFechaCreacion(),
-                e.getUserModificacion(), e.getFechaModificacion());
-        return Puesto.reconstituir(
-                e.getIdpk().getId(),
-                e.getNombre(),
-                e.getNombreLlamada(),
-                Estado.fromCodigo(e.getEstado()),
-                sucursalVo,
-                auditoria);
+        Auditoria auditoriaCreacion = Auditoria.reconstituir(e.getUserCreacion(), e.getFechaCreacion());
+        Auditoria auditoriaModificacion = Auditoria.reconstituir(e.getUserModificacion(), e.getFechaModificacion());
+        return Puesto.of(new Puesto.Builder()
+                .identificador(e.getIdpk().getId())
+                .nombre(e.getNombre())
+                .nombreLlamada(e.getNombreLlamada())
+                .estado(Estado.fromCodigo(e.getEstado()))
+                .sucursal(sucursalVo)
+                .auditoriaCreacion(auditoriaCreacion)
+                .auditoriaModificacion(auditoriaModificacion));
     }
 
     @Named("estadoToCodigo")

@@ -4,16 +4,22 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.empresa.tomaturno.persona.dominio.exceptions.PersonaValidationException;
+import com.empresa.tomaturno.persona.dominio.validador.ValidadorNulosVacios;
 
-public class Persona {
+/**
+ * A diferencia de Cola/Configuracion, la tabla persona no registra "quién" crea o modifica
+ * (no hay columnas de usuario), solo "cuándo": por eso no existe un VO Auditoria local aquí,
+ * solo fechaCreacion/fechaModificacion, estampadas por el llamador antes de construir/modificar.
+ */
+public final class Persona {
 
-    private Long id;
-    private String dui;
+    private final Long id;
+    private final String dui;
     private String nombres;
     private String apellidos;
     private LocalDate fechaNacimiento;
     private String sexo;
-    private LocalDateTime fechaCreacion;
+    private final LocalDateTime fechaCreacion;
     private LocalDateTime fechaModificacion;
 
     private Persona(Builder builder) {
@@ -27,46 +33,47 @@ public class Persona {
         this.fechaModificacion = builder.fechaModificacion;
     }
 
-    public static Builder builder() {
-        return new Builder();
+    // ─── Builder ──────────────────────────────────────────────────────────
+
+    /** Único punto de creación/reconstitución: valida el builder antes de construir. */
+    public static Persona of(Builder builder) {
+        validarCreacion(builder);
+        return builder.build();
     }
 
-    /* ── Factory method ───────────────────────────────────────────────── */
+    // ─── Comportamiento ───────────────────────────────────────────────────
 
-    public static Persona inicializar(String dui, String nombres, String apellidos,
-            LocalDate fechaNacimiento, String sexo) {
-        return builder()
-                .dui(dui)
-                .nombres(nombres)
-                .apellidos(apellidos)
-                .fechaNacimiento(fechaNacimiento)
-                .sexo(sexo)
-                .build();
-    }
-
-    /* ── Comportamiento ───────────────────────────────────────────────── */
-
-    public void crear() {
-        validarCreacion();
-        this.fechaCreacion = LocalDateTime.now();
-    }
-
-    public void actualizar(String nombres, String apellidos, LocalDate fechaNacimiento, String sexo) {
+    /** fechaModificacion ya viene estampada por el llamador; esta entidad no la arma. */
+    public void modificar(String nombres, String apellidos, LocalDate fechaNacimiento, String sexo,
+            LocalDateTime fechaModificacion) {
         this.nombres = nombres;
         this.apellidos = apellidos;
         this.fechaNacimiento = fechaNacimiento;
         this.sexo = sexo;
-        this.fechaModificacion = LocalDateTime.now();
+        aplicarFechaModificacion(fechaModificacion);
     }
 
-    /* ── Validaciones privadas ────────────────────────────────────────── */
-
-    private void validarCreacion() {
-        if (this.dui == null || this.dui.isBlank())
-            throw new PersonaValidationException("El DUI es obligatorio");
+    private void aplicarFechaModificacion(LocalDateTime fechaModificacion) {
+        ValidadorNulosVacios
+                .variable(fechaModificacion, "La fecha de modificacion de la persona",
+                        PersonaValidationException::new)
+                .noNulo();
+        this.fechaModificacion = fechaModificacion;
     }
 
-    /* ── Getters ──────────────────────────────────────────────────────── */
+    /**
+     * Valida el builder antes de construir: el objeto nunca existe en un estado inválido.
+     */
+    private static void validarCreacion(Builder builder) {
+        ValidadorNulosVacios.variable(builder.dui, "El DUI de la persona", PersonaValidationException::new)
+                .noNuloNoVacio();
+        ValidadorNulosVacios
+                .variable(builder.fechaCreacion, "La fecha de creacion de la persona",
+                        PersonaValidationException::new)
+                .noNulo();
+    }
+
+    // ─── Getters ──────────────────────────────────────────────────────────
 
     public Long getId() {
         return id;
@@ -100,10 +107,7 @@ public class Persona {
         return fechaModificacion;
     }
 
-    /* ── Builder ──────────────────────────────────────────────────────── */
-
     public static class Builder {
-
         private Long id;
         private String dui;
         private String nombres;
@@ -112,9 +116,6 @@ public class Persona {
         private String sexo;
         private LocalDateTime fechaCreacion;
         private LocalDateTime fechaModificacion;
-
-        private Builder() {
-        }
 
         public Builder id(Long id) {
             this.id = id;
@@ -156,7 +157,7 @@ public class Persona {
             return this;
         }
 
-        public Persona build() {
+        private Persona build() {
             return new Persona(this);
         }
     }

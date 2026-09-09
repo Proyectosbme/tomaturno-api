@@ -6,11 +6,14 @@ import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
+import java.time.LocalDateTime;
+
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.EmpresaJpaEntity;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.EmpresaJpaRepository;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.SucursalJpaRepository;
 import com.empresa.tomaturno.sucursal.application.command.port.input.SucursalCommandInputPort;
 import com.empresa.tomaturno.sucursal.dominio.entity.Sucursal;
+import com.empresa.tomaturno.sucursal.dominio.vo.Auditoria;
 import com.empresa.tomaturno.sucursal.dominio.vo.Contacto;
 import com.empresa.tomaturno.shared.clases.Estado;
 
@@ -41,10 +44,12 @@ public class AdminStartupBean {
     private void obtenerOCrearSucursalDefault() {
         if (sucursalJpaRepository.count() > 0) return;
 
-        Sucursal sucursal = Sucursal.inicializar("Administracion Central",
-                Contacto.crear("00000000", "admin@sistema.com", "Sin direccion"), Estado.ACTIVO);
-        sucursal.crear(USUARIO_SISTEMA);
-        sucursalCommandInputPort.crear(sucursal, USUARIO_SISTEMA);
+        Sucursal sucursal = Sucursal.of(new Sucursal.Builder()
+                .nombre("Administracion Central")
+                .contacto(Contacto.crear("00000000", "admin@sistema.com", "Sin direccion"))
+                .estado(Estado.ACTIVO)
+                .auditoriaCreacion(Auditoria.of(USUARIO_SISTEMA, LocalDateTime.now())));
+        sucursalCommandInputPort.crear(sucursal);
     }
 
     private void crearEmpresaSiNoExiste() {

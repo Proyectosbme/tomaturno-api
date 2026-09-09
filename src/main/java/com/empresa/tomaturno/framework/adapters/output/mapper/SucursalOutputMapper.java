@@ -6,9 +6,9 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.SucursalJpaEntity;
-import com.empresa.tomaturno.sucursal.dominio.entity.Sucursal;
-import com.empresa.tomaturno.shared.clases.Auditoria;
 import com.empresa.tomaturno.shared.clases.Estado;
+import com.empresa.tomaturno.sucursal.dominio.entity.Sucursal;
+import com.empresa.tomaturno.sucursal.dominio.vo.Auditoria;
 import com.empresa.tomaturno.sucursal.dominio.vo.Contacto;
 
 
@@ -19,29 +19,34 @@ public interface SucursalOutputMapper {
     @Mapping(target = "telefono", source = "contacto.telefono")
     @Mapping(target = "correo", source = "contacto.correo")
     @Mapping(target = "direccion", source = "contacto.direccion")
-    @Mapping(target = "usuarioCreacion", source = "auditoria.usuarioCreacion")
-    @Mapping(target = "fechaCreacion", source = "auditoria.fechaCreacion")
-    @Mapping(target = "usuarioModificacion", source = "auditoria.usuarioModificacion")
-    @Mapping(target = "fechaModificacion", source = "auditoria.fechaModificacion")
+    @Mapping(target = "usuarioCreacion", source = "auditoriaCreacion.usuario")
+    @Mapping(target = "fechaCreacion", source = "auditoriaCreacion.fecha")
+    @Mapping(target = "usuarioModificacion", source = "auditoriaModificacion.usuario")
+    @Mapping(target = "fechaModificacion", source = "auditoriaModificacion.fecha")
     @Mapping(target = "estado", source = "estado", qualifiedByName = "estadoToCodigo")
     SucursalJpaEntity toSucursalJpaEntity(Sucursal sucursal);
 
     default Sucursal toDomain(SucursalJpaEntity e) {
         Contacto contacto = Contacto.reconstituir(e.getTelefono(), e.getCorreo(), e.getDireccion());
-        Auditoria auditoria = Auditoria.reconstituir(
-                e.getUsuarioCreacion(), e.getFechaCreacion(),
-                e.getUsuarioModificacion(), e.getFechaModificacion());
-        return Sucursal.reconstituir(e.getId(), e.getNombre(), contacto, Estado.fromCodigo(e.getEstado()), auditoria);
+        Auditoria auditoriaCreacion = Auditoria.reconstituir(e.getUsuarioCreacion(), e.getFechaCreacion());
+        Auditoria auditoriaModificacion = Auditoria.reconstituir(e.getUsuarioModificacion(), e.getFechaModificacion());
+        return Sucursal.of(new Sucursal.Builder()
+                .identificador(e.getId())
+                .nombre(e.getNombre())
+                .contacto(contacto)
+                .estado(Estado.fromCodigo(e.getEstado()))
+                .auditoriaCreacion(auditoriaCreacion)
+                .auditoriaModificacion(auditoriaModificacion));
     }
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "telefono", source = "contacto.telefono")
     @Mapping(target = "correo", source = "contacto.correo")
     @Mapping(target = "direccion", source = "contacto.direccion")
-    @Mapping(target = "usuarioCreacion", source = "auditoria.usuarioCreacion")
-    @Mapping(target = "fechaCreacion", source = "auditoria.fechaCreacion")
-    @Mapping(target = "usuarioModificacion", source = "auditoria.usuarioModificacion")
-    @Mapping(target = "fechaModificacion", source = "auditoria.fechaModificacion")
+    @Mapping(target = "usuarioCreacion", source = "auditoriaCreacion.usuario")
+    @Mapping(target = "fechaCreacion", source = "auditoriaCreacion.fecha")
+    @Mapping(target = "usuarioModificacion", source = "auditoriaModificacion.usuario")
+    @Mapping(target = "fechaModificacion", source = "auditoriaModificacion.fecha")
     @Mapping(target = "estado", source = "estado", qualifiedByName = "estadoToCodigo")
     void updateEntityFromDomain(Sucursal sucursal, @MappingTarget SucursalJpaEntity entity);
 

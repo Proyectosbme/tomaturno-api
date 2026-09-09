@@ -16,8 +16,11 @@ public class CrearSucursalCaseUse {
         this.eventPublisher = eventPublisher;
     }
 
-    public Sucursal ejecutar(Sucursal sucursal,String usuario) {
-        sucursal.crear(usuario);
+    /**
+     * La sucursal ya llega con auditoriaCreacion armada (Sucursal.of(builder) la validó);
+     * este caso de uso no la arma.
+     */
+    public Sucursal ejecutar(Sucursal sucursal) {
         Sucursal creada = sucursalCommandRepository.save(sucursal);
         eventPublisher.publishSucursalCreada(new SucursalCreadaEvent(creada.getIdentificador()));
         return creada;

@@ -1,24 +1,33 @@
 package com.empresa.tomaturno.framework.adapters.input.mapper;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 import com.empresa.tomaturno.framework.adapters.input.dto.PersonaRequestDTO;
 import com.empresa.tomaturno.framework.adapters.input.dto.PersonaResponseDTO;
 import com.empresa.tomaturno.persona.dominio.entity.Persona;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 @Mapper(componentModel = "cdi")
 public interface PersonaInputMapper {
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "fechaCreacion", ignore = true)
-    @Mapping(target = "fechaModificacion", ignore = true)
-    @Mapping(target = "fechaNacimiento", expression = "java(parseFecha(dto.getFechaNacimiento()))")
-    Persona toDomain(PersonaRequestDTO dto);
+    /**
+     * Solicitud entrante: se arma con fechaCreacion = ahora. Si el caso de uso determina que
+     * ya existe una persona con ese DUI, esa misma marca de tiempo se reutiliza como
+     * fechaModificacion en vez de descartarse.
+     */
+    default Persona toDomain(PersonaRequestDTO dto) {
+        return Persona.of(new Persona.Builder()
+                .dui(dto.getDui())
+                .nombres(dto.getNombres())
+                .apellidos(dto.getApellidos())
+                .fechaNacimiento(parseFecha(dto.getFechaNacimiento()))
+                .sexo(dto.getSexo())
+                .fechaCreacion(LocalDateTime.now()));
+    }
 
     PersonaResponseDTO toResponse(Persona persona);
 
