@@ -52,9 +52,4 @@ public class ConfiguracionQueryJpaAdapters implements ConfiguracionQueryReposito
         ConfiguracionJpaEntity entity = repository.buscarPorNombreYSucursal(idSucursal, nombre);
         return entity != null ? mapper.toDomain(entity) : null;
     }
-
-    @Override
-    public Long obtenerSiguienteId(Long idSucursal) {
-        return repository.obtenerSiguienteId(idSucursal);
-    }
 }

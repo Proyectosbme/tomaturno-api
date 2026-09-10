@@ -35,7 +35,7 @@ public interface EstadoOperadorOutputMapper {
         Auditoria auditoria = Auditoria.reconstituir(
                 e.getUserCreacion(), e.getFechaCreacion(),
                 e.getUserModificacion(), e.getFechaModificacion());
-        return EstadoOperador.builder()
+        return EstadoOperador.of(new EstadoOperador.Builder()
                 .id(e.getId())
                 .idUsuario(e.getIdUsuario())
                 .idSucursal(e.getIdSucursal())
@@ -45,7 +45,6 @@ public interface EstadoOperadorOutputMapper {
                 .comentario(e.getComentario())
                 .fechaInicio(e.getFechaInicio())
                 .fechaFin(e.getFechaFin())
-                .auditoria(auditoria)
-                .reconstituir();
+                .auditoria(auditoria));
     }
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import com.empresa.tomaturno.cola.dominio.entity.Cola;
 import com.empresa.tomaturno.cola.dominio.entity.Detalle;
 import com.empresa.tomaturno.framework.adapters.output.mapper.ColaOutputMapper;
+import com.empresa.tomaturno.framework.adapters.output.mapper.TurnoHoyOutputMapper;
 import com.empresa.tomaturno.framework.adapters.output.mapper.TurnoOutputMapper;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.ColaJpaEntity;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaJpaEntity;
@@ -19,6 +20,8 @@ import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.P
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.SucursalJpaRepository;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.TurnoJpaRepository;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.UsuarioJpaRepository;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.VwTurnosHoyJpaRepository;
+import com.empresa.tomaturno.turno.application.query.dto.TurnoHoyDTO;
 import com.empresa.tomaturno.turno.application.query.port.output.TurnoQueryRepository;
 import com.empresa.tomaturno.turno.dominio.entity.Turno;
 
@@ -35,6 +38,8 @@ public class TurnoQueryJpaAdapters implements TurnoQueryRepository {
     private final SucursalJpaRepository sucursalJpaRepository;
     private final ColaOutputMapper colaOutputMapper;
     private final ColaDetalleRepository colaDetalleRepository;
+    private final VwTurnosHoyJpaRepository vwTurnosHoyJpaRepository;
+    private final TurnoHoyOutputMapper turnoHoyOutputMapper;
 
     public TurnoQueryJpaAdapters(TurnoJpaRepository turnoJpaRepository,
             TurnoOutputMapper turnoOutputMapper,
@@ -43,7 +48,9 @@ public class TurnoQueryJpaAdapters implements TurnoQueryRepository {
             ColaJpaRespository colaJpaRepository,
             SucursalJpaRepository sucursalJpaRepository,
             ColaOutputMapper colaOutputMapper,
-            ColaDetalleRepository colaDetalleRepository) {
+            ColaDetalleRepository colaDetalleRepository,
+            VwTurnosHoyJpaRepository vwTurnosHoyJpaRepository,
+            TurnoHoyOutputMapper turnoHoyOutputMapper) {
         this.turnoJpaRepository = turnoJpaRepository;
         this.turnoOutputMapper = turnoOutputMapper;
         this.puestoJpaRepository = puestoJpaRepository;
@@ -52,6 +59,8 @@ public class TurnoQueryJpaAdapters implements TurnoQueryRepository {
         this.sucursalJpaRepository = sucursalJpaRepository;
         this.colaOutputMapper = colaOutputMapper;
         this.colaDetalleRepository = colaDetalleRepository;
+        this.vwTurnosHoyJpaRepository = vwTurnosHoyJpaRepository;
+        this.turnoHoyOutputMapper = turnoHoyOutputMapper;
     }
 
     private void enriquecerNombreLlamada(Turno turno) {
@@ -145,4 +154,14 @@ public class TurnoQueryJpaAdapters implements TurnoQueryRepository {
         return entity.getId().getIdDetalle();
     }
 
+    @Override
+    public List<TurnoHoyDTO> buscarTurnosHoy(Long idSucursal) {
+        return vwTurnosHoyJpaRepository.buscarTodos(idSucursal).stream().map(turnoHoyOutputMapper::toDomain).toList();
+    }
+
+    @Override
+    public List<TurnoHoyDTO> buscarTurnosHoyPorUsuario(Long idUsuario, Long idSucursal) {
+        return vwTurnosHoyJpaRepository.buscarPorUsuario(idUsuario, idSucursal).stream()
+                .map(turnoHoyOutputMapper::toDomain).toList();
+    }
 }

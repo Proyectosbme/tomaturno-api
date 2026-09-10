@@ -16,7 +16,6 @@ import com.empresa.tomaturno.framework.adapters.config.TurnoAutomaticoOrquestado
 import com.empresa.tomaturno.turno.application.command.port.input.TurnoCommandInputPort;
 import com.empresa.tomaturno.turno.application.query.port.input.TurnoQueryInputPort;
 import com.empresa.tomaturno.turno.application.query.dto.TurnoHoyDTO;
-import com.empresa.tomaturno.turno.application.query.port.input.TurnoHoyQueryInputPort;
 import com.empresa.tomaturno.turno.dominio.entity.Turno;
 
 import io.quarkus.security.Authenticated;
@@ -37,7 +36,6 @@ public class TurnoController {
         private final TurnoWebSocket turnoWebSocket;
         private final Jsonb jsonb;
         private final TurnoAutomaticoOrquestador turnoAutomaticoOrquestador;
-        private final TurnoHoyQueryInputPort turnoHoyQueryInputPort;
         private final TurnoHoyInputMapper turnoHoyInputMapper;
         private final String TURNO_LLAMADO = "TURNO_LLAMADO";
 
@@ -47,7 +45,6 @@ public class TurnoController {
                         TurnoWebSocket turnoWebSocket,
                         Jsonb jsonb,
                         TurnoAutomaticoOrquestador turnoAutomaticoOrquestador,
-                        TurnoHoyQueryInputPort turnoHoyQueryInputPort,
                         TurnoHoyInputMapper turnoHoyInputMapper) {
                 this.turnoCommandInputPort = turnoCommandInputPort;
                 this.turnoQueryInputPort = turnoQueryInputPort;
@@ -55,7 +52,6 @@ public class TurnoController {
                 this.turnoWebSocket = turnoWebSocket;
                 this.jsonb = jsonb;
                 this.turnoAutomaticoOrquestador = turnoAutomaticoOrquestador;
-                this.turnoHoyQueryInputPort = turnoHoyQueryInputPort;
                 this.turnoHoyInputMapper = turnoHoyInputMapper;
         }
 
@@ -97,8 +93,8 @@ public class TurnoController {
                         @QueryParam("idSucursal") Long idSucursal,
                         @QueryParam("idUsuario") Long idUsuario) {
                 List<TurnoHoyDTO> turnos = idUsuario != null
-                                ? turnoHoyQueryInputPort.buscarPorUsuario(idUsuario, idSucursal)
-                                : turnoHoyQueryInputPort.buscarTodos(idSucursal);
+                                ? turnoQueryInputPort.buscarTurnosHoyPorUsuario(idUsuario, idSucursal)
+                                : turnoQueryInputPort.buscarTurnosHoy(idSucursal);
                 return turnos.stream().map(turnoHoyInputMapper::toResponse).toList();
         }
 

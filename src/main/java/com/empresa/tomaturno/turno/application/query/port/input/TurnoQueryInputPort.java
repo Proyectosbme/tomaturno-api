@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.empresa.tomaturno.turno.application.query.dto.TurnoHoyDTO;
 import com.empresa.tomaturno.turno.dominio.entity.Turno;
 
 public interface TurnoQueryInputPort {
@@ -14,4 +15,8 @@ public interface TurnoQueryInputPort {
     boolean existeTurnoLlamadoPorUsuario(Long idUsuario, Long idSucursal, LocalDate fecha);
     /** MAX(fechaLlamada) histórico del usuario en la sucursal, o null si nunca recibió un turno */
     LocalDateTime obtenerUltimaFechaLlamadaPorUsuario(Long idUsuario, Long idSucursal);
+
+    /** Turnos de hoy (vista VW_TURNOS_HOY): distinta fuente de datos, mismo puerto de query de Turno. */
+    List<TurnoHoyDTO> buscarTurnosHoy(Long idSucursal);
+    List<TurnoHoyDTO> buscarTurnosHoyPorUsuario(Long idUsuario, Long idSucursal);
 }

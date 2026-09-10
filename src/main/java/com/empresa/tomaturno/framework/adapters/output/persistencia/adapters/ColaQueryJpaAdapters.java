@@ -8,11 +8,9 @@ import java.util.stream.Stream;
 
 import com.empresa.tomaturno.cola.application.query.port.output.ColaQueryRepository;
 import com.empresa.tomaturno.cola.dominio.entity.Cola;
-import com.empresa.tomaturno.cola.dominio.entity.Detalle;
 import com.empresa.tomaturno.framework.adapters.output.mapper.ColaOutputMapper;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.ColaJpaEntity;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaJpaEntity;
-import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.DetalleColaPK;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.entity.SucursalJpaEntity;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.ColaDetalleRepository;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.repository.ColaJpaRespository;
@@ -85,24 +83,6 @@ public class ColaQueryJpaAdapters implements ColaQueryRepository {
                     idSucursal, entity.getIdpk().getId(), null);
             return colaOutputMapper.toDomainCompleto(entity, sucursal, detalles);
         }).toList();
-    }
-
-    @Override
-    public boolean existeNombreEnSucursal(Long idSucursal, String nombre) {
-        return colaJpaRepository.existeNombreEnSucursal(idSucursal, nombre);
-    }
-
-    @Override
-    public boolean existeNombreDetalleEnCola(Long idCola, Long idSucursal, String nombreDetalle) {
-        return colaDetalleRepository.existeNombreEnCola(idCola, idSucursal, nombreDetalle);
-    }
-
-    @Override
-    public Detalle obtenerDetalle(Long idCola, Long idSucursal, Long idDetalle) {
-        DetalleColaPK pk = new DetalleColaPK(idCola, idSucursal.intValue(), idDetalle);
-        DetalleColaJpaEntity entity = colaDetalleRepository.findById(pk);
-        if (entity == null) return null;
-        return colaOutputMapper.toDomainDetalle(entity);
     }
 
     @Override

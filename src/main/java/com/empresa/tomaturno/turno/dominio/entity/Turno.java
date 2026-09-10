@@ -11,21 +11,21 @@ import com.empresa.tomaturno.turno.dominio.exceptions.TurnoValidationException;
 public class Turno {
 
     private Long id;
-    private Long idSucursal;
-    private LocalDateTime fechaCreacion;
-    private String codigoTurno;
+    private final Long idSucursal;
+    private final LocalDateTime fechaCreacion;
+    private final String codigoTurno;
     private LocalDateTime fechaLlamada;
     private LocalDateTime fechaFinalizacion;
-    private Long idCola;
-    private Long idCatalogo;
-    private Long idDetalle;
+    private final Long idCola;
+    private final Long idCatalogo;
+    private final Long idDetalle;
     private CatalogoDetalle estado;
-    private Long idTurnoRelacionado;
+    private final Long idTurnoRelacionado;
     private Long idPuesto;
     private Long idSucursalPuesto;
     private Long idUsuario;
-    private Long idPersona;
-    private Integer tipoCasoEspecial;
+    private final Long idPersona;
+    private final Integer tipoCasoEspecial;
     private String nombreLlamada;
 
     private Turno(Builder builder) {
@@ -47,13 +47,17 @@ public class Turno {
         this.tipoCasoEspecial = builder.tipoCasoEspecial;
     }
 
-    public static Builder builder() {
-        return new Builder();
+    /**
+     * Único punto de traducción Builder -> Turno: Builder.build() es privado, nada
+     * fuera de esta clase puede invocarlo directamente.
+     */
+    public static Turno of(Builder builder) {
+        return builder.build();
     }
 
     public static Turno inicializar(Long idSucursal, Long idCola, Long idDetalle,
             String codigoTurno, Long idPersona, Integer tipoCasoEspecial) {
-        Turno turno = Turno.builder()
+        Turno turno = Turno.of(new Builder()
                 .idSucursal(idSucursal)
                 .idCola(idCola)
                 .idDetalle(idDetalle)
@@ -62,8 +66,7 @@ public class Turno {
                 .estado(new CatalogoDetalle(CatalogoEstado.ESTADO_TURNO.getValor(), DetalleEstado.CREADO.getValor()))
                 .idPersona(idPersona)
                 .tipoCasoEspecial(tipoCasoEspecial == null ? 0 : tipoCasoEspecial)
-                .idCatalogo(CatalogoEnum.ESTADOS_TURNOS.getCodigo().longValue())
-                .build();
+                .idCatalogo(CatalogoEnum.ESTADOS_TURNOS.getCodigo().longValue()));
         turno.validarCreacion();
         return turno;
     }
@@ -89,7 +92,7 @@ public class Turno {
         validarTransicionReasignar();
         this.estado = new CatalogoDetalle(CatalogoEstado.ESTADO_TURNO.getValor(), DetalleEstado.TRASLADO.getValor());
         this.fechaFinalizacion = LocalDateTime.now();
-        return Turno.builder()
+        return Turno.of(new Builder()
                 .id(nuevoId)
                 .idSucursal(idSucursalDestino)
                 .idCola(idColaDestino)
@@ -100,8 +103,7 @@ public class Turno {
                 .fechaCreacion(this.fechaCreacion.plusSeconds(1))
                 .estado(new CatalogoDetalle(CatalogoEstado.ESTADO_TURNO.getValor(), DetalleEstado.CREADO.getValor()))
                 .idTurnoRelacionado(this.id)
-                .tipoCasoEspecial(this.tipoCasoEspecial)
-                .build();
+                .tipoCasoEspecial(this.tipoCasoEspecial));
     }
 
     public static String generarCodigoTurno(String base, Long numero) {
@@ -277,9 +279,6 @@ public class Turno {
         private Long idPersona;
         private Integer tipoCasoEspecial;
 
-        private Builder() {
-        }
-
         public Builder id(Long id) {
             this.id = id;
             return this;
@@ -360,7 +359,7 @@ public class Turno {
             return this;
         }
 
-        public Turno build() {
+        private Turno build() {
             return new Turno(this);
         }
     }

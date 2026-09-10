@@ -1,21 +1,22 @@
 package com.empresa.tomaturno.estadooperador.application.command.usecase;
 
 import com.empresa.tomaturno.estadooperador.application.command.port.output.EstadoOperadorCommandRepository;
-import com.empresa.tomaturno.estadooperador.application.query.port.output.EstadoOperadorQueryRepository;
+import com.empresa.tomaturno.estadooperador.application.command.port.output.EstadoOperadorGatewayPort;
 import com.empresa.tomaturno.estadooperador.dominio.entity.EstadoOperador;
 
 public class QuitarDescansoUseCase {
 
     private final EstadoOperadorCommandRepository commandRepository;
-    private final EstadoOperadorQueryRepository queryRepository;
+    private final EstadoOperadorGatewayPort estadoOperadorGatewayPort;
 
-    public QuitarDescansoUseCase(EstadoOperadorCommandRepository commandRepository, EstadoOperadorQueryRepository queryRepository) {
+    public QuitarDescansoUseCase(EstadoOperadorCommandRepository commandRepository,
+            EstadoOperadorGatewayPort estadoOperadorGatewayPort) {
         this.commandRepository = commandRepository;
-        this.queryRepository = queryRepository;
+        this.estadoOperadorGatewayPort = estadoOperadorGatewayPort;
     }
 
     public EstadoOperador ejecutar(Long idUsuario, Long idSucursal, Long idPuesto) {
-        EstadoOperador vigente = queryRepository.buscarVigente(idUsuario, idSucursal);
+        EstadoOperador vigente = estadoOperadorGatewayPort.buscarVigente(idUsuario, idSucursal);
         if (vigente != null) {
             vigente.cerrarVigencia();
             commandRepository.actualizar(vigente);

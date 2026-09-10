@@ -24,7 +24,7 @@ public final class Detalle {
     }
 
     /** Único punto de creación/reconstitución: valida el builder antes de construir. Solo Cola lo invoca. */
-    protected static Detalle crear(Builder builder) {
+    protected static Detalle of(Builder builder) {
         validarCreacion(builder);
         return builder.build();
     }

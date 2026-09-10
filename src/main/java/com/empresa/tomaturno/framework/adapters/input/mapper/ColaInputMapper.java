@@ -33,7 +33,7 @@ public interface ColaInputMapper {
                 .auditoriaCreacion(Auditoria.of(usuario, LocalDateTime.now())));
     }
 
-    /** Detalle.crear es protected: se arma el Builder acá y se termina de construir vía Cola.crearDetalle. */
+    /** Detalle.of es protected: se arma el Builder acá y se termina de construir vía Cola.crearDetalle. */
     default Detalle.Builder toDetalleBuilder(DetalleRequestDTO dto) {
         return new Detalle.Builder()
                 .nombre(dto.getNombre())

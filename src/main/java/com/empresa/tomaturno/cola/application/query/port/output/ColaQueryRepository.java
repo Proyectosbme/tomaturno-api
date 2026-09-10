@@ -3,7 +3,6 @@ package com.empresa.tomaturno.cola.application.query.port.output;
 import java.util.List;
 
 import com.empresa.tomaturno.cola.dominio.entity.Cola;
-import com.empresa.tomaturno.cola.dominio.entity.Detalle;
 
 public interface ColaQueryRepository {
 
@@ -16,17 +15,5 @@ public interface ColaQueryRepository {
     /** Para replicar: trae todas las colas con detalles de una sucursal */
     List<Cola> buscarConDetallesPorSucursal(Long idSucursal);
 
-    Detalle obtenerDetalle(Long idCola, Long idSucursal, Long idDetalle);
-
-     List<Cola> buscarColasQueTienenDetalles(Long idSucursal);
-
-    /**
-     * Validación unicidad cola: ¿ya existe una cola con ese nombre en la sucursal?
-     */
-    boolean existeNombreEnSucursal(Long idSucursal, String nombre);
-
-    /**
-     * Validación unicidad detalle: ¿ya existe un detalle con ese nombre en la cola?
-     */
-    boolean existeNombreDetalleEnCola(Long idCola, Long idSucursal, String nombreDetalle);
+    List<Cola> buscarColasQueTienenDetalles(Long idSucursal);
 }

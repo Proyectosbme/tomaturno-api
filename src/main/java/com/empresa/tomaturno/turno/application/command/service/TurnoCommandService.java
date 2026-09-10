@@ -2,10 +2,9 @@ package com.empresa.tomaturno.turno.application.command.service;
 
 import java.time.LocalDateTime;
 
-import com.empresa.tomaturno.turno.application.command.port.input.LlamarTurnoInputPort;
 import com.empresa.tomaturno.turno.application.command.port.input.TurnoCommandInputPort;
-import com.empresa.tomaturno.turno.application.query.port.output.TurnoColaPort;
 import com.empresa.tomaturno.turno.application.command.port.output.TurnoCommandRepository;
+import com.empresa.tomaturno.turno.application.command.port.output.TurnoGatewayPort;
 import com.empresa.tomaturno.turno.application.command.usecase.CrearTurnoUseCase;
 import com.empresa.tomaturno.turno.application.command.usecase.FinalizarTurnoUseCase;
 import com.empresa.tomaturno.turno.application.command.usecase.LlamarTurnoUseCase;
@@ -14,11 +13,9 @@ import com.empresa.tomaturno.turno.application.command.usecase.ReasignarTurnoUse
 import com.empresa.tomaturno.turno.application.command.usecase.LlamarSiguienteTurnoUseCase;
 import com.empresa.tomaturno.turno.application.command.usecase.MarcarSinAtenderUseCase;
 import com.empresa.tomaturno.turno.application.command.usecase.RellamarTurnoUseCase;
-import com.empresa.tomaturno.turno.application.query.port.output.TurnoConfiguracionPort;
-import com.empresa.tomaturno.turno.application.query.port.output.TurnoQueryRepository;
 import com.empresa.tomaturno.turno.dominio.entity.Turno;
 
-public class TurnoCommandService implements TurnoCommandInputPort, LlamarTurnoInputPort {
+public class TurnoCommandService implements TurnoCommandInputPort {
 
     private final CrearTurnoUseCase crearTurnoUseCase;
     private final LlamarTurnoUseCase llamarTurnoUseCase;
@@ -30,20 +27,15 @@ public class TurnoCommandService implements TurnoCommandInputPort, LlamarTurnoIn
     private final MarcarEnEsperaUseCase marcarEnEsperaUseCase;
 
     public TurnoCommandService(TurnoCommandRepository turnoCommandRepository,
-            TurnoQueryRepository turnoQueryRepository,
-            TurnoColaPort turnoColaPort,
-            TurnoConfiguracionPort turnoConfiguracionPort) {
-        this.crearTurnoUseCase = new CrearTurnoUseCase(turnoCommandRepository, turnoQueryRepository);
-        this.llamarTurnoUseCase = new LlamarTurnoUseCase(turnoCommandRepository, turnoQueryRepository,
-                turnoConfiguracionPort);
-        this.llamarSiguienteTurnoUseCase = new LlamarSiguienteTurnoUseCase(turnoQueryRepository, this);
-        this.marcarSinAtenderUseCase = new MarcarSinAtenderUseCase(turnoCommandRepository, turnoQueryRepository);
-        this.reasignarTurnoUseCase = new ReasignarTurnoUseCase(turnoCommandRepository, turnoQueryRepository,
-                turnoColaPort);
-        this.finalizarTurnoUseCase = new FinalizarTurnoUseCase(turnoCommandRepository, turnoQueryRepository);
-        this.rellamarTurnoUseCase = new RellamarTurnoUseCase(turnoCommandRepository, turnoQueryRepository,
-                turnoConfiguracionPort);
-        this.marcarEnEsperaUseCase = new MarcarEnEsperaUseCase(turnoCommandRepository, turnoQueryRepository);
+            TurnoGatewayPort turnoGatewayPort) {
+        this.crearTurnoUseCase = new CrearTurnoUseCase(turnoCommandRepository, turnoGatewayPort);
+        this.llamarTurnoUseCase = new LlamarTurnoUseCase(turnoCommandRepository, turnoGatewayPort);
+        this.llamarSiguienteTurnoUseCase = new LlamarSiguienteTurnoUseCase(turnoGatewayPort, this);
+        this.marcarSinAtenderUseCase = new MarcarSinAtenderUseCase(turnoCommandRepository, turnoGatewayPort);
+        this.reasignarTurnoUseCase = new ReasignarTurnoUseCase(turnoCommandRepository, turnoGatewayPort);
+        this.finalizarTurnoUseCase = new FinalizarTurnoUseCase(turnoCommandRepository, turnoGatewayPort);
+        this.rellamarTurnoUseCase = new RellamarTurnoUseCase(turnoCommandRepository, turnoGatewayPort);
+        this.marcarEnEsperaUseCase = new MarcarEnEsperaUseCase(turnoCommandRepository, turnoGatewayPort);
     }
 
     @Override

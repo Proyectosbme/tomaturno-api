@@ -2,11 +2,11 @@ package com.empresa.tomaturno.estadooperador.application.command.service;
 
 import com.empresa.tomaturno.estadooperador.application.command.port.input.EstadoOperadorCommandInputPort;
 import com.empresa.tomaturno.estadooperador.application.command.port.output.EstadoOperadorCommandRepository;
+import com.empresa.tomaturno.estadooperador.application.command.port.output.EstadoOperadorGatewayPort;
 import com.empresa.tomaturno.estadooperador.application.command.usecase.AbrirOperadorUseCase;
 import com.empresa.tomaturno.estadooperador.application.command.usecase.CerrarOperadorUseCase;
 import com.empresa.tomaturno.estadooperador.application.command.usecase.IniciarDescansoUseCase;
 import com.empresa.tomaturno.estadooperador.application.command.usecase.QuitarDescansoUseCase;
-import com.empresa.tomaturno.estadooperador.application.query.port.output.EstadoOperadorQueryRepository;
 import com.empresa.tomaturno.estadooperador.dominio.entity.EstadoOperador;
 
 public class EstadoOperadorCommandService implements EstadoOperadorCommandInputPort {
@@ -17,11 +17,11 @@ public class EstadoOperadorCommandService implements EstadoOperadorCommandInputP
     private final QuitarDescansoUseCase quitarDescansoUseCase;
 
     public EstadoOperadorCommandService(EstadoOperadorCommandRepository commandRepository,
-                                     EstadoOperadorQueryRepository queryRepository) {
-        this.abrirOperadorUseCase = new AbrirOperadorUseCase(commandRepository, queryRepository);
-        this.cerrarOperadorUseCase = new CerrarOperadorUseCase(commandRepository, queryRepository);
-        this.iniciarDescansoUseCase = new IniciarDescansoUseCase(commandRepository, queryRepository);
-        this.quitarDescansoUseCase = new QuitarDescansoUseCase(commandRepository, queryRepository);
+                                     EstadoOperadorGatewayPort estadoOperadorGatewayPort) {
+        this.abrirOperadorUseCase = new AbrirOperadorUseCase(commandRepository, estadoOperadorGatewayPort);
+        this.cerrarOperadorUseCase = new CerrarOperadorUseCase(commandRepository, estadoOperadorGatewayPort);
+        this.iniciarDescansoUseCase = new IniciarDescansoUseCase(commandRepository, estadoOperadorGatewayPort);
+        this.quitarDescansoUseCase = new QuitarDescansoUseCase(commandRepository, estadoOperadorGatewayPort);
     }
 
     @Override

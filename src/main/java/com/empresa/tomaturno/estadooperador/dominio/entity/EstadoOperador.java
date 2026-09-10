@@ -9,24 +9,38 @@ import com.empresa.tomaturno.shared.clases.Auditoria;
 
 public class EstadoOperador {
 
-    private Long id;
-    private Long idUsuario;
-    private Long idSucursal;
-    private Long idPuesto;
-    private Long idEstadoOperador;
-    private Long idTipoDescanso;
-    private String comentario;
-    private LocalDateTime fechaInicio;
+    private final Long id;
+    private final Long idUsuario;
+    private final Long idSucursal;
+    private final Long idPuesto;
+    private final Long idEstadoOperador;
+    private final Long idTipoDescanso;
+    private final String comentario;
+    private final LocalDateTime fechaInicio;
     private LocalDateTime fechaFin;
     private Auditoria auditoria;
 
-    private EstadoOperador() {
+    private EstadoOperador(Builder builder) {
+        this.id = builder.id;
+        this.idUsuario = builder.idUsuario;
+        this.idSucursal = builder.idSucursal;
+        this.idPuesto = builder.idPuesto;
+        this.idEstadoOperador = builder.idEstadoOperador;
+        this.idTipoDescanso = builder.idTipoDescanso;
+        this.comentario = builder.comentario;
+        this.fechaInicio = builder.fechaInicio;
+        this.fechaFin = builder.fechaFin;
+        this.auditoria = builder.auditoria;
     }
 
     // ─── Builder ──────────────────────────────────────────────────────────
 
-    public static Builder builder() {
-        return new Builder();
+    /**
+     * Único punto de creación/reconstitución: valida el builder antes de construir.
+     */
+    public static EstadoOperador of(Builder builder) {
+        validarCreacion(builder);
+        return builder.build();
     }
 
     public static class Builder {
@@ -40,9 +54,6 @@ public class EstadoOperador {
         private LocalDateTime fechaInicio;
         private LocalDateTime fechaFin;
         private Auditoria auditoria;
-
-        private Builder() {
-        }
 
         public Builder id(Long id) {
             this.id = id;
@@ -94,31 +105,8 @@ public class EstadoOperador {
             return this;
         }
 
-        /** Para filas nuevas: sin id todavía (lo asigna la persistencia). */
-        public EstadoOperador inicializar() {
-            EstadoOperador e = construir();
-            e.id = null;
-            return e;
-        }
-
-        /** Para reconstituir desde la base de datos: todos los campos, incluido el id. */
-        public EstadoOperador reconstituir() {
-            return construir();
-        }
-
-        private EstadoOperador construir() {
-            EstadoOperador e = new EstadoOperador();
-            e.id = this.id;
-            e.idUsuario = this.idUsuario;
-            e.idSucursal = this.idSucursal;
-            e.idPuesto = this.idPuesto;
-            e.idEstadoOperador = this.idEstadoOperador;
-            e.idTipoDescanso = this.idTipoDescanso;
-            e.comentario = this.comentario;
-            e.fechaInicio = this.fechaInicio;
-            e.fechaFin = this.fechaFin;
-            e.auditoria = this.auditoria;
-            return e;
+        private EstadoOperador build() {
+            return new EstadoOperador(this);
         }
     }
 
@@ -126,9 +114,7 @@ public class EstadoOperador {
 
     /** Activa al operador: queda ACTIVA, disponible para recibir turnos. */
     public static EstadoOperador abrir(Long idUsuario, Long idSucursal, Long idPuesto) {
-        EstadoOperador e = nuevaFila(idUsuario, idSucursal, idPuesto, DetalleEstadoOperador.ACTIVA.getValor(), null, null);
-        e.validarCreacion();
-        return e;
+        return nuevaFila(idUsuario, idSucursal, idPuesto, DetalleEstadoOperador.ACTIVA.getValor(), null, null);
     }
 
     /**
@@ -138,23 +124,19 @@ public class EstadoOperador {
      */
     public static EstadoOperador iniciarDescanso(Long idUsuario, Long idSucursal, Long idPuesto,
             Long idTipoDescanso, String comentario) {
-        EstadoOperador e = nuevaFila(idUsuario, idSucursal, idPuesto, DetalleEstadoOperador.DESCANSO.getValor(),
+        return nuevaFila(idUsuario, idSucursal, idPuesto, DetalleEstadoOperador.DESCANSO.getValor(),
                 idTipoDescanso, comentario);
-        e.validarCreacion();
-        return e;
     }
 
     /** Cierra al operador: queda CERRADA, el operador se va. */
     public static EstadoOperador cerrar(Long idUsuario, Long idSucursal, Long idPuesto) {
-        EstadoOperador e = nuevaFila(idUsuario, idSucursal, idPuesto, DetalleEstadoOperador.CERRADA.getValor(), null, null);
-        e.validarCreacion();
-        return e;
+        return nuevaFila(idUsuario, idSucursal, idPuesto, DetalleEstadoOperador.CERRADA.getValor(), null, null);
     }
 
     private static EstadoOperador nuevaFila(Long idUsuario, Long idSucursal, Long idPuesto,
             Long idEstadoOperador, Long idTipoDescanso, String comentario) {
         LocalDateTime ahora = LocalDateTime.now();
-        return EstadoOperador.builder()
+        return EstadoOperador.of(new Builder()
                 .idUsuario(idUsuario)
                 .idSucursal(idSucursal)
                 .idPuesto(idPuesto)
@@ -163,8 +145,7 @@ public class EstadoOperador {
                 .comentario(comentario)
                 .fechaInicio(ahora)
                 .fechaFin(null)
-                .auditoria(Auditoria.deCreacion(usuarioAuditoria(idUsuario), ahora))
-                .inicializar();
+                .auditoria(Auditoria.deCreacion(usuarioAuditoria(idUsuario), ahora)));
     }
 
     /**
@@ -189,18 +170,18 @@ public class EstadoOperador {
 
     // ─── Validaciones ─────────────────────────────────────────────────────
 
-    private void validarCreacion() {
-        if (this.idUsuario == null)
+    private static void validarCreacion(Builder builder) {
+        if (builder.idUsuario == null)
             throw new EstadoOperadorValidationException("El idUsuario es obligatorio");
-        if (this.idSucursal == null)
+        if (builder.idSucursal == null)
             throw new EstadoOperadorValidationException("El idSucursal es obligatorio");
-        if (this.idEstadoOperador == null)
+        if (builder.idEstadoOperador == null)
             throw new EstadoOperadorValidationException("El idEstadoOperador es obligatorio");
-        if (this.idEstadoOperador.equals(DetalleEstadoOperador.DESCANSO.getValor()) && this.idTipoDescanso == null)
+        if (builder.idEstadoOperador.equals(DetalleEstadoOperador.DESCANSO.getValor()) && builder.idTipoDescanso == null)
             throw new EstadoOperadorValidationException(
                     "El idTipoDescanso es obligatorio cuando el operador está en DESCANSO");
-        if (this.idTipoDescanso != null && this.idTipoDescanso.equals(DetalleTipoDescanso.OTRO.getValor())
-                && (this.comentario == null || this.comentario.isBlank()))
+        if (builder.idTipoDescanso != null && builder.idTipoDescanso.equals(DetalleTipoDescanso.OTRO.getValor())
+                && (builder.comentario == null || builder.comentario.isBlank()))
             throw new EstadoOperadorValidationException(
                     "El comentario es obligatorio cuando el tipo de descanso es OTRO");
     }

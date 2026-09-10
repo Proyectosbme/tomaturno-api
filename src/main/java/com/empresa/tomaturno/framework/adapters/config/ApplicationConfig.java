@@ -51,11 +51,11 @@ import com.empresa.tomaturno.framework.adapters.output.persistencia.adapters.Col
 import com.empresa.tomaturno.framework.adapters.output.persistencia.adapters.ConfiguracionGatewayAdapter;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.adapters.DetalleColaxPuestoGatewayAdapter;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.adapters.EmpresaGatewayAdapter;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.adapters.EstadoOperadorGatewayAdapter;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.adapters.PersonaGatewayAdapter;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.adapters.PuestoGatewayAdapter;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.adapters.SucursalGatewayAdapter;
-import com.empresa.tomaturno.framework.adapters.output.persistencia.adapters.TurnoColaAdapter;
-import com.empresa.tomaturno.framework.adapters.output.persistencia.adapters.TurnoConfiguracionAdapter;
+import com.empresa.tomaturno.framework.adapters.output.persistencia.adapters.TurnoGatewayAdapter;
 import com.empresa.tomaturno.framework.adapters.output.persistencia.adapters.UsuarioGatewayAdapter;
 import com.empresa.tomaturno.turno.application.command.port.input.TurnoCommandInputPort;
 import com.empresa.tomaturno.turno.application.command.port.output.TurnoCommandRepository;
@@ -63,9 +63,6 @@ import com.empresa.tomaturno.turno.application.command.service.TurnoCommandServi
 import com.empresa.tomaturno.turno.application.query.port.input.TurnoQueryInputPort;
 import com.empresa.tomaturno.turno.application.query.port.output.TurnoQueryRepository;
 import com.empresa.tomaturno.turno.application.query.service.TurnoQueryService;
-import com.empresa.tomaturno.turno.application.query.port.input.TurnoHoyQueryInputPort;
-import com.empresa.tomaturno.turno.application.query.port.output.TurnoHoyQueryRepository;
-import com.empresa.tomaturno.turno.application.query.service.TurnoHoyQueryService;
 import com.empresa.tomaturno.usuario.application.command.port.input.UsuarioCommandInputPort;
 import com.empresa.tomaturno.usuario.application.command.port.output.KeycloakAdminPort;
 import com.empresa.tomaturno.usuario.application.command.port.output.UsuarioCommandRepository;
@@ -101,7 +98,6 @@ public class ApplicationConfig {
     private final KeycloakAdminPort keycloakAdminPort;
     private final EstadoOperadorCommandRepository estadoOperadorCommandRepository;
     private final EstadoOperadorQueryRepository estadoOperadorQueryRepository;
-    private final TurnoHoyQueryRepository turnoHoyQueryRepository;
 
     public ApplicationConfig(SucursalQueryRepository sucursalQueryRepository,
                              SucursalCommandRepository sucursalCommandRepository,
@@ -123,8 +119,7 @@ public class ApplicationConfig {
                              EmpresaQueryRepository empresaQueryRepository,
                              KeycloakAdminPort keycloakAdminPort,
                              EstadoOperadorCommandRepository estadoOperadorCommandRepository,
-                             EstadoOperadorQueryRepository estadoOperadorQueryRepository,
-                             TurnoHoyQueryRepository turnoHoyQueryRepository) {
+                             EstadoOperadorQueryRepository estadoOperadorQueryRepository) {
         this.sucursalQueryRepository = sucursalQueryRepository;
         this.sucursalCommandRepository = sucursalCommandRepository;
         this.colaCommandRepository = colaCommandRepository;
@@ -146,7 +141,6 @@ public class ApplicationConfig {
         this.keycloakAdminPort = keycloakAdminPort;
         this.estadoOperadorCommandRepository = estadoOperadorCommandRepository;
         this.estadoOperadorQueryRepository = estadoOperadorQueryRepository;
-        this.turnoHoyQueryRepository = turnoHoyQueryRepository;
     }
 
 
@@ -222,9 +216,9 @@ public class ApplicationConfig {
     @Produces
     @ApplicationScoped
     public TurnoCommandInputPort turnoCommandService() {
-        return new TurnoCommandService(turnoCommandRepository, turnoQueryRepository,
-                new TurnoColaAdapter(colaQueryRepository),
-                new TurnoConfiguracionAdapter(configuracionQueryRepository, estadoOperadorQueryRepository));
+        return new TurnoCommandService(turnoCommandRepository,
+                new TurnoGatewayAdapter(turnoQueryRepository, colaQueryRepository, configuracionQueryRepository,
+                        estadoOperadorQueryRepository));
     }
 
     @Produces
@@ -264,7 +258,8 @@ public class ApplicationConfig {
     @Produces
     @ApplicationScoped
     public EstadoOperadorCommandInputPort estadoOperadorCommandService() {
-        return new EstadoOperadorCommandService(estadoOperadorCommandRepository, estadoOperadorQueryRepository);
+        return new EstadoOperadorCommandService(estadoOperadorCommandRepository,
+                new EstadoOperadorGatewayAdapter(estadoOperadorQueryRepository));
     }
 
     @Produces
@@ -273,9 +268,4 @@ public class ApplicationConfig {
         return new EstadoOperadorQueryService(estadoOperadorQueryRepository);
     }
 
-    @Produces
-    @ApplicationScoped
-    public TurnoHoyQueryInputPort turnoHoyQueryService() {
-        return new TurnoHoyQueryService(turnoHoyQueryRepository);
-    }
 }

@@ -33,7 +33,7 @@ public interface TurnoOutputMapper {
                 entity.getIdCatalogoEstado() != null ? entity.getIdCatalogoEstado() : 0L,
                 entity.getIdCatalogoEstadoDetalle().longValue());
         }
-        return Turno.builder()
+        return Turno.of(new Turno.Builder()
                 .id(entity.getId())
                 .idSucursal(entity.getIdpk().getIdSucursal())
                 .fechaCreacion(entity.getIdpk().getFechaCreacion())
@@ -48,8 +48,7 @@ public interface TurnoOutputMapper {
                 .idSucursalPuesto(entity.getIdSucursalPuesto())
                 .idUsuario(entity.getIdUsuario())
                 .idPersona(entity.getIdPersona())
-                .tipoCasoEspecial(entity.getTipoCasoEspecial())
-                .build();
+                .tipoCasoEspecial(entity.getTipoCasoEspecial()));
     }
 
     @Mapping(target = "idpk",        ignore = true)

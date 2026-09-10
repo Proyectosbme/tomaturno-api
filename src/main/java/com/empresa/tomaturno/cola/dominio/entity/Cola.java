@@ -72,7 +72,7 @@ public final class Cola {
     }
 
     /**
-     * Detalle.crear es protected: solo Cola construye un Detalle nuevo. La
+     * Detalle.of es protected: solo Cola construye un Detalle nuevo. La
      * auditoría viene ya armada de afuera.
      */
     public Detalle crearDetalle(Detalle.Builder builder, Auditoria auditoriaCreacion) {
@@ -80,7 +80,7 @@ public final class Cola {
         // El código del detalle son dos letras: la de esta cola más la propia que trae
         // el builder.
         builder.codigo(this.codigo + (builder.getCodigo() != null ? builder.getCodigo() : ""));
-        Detalle detalle = Detalle.crear(builder);
+        Detalle detalle = Detalle.of(builder);
         validarNombreDetalleUnico(detalle.getNombre());
         validarCodigoDetalleUnico(detalle.getCodigo());
         return detalle;
@@ -88,7 +88,7 @@ public final class Cola {
 
     /** Reconstitución desde persistencia: los datos ya son válidos, no recompone código ni valida unicidad. */
     public static Detalle reconstituirDetalle(Detalle.Builder builder) {
-        return Detalle.crear(builder);
+        return Detalle.of(builder);
     }
 
     public void validarCodigoDetalleUnico(String codigoDetalle) {

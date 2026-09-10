@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.empresa.tomaturno.turno.application.query.dto.TurnoHoyDTO;
 import com.empresa.tomaturno.turno.dominio.entity.Turno;
 
 public interface TurnoQueryRepository {
@@ -23,4 +24,8 @@ public interface TurnoQueryRepository {
 
     String obtenerCodigoBaseTurno( Long idSucursal,Long idCola, Long idDetalle);
     Long obtenerCorreltivoDetalle (Long idSucursal, Long idCola,Long idDetalle );
+
+    /** Turnos de hoy (vista VW_TURNOS_HOY): distinta fuente de datos, mismo puerto de query de Turno. */
+    List<TurnoHoyDTO> buscarTurnosHoy(Long idSucursal);
+    List<TurnoHoyDTO> buscarTurnosHoyPorUsuario(Long idUsuario, Long idSucursal);
 }

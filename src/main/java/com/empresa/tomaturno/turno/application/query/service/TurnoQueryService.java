@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.empresa.tomaturno.turno.application.query.dto.TurnoHoyDTO;
 import com.empresa.tomaturno.turno.application.query.port.input.TurnoQueryInputPort;
 import com.empresa.tomaturno.turno.application.query.port.output.TurnoQueryRepository;
 import com.empresa.tomaturno.turno.application.query.usecase.BuscarTurnoPorPKUseCase;
@@ -42,5 +43,15 @@ public class TurnoQueryService implements TurnoQueryInputPort {
     @Override
     public LocalDateTime obtenerUltimaFechaLlamadaPorUsuario(Long idUsuario, Long idSucursal) {
         return turnoQueryRepository.obtenerUltimaFechaLlamadaPorUsuario(idUsuario, idSucursal);
+    }
+
+    @Override
+    public List<TurnoHoyDTO> buscarTurnosHoy(Long idSucursal) {
+        return turnoQueryRepository.buscarTurnosHoy(idSucursal);
+    }
+
+    @Override
+    public List<TurnoHoyDTO> buscarTurnosHoyPorUsuario(Long idUsuario, Long idSucursal) {
+        return turnoQueryRepository.buscarTurnosHoyPorUsuario(idUsuario, idSucursal);
     }
 }
