@@ -138,6 +138,13 @@ public class TurnoAutomaticoOrquestador {
             return;
         }
 
+        if (!turnoWebSocket.tieneSesionActiva(idUsuario)) {
+            LOG.log(Level.FINE,
+                    "Operador ACTIVA pero sin sesión de WebSocket, se omite el llamado automático (idUsuario={0})",
+                    idUsuario);
+            return;
+        }
+
         Turno turno;
         try {
             turno = turnoCommandInputPort.llamarSiguiente(idSucursal, idPuesto, idSucursalPuesto, idUsuario);
@@ -225,6 +232,10 @@ public class TurnoAutomaticoOrquestador {
                     EstadoOperador vigente = estadoOperadorQueryInputPort.buscarVigente(idUsuario, idSucursalPuesto);
                     if (vigente == null || vigente.getIdEstadoOperador() == null
                             || !vigente.getIdEstadoOperador().equals(DetalleEstadoOperador.ACTIVA.getValor())) {
+                        continue;
+                    }
+
+                    if (!turnoWebSocket.tieneSesionActiva(idUsuario)) {
                         continue;
                     }
 

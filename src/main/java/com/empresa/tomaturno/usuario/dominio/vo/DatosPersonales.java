@@ -11,8 +11,8 @@ public class DatosPersonales {
     private final String correo;
 
     private DatosPersonales(String nombres, String apellidos, String dui, String telefono, String correo) {
-        this.nombres = nombres;
-        this.apellidos = apellidos;
+        this.nombres = nombres != null ? nombres.toUpperCase() : null;
+        this.apellidos = apellidos != null ? apellidos.toUpperCase() : null;;
         this.dui = dui;
         this.telefono = telefono;
         this.correo = correo;

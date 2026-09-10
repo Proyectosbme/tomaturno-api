@@ -99,6 +99,26 @@ public class EstadoOperadorController {
         return Response.ok(mapper.toResponse(estadoOperador)).build();
     }
 
+    /**
+     * Reintenta el llamado automático sin cambiar el estado del operador — para el caso
+     * en que el operador entra/recarga la pantalla ya ACTIVA (no pasa por /abrir ni
+     * /descanso/quitar) y hay turnos en espera. El llamador debe evitar invocar esto si
+     * el operador ya tiene un turno LLAMADO vigente (no se valida acá; depende de la
+     * config por sucursal LLAMAR_CON_ACTIVO en el flujo de llamado normal).
+     */
+    @PUT
+    @Path("/verificar-automatico")
+    @Transactional
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("OPERADOR")
+    public Response verificarLlamadoAutomatico(
+            @QueryParam("idUsuario") Long idUsuario,
+            @QueryParam("idSucursal") Long idSucursal,
+            @QueryParam("idPuesto") Long idPuesto) {
+        turnoAutomaticoOrquestador.intentarLlamadoAutomatico(idSucursal, idPuesto, idSucursal, idUsuario);
+        return Response.noContent().build();
+    }
+
     @PUT
     @Path("/descanso/quitar")
     @Transactional
