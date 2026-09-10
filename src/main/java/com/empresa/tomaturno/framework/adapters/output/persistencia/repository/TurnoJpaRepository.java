@@ -61,15 +61,20 @@ public class TurnoJpaRepository implements PanacheRepositoryBase<TurnoJpaEntity,
                 idUsuario, idSucursal, inicio, fin) > 0;
     }
 
-    /** MAX(fechaLlamada) histórico del usuario en la sucursal (todos los turnos, sin filtrar por fecha ni estado) */
-    public LocalDateTime obtenerUltimaFechaLlamadaPorUsuario(Long idUsuario, Long idSucursal) {
-        return getEntityManager()
+    /**
+     * MAX(fechaLlamada) histórico del usuario en la sucursal (todos los turnos, sin
+     * filtrar por fecha ni estado)
+     */
+    public LocalDateTime obtenerUltimaFechaLlamadaPorUsuario(Long idUsuario, Long idSucursalPuesto) {
+        List<LocalDateTime> resultados = getEntityManager()
                 .createQuery(
-                        "select max(t.fechaLlamada) from TurnoJpaEntity t where t.idUsuario = ?1 and t.idpk.idSucursal = ?2",
+                        "select max(t.fechaLlamada) from TurnoJpaEntity t where t.idUsuario = ?1 and t.idSucursalPuesto = ?2",
                         LocalDateTime.class)
                 .setParameter(1, idUsuario)
-                .setParameter(2, idSucursal)
-                .getSingleResult();
+                .setParameter(2, idSucursalPuesto)
+                .getResultList();
+
+        return resultados.isEmpty() ? null : resultados.get(0);
     }
 
     public List<TurnoJpaEntity> buscarPorFiltros(Long idSucursal, Long idCola, Long idDetalle,
@@ -83,9 +88,11 @@ public class TurnoJpaRepository implements PanacheRepositoryBase<TurnoJpaEntity,
         StringBuilder jpql = new StringBuilder("SELECT t FROM TurnoJpaEntity t ");
         if (conPrioridad) {
             // INNER JOIN a propósito: si se filtra por puesto, solo interesan turnos de
-            // cola+detalle que ese puesto tiene asignados en detallecolaxpuesto. Con LEFT JOIN
+            // cola+detalle que ese puesto tiene asignados en detallecolaxpuesto. Con LEFT
+            // JOIN
             // los turnos de colas/detalles NO asignados igual se colaban en el resultado
-            // (con prioridad 9999 por el COALESCE), permitiendo que "llamar siguiente" tomara
+            // (con prioridad 9999 por el COALESCE), permitiendo que "llamar siguiente"
+            // tomara
             // un turno de un detalle que ese operador no atiende.
             jpql.append("JOIN DetalleColaxPuestoJpaEntity d ")
                     .append("ON t.idCola = d.id.idCola ")

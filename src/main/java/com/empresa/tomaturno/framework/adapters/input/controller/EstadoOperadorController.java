@@ -78,7 +78,7 @@ public class EstadoOperadorController {
             @QueryParam("idUsuario") Long idUsuario,
             @QueryParam("idSucursal") Long idSucursal,
             @QueryParam("idPuesto") Long idPuesto) {
-        turnoAutomaticoOrquestador.finalizarTurnoActivoSiExiste(idSucursal, idPuesto, idSucursal);
+        turnoAutomaticoOrquestador.finalizarTurnoActivoSiExiste(idSucursal, idPuesto, idSucursal,idUsuario);
         EstadoOperador estadoOperador = commandPort.cerrarOperador(idUsuario, idSucursal, idPuesto);
         return Response.ok(mapper.toResponse(estadoOperador)).build();
     }
@@ -94,7 +94,7 @@ public class EstadoOperadorController {
             @QueryParam("idSucursal") Long idSucursal,
             @QueryParam("idPuesto") Long idPuesto,
             @Valid DescansoRequestDTO dto) {
-        turnoAutomaticoOrquestador.finalizarTurnoActivoSiExiste(idSucursal, idPuesto, idSucursal);
+        turnoAutomaticoOrquestador.finalizarTurnoActivoSiExiste(idSucursal, idPuesto, idSucursal,idUsuario);
         EstadoOperador estadoOperador = commandPort.iniciarDescanso(idUsuario, idSucursal, idPuesto, dto.getIdTipoDescanso(), dto.getComentario());
         return Response.ok(mapper.toResponse(estadoOperador)).build();
     }

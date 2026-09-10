@@ -36,7 +36,8 @@ import jakarta.json.bind.Jsonb;
  * conectando estado de operador (EstadoOperador), configuración por sucursal
  * (TURNO_AUTOMATICO) y el flujo normal de turnos (TurnoCommandInputPort).
  *
- * No se ocupa del caso "turno nuevo creado con cola vacía" (eso lo maneja otro flujo).
+ * No se ocupa del caso "turno nuevo creado con cola vacía" (eso lo maneja otro
+ * flujo).
  */
 @ApplicationScoped
 public class TurnoAutomaticoOrquestador {
@@ -80,11 +81,13 @@ public class TurnoAutomaticoOrquestador {
     }
 
     /**
-     * Si el puesto indicado tiene actualmente un turno en estado LLAMADO, lo finaliza
-     * y emite el evento websocket TURNO_FINALIZADO. Si no hay turno LLAMADO, no hace nada.
+     * Si el puesto indicado tiene actualmente un turno en estado LLAMADO, lo
+     * finaliza
+     * y emite el evento websocket TURNO_FINALIZADO. Si no hay turno LLAMADO, no
+     * hace nada.
      * Tolerante a nulls: si falta algún dato necesario, no hace nada.
      */
-    public void finalizarTurnoActivoSiExiste(Long idSucursal, Long idPuesto, Long idSucursalPuesto) {
+    public void finalizarTurnoActivoSiExiste(Long idSucursal, Long idPuesto, Long idSucursalPuesto, Long idUsuario) {
         if (idSucursal == null || idPuesto == null || idSucursalPuesto == null) {
             return;
         }
@@ -97,7 +100,15 @@ public class TurnoAutomaticoOrquestador {
             return;
         }
 
-        Turno turno = llamados.get(0);
+        Turno turno = llamados.stream()
+                .filter(t -> idUsuario.equals(t.getIdUsuario()))
+                .findFirst()
+                .orElse(null);
+
+        if (turno == null) {
+            return; 
+        }
+
         Turno finalizado = turnoCommandInputPort.finalizar(turno.getIdSucursal(), turno.getFechaCreacion(),
                 turno.getCodigoTurno());
         TurnoResponseDTO responseDTO = turnoInputMapper.toResponse(finalizado);
@@ -105,8 +116,10 @@ public class TurnoAutomaticoOrquestador {
     }
 
     /**
-     * Si la sucursal tiene activado TURNO_AUTOMATICO y el estado del operador sigue ACTIVA,
-     * intenta llamar el siguiente turno pendiente del puesto. Si no hay turnos pendientes,
+     * Si la sucursal tiene activado TURNO_AUTOMATICO y el estado del operador sigue
+     * ACTIVA,
+     * intenta llamar el siguiente turno pendiente del puesto. Si no hay turnos
+     * pendientes,
      * no hace nada (caso normal, no es error). Tolerante a nulls.
      */
     public void intentarLlamadoAutomatico(Long idSucursal, Long idPuesto, Long idSucursalPuesto, Long idUsuario) {
@@ -144,16 +157,22 @@ public class TurnoAutomaticoOrquestador {
     }
 
     /**
-     * Cuando se crea un turno nuevo y hay un operador libre (ACTIVA, sin turno en curso)
-     * asignado a esa cola, se lo asigna automáticamente, repartiendo de forma equitativa
+     * Cuando se crea un turno nuevo y hay un operador libre (ACTIVA, sin turno en
+     * curso)
+     * asignado a esa cola, se lo asigna automáticamente, repartiendo de forma
+     * equitativa
      * entre los operadores libres según cuál lleva más tiempo sin recibir un turno.
      *
-     * Es "best effort": si dos turnos se crean casi simultáneamente y compiten por el mismo
-     * candidato, uno de los dos fallará su intento (condición de carrera) y ese turno se
+     * Es "best effort": si dos turnos se crean casi simultáneamente y compiten por
+     * el mismo
+     * candidato, uno de los dos fallará su intento (condición de carrera) y ese
+     * turno se
      * queda pendiente en cola normalmente, sin romper nada.
      *
-     * Tolerante a nulls/errores en cada paso: nunca debe lanzar una excepción hacia el
-     * llamador, porque esto nunca debe hacer fallar la creación del turno que ya se completó.
+     * Tolerante a nulls/errores en cada paso: nunca debe lanzar una excepción hacia
+     * el
+     * llamador, porque esto nunca debe hacer fallar la creación del turno que ya se
+     * completó.
      */
     public void intentarAsignarTurnoNuevo(Turno turnoCreado) {
         try {
