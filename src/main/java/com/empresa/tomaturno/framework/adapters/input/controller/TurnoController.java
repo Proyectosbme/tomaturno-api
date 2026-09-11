@@ -38,6 +38,7 @@ public class TurnoController {
         private final TurnoAutomaticoOrquestador turnoAutomaticoOrquestador;
         private final TurnoHoyInputMapper turnoHoyInputMapper;
         private final String TURNO_LLAMADO = "TURNO_LLAMADO";
+        private final String TURNO_TRASLADO = "TURNO_TRASLADO";
 
         public TurnoController(TurnoCommandInputPort turnoCommandInputPort,
                         TurnoQueryInputPort turnoQueryInputPort,
@@ -169,6 +170,10 @@ public class TurnoController {
                 // se usa para liberar a ese operador y disparar el llamado automático si corresponde.
                 Turno turnoOriginal = turnoQueryInputPort.buscarPorPK(idSucursal, fechaCreacion, codigoTurno);
                 if (turnoOriginal != null) {
+                        // Sin esto, la pantalla de la sucursal de origen (toma-turno) no se entera del
+                        // traslado y sigue mostrando el turno como si siguiera en la caja/operador anterior.
+                        TurnoResponseDTO turnoOriginalDTO = turnoInputMapper.toResponse(turnoOriginal);
+                        turnoWebSocket.enviarTurno(wsPayload(TURNO_TRASLADO, idSucursal, turnoOriginalDTO));
                         turnoAutomaticoOrquestador.intentarLlamadoAutomatico(idSucursal, turnoOriginal.getIdPuesto(),
                                         turnoOriginal.getIdSucursalPuesto(), turnoOriginal.getIdUsuario());
                 }
