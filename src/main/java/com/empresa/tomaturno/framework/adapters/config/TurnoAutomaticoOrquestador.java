@@ -23,7 +23,6 @@ import com.empresa.tomaturno.framework.adapters.input.controller.TurnoWebSocket;
 import com.empresa.tomaturno.turno.application.command.port.input.TurnoCommandInputPort;
 import com.empresa.tomaturno.turno.application.query.port.input.TurnoQueryInputPort;
 import com.empresa.tomaturno.turno.dominio.entity.Turno;
-import com.empresa.tomaturno.turno.dominio.exceptions.TurnoNotFoundException;
 import com.empresa.tomaturno.turno.dominio.vo.DetalleEstado;
 import com.empresa.tomaturno.usuario.application.query.port.input.UsuarioQueryInputPort;
 import com.empresa.tomaturno.usuario.dominio.entity.Usuario;
@@ -148,9 +147,13 @@ public class TurnoAutomaticoOrquestador {
         Turno turno;
         try {
             turno = turnoCommandInputPort.llamarSiguiente(idSucursal, idPuesto, idSucursalPuesto, idUsuario);
-        } catch (TurnoNotFoundException e) {
-            LOG.log(Level.FINE, "No hay turnos pendientes para el llamado automático (idSucursal={0}, idPuesto={1})",
-                    new Object[] { idSucursal, idPuesto });
+        } catch (Exception e) {
+            // No hay turnos pendientes, o el operador ya quedó con uno vigente por una condición
+            // de carrera con otro trigger (ej. turno nuevo creado al mismo tiempo, ver
+            // intentarAsignarTurnoNuevo). En ambos casos no hay nada que llamar ahora: esto nunca
+            // debe propagar y hacer rollback de la transacción del llamador (finalizar, etc.).
+            LOG.log(Level.FINE, "No se pudo completar el llamado automático (idSucursal={0}, idPuesto={1}): {2}",
+                    new Object[] { idSucursal, idPuesto, e.getMessage() });
             return;
         }
 
@@ -192,6 +195,17 @@ public class TurnoAutomaticoOrquestador {
             if (cfg == null || cfg.getParametro() == null || cfg.getParametro() != 1) {
                 return;
             }
+
+            // Si ya hay otros turnos CREADO esperando en esta misma cola/detalle, al operador
+            // libre no se le asigna el recién creado sino el más antiguo pendiente (orden
+            // fechaCreacion ASC, ya viene así de buscarPorFiltro): evita que el nuevo se salte
+            // a los que ya esperaban, sin dejar cajeros libres ociosos habiendo trabajo.
+            List<Turno> pendientesEnCola = turnoQueryInputPort.buscarPorFiltro(
+                    turnoCreado.getIdSucursal(), turnoCreado.getIdCola(), turnoCreado.getIdDetalle(),
+                    (int) DetalleEstado.CREADO.getValor(), LocalDate.now(), null, null);
+            Turno turnoAAsignar = (pendientesEnCola != null && !pendientesEnCola.isEmpty())
+                    ? pendientesEnCola.get(0)
+                    : turnoCreado;
 
             List<DetalleColaxPuesto> asignaciones = detalleColaxPuestoQueryInputPort.buscarPorCola(
                     turnoCreado.getIdCola(), turnoCreado.getIdDetalle(), turnoCreado.getIdSucursal());
@@ -259,15 +273,15 @@ public class TurnoAutomaticoOrquestador {
 
             Turno turno;
             try {
-                turno = turnoCommandInputPort.llamar(turnoCreado.getIdSucursal(), turnoCreado.getFechaCreacion(),
-                        turnoCreado.getCodigoTurno(), elegido.idPuesto(), elegido.idSucursalPuesto(),
+                turno = turnoCommandInputPort.llamar(turnoAAsignar.getIdSucursal(), turnoAAsignar.getFechaCreacion(),
+                        turnoAAsignar.getCodigoTurno(), elegido.idPuesto(), elegido.idSucursalPuesto(),
                         elegido.idUsuario());
             } catch (Exception e) {
                 // Condición de carrera esperada (otro turno tomó al mismo candidato primero) u
                 // otra validación de negocio: el turno se queda pendiente en cola, normal.
                 LOG.log(Level.FINE,
                         "No se pudo auto-asignar el turno nuevo (idSucursal={0}, codigoTurno={1}): {2}",
-                        new Object[] { turnoCreado.getIdSucursal(), turnoCreado.getCodigoTurno(), e.getMessage() });
+                        new Object[] { turnoAAsignar.getIdSucursal(), turnoAAsignar.getCodigoTurno(), e.getMessage() });
                 return;
             }
 

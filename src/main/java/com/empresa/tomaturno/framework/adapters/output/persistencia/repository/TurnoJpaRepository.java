@@ -46,6 +46,16 @@ public class TurnoJpaRepository implements PanacheRepositoryBase<TurnoJpaEntity,
     }
 
     public boolean existeTurnoLlamadoPorPuesto(Long idPuesto, Long idSucursal, LocalDate fecha) {
+        // Lock por sucursal + puesto: sin esto, dos llamados casi simultáneos (doble pestaña,
+        // doble clic) pueden leer "0 turnos activos" antes de que cualquiera confirme y
+        // terminar asignando 2 turnos LLAMADO al mismo puesto. Signo negativo en la 2da
+        // key para no compartir espacio de lock con existeTurnoLlamadoPorUsuario.
+        getEntityManager()
+                .createNativeQuery("SELECT pg_advisory_xact_lock(:sucursal, :puesto)")
+                .setParameter("sucursal", idSucursal.intValue())
+                .setParameter("puesto", -idPuesto.intValue())
+                .getSingleResult();
+
         LocalDateTime inicio = fecha.atStartOfDay();
         LocalDateTime fin = fecha.plusDays(1).atStartOfDay();
         return count(
@@ -54,6 +64,14 @@ public class TurnoJpaRepository implements PanacheRepositoryBase<TurnoJpaEntity,
     }
 
     public boolean existeTurnoLlamadoPorUsuario(Long idUsuario, Long idSucursal, LocalDate fecha) {
+        // Ver comentario de existeTurnoLlamadoPorPuesto. Key positiva: mismo espacio de
+        // lock que esa, separada por signo para evitar colisión idUsuario/idPuesto.
+        getEntityManager()
+                .createNativeQuery("SELECT pg_advisory_xact_lock(:sucursal, :usuario)")
+                .setParameter("sucursal", idSucursal.intValue())
+                .setParameter("usuario", idUsuario.intValue())
+                .getSingleResult();
+
         LocalDateTime inicio = fecha.atStartOfDay();
         LocalDateTime fin = fecha.plusDays(1).atStartOfDay();
         return count(

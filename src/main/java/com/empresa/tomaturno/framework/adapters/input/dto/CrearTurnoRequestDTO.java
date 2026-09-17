@@ -16,7 +16,7 @@ public class CrearTurnoRequestDTO {
     @NotNull
     private Long idCola;
     @NotNull
-    private Long idDetalle; // nullable: solo si la cola tiene detalles
+    private Long idDetalle;
     private Long idPersona; // nullable: solo si se escaneó el DUI
     private Integer tipoCasoEspecial; // nullable: solo si es caso especial
 }
