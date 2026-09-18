@@ -40,4 +40,4 @@ order by t.fechacreacion ;
 
 
 -- Programar la actualización cada día a las 2 AM
-SELECT cron.schedule('0 2 * * *', 'REFRESH MATERIALIZED VIEW tomaturno.VWTURNOS3MESES');
+--SELECT cron.schedule('0 2 * * *', 'REFRESH MATERIALIZED VIEW tomaturno.VWTURNOS3MESES');

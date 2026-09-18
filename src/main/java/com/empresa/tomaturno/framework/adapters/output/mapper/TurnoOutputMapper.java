@@ -48,7 +48,8 @@ public interface TurnoOutputMapper {
                 .idSucursalPuesto(entity.getIdSucursalPuesto())
                 .idUsuario(entity.getIdUsuario())
                 .idPersona(entity.getIdPersona())
-                .tipoCasoEspecial(entity.getTipoCasoEspecial()));
+                .tipoCasoEspecial(entity.getTipoCasoEspecial())
+                .fechaTraslado(entity.getFechaTraslado()));
     }
 
     @Mapping(target = "idpk",        ignore = true)

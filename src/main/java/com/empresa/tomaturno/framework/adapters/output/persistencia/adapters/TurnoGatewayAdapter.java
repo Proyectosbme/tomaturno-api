@@ -15,6 +15,8 @@ import com.empresa.tomaturno.shared.clases.ConfiguracionClave;
 import com.empresa.tomaturno.turno.application.command.port.output.TurnoGatewayPort;
 import com.empresa.tomaturno.turno.application.query.port.output.TurnoQueryRepository;
 import com.empresa.tomaturno.turno.dominio.entity.Turno;
+import com.empresa.tomaturno.usuario.application.query.port.output.UsuarioQueryRepository;
+import com.empresa.tomaturno.usuario.dominio.entity.Usuario;
 
 public class TurnoGatewayAdapter implements TurnoGatewayPort {
 
@@ -22,15 +24,18 @@ public class TurnoGatewayAdapter implements TurnoGatewayPort {
     private final ColaQueryRepository colaQueryRepository;
     private final ConfiguracionQueryRepository configuracionQueryRepository;
     private final EstadoOperadorQueryRepository estadoOperadorQueryRepository;
+    private final UsuarioQueryRepository usuarioQueryRepository;
 
     public TurnoGatewayAdapter(TurnoQueryRepository turnoQueryRepository,
             ColaQueryRepository colaQueryRepository,
             ConfiguracionQueryRepository configuracionQueryRepository,
-            EstadoOperadorQueryRepository estadoOperadorQueryRepository) {
+            EstadoOperadorQueryRepository estadoOperadorQueryRepository,
+            UsuarioQueryRepository usuarioQueryRepository) {
         this.turnoQueryRepository = turnoQueryRepository;
         this.colaQueryRepository = colaQueryRepository;
         this.configuracionQueryRepository = configuracionQueryRepository;
         this.estadoOperadorQueryRepository = estadoOperadorQueryRepository;
+        this.usuarioQueryRepository = usuarioQueryRepository;
     }
 
     @Override
@@ -96,5 +101,15 @@ public class TurnoGatewayAdapter implements TurnoGatewayPort {
         EstadoOperador vigente = estadoOperadorQueryRepository.buscarVigente(idUsuario, idSucursal);
         return vigente != null && vigente.getIdEstadoOperador() != null
                 && vigente.getIdEstadoOperador() == DetalleEstadoOperador.ACTIVA.getValor();
+    }
+
+    @Override
+    public boolean atiendeCasosEspeciales(Long idUsuario, Long idSucursal) {
+        if (idUsuario == null) {
+            return false;
+        }
+        Usuario usuario = usuarioQueryRepository.buscarPorIdUsuarioYSucursal(idUsuario, idSucursal);
+        return usuario != null && usuario.getAtenderCasosEspeciales() != null
+                && usuario.getAtenderCasosEspeciales() != 0;
     }
 }

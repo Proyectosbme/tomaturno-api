@@ -218,7 +218,7 @@ public class ApplicationConfig {
     public TurnoCommandInputPort turnoCommandService() {
         return new TurnoCommandService(turnoCommandRepository,
                 new TurnoGatewayAdapter(turnoQueryRepository, colaQueryRepository, configuracionQueryRepository,
-                        estadoOperadorQueryRepository));
+                        estadoOperadorQueryRepository, usuarioQueryRepository));
     }
 
     @Produces

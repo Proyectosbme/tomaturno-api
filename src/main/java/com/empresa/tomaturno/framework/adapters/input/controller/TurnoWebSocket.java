@@ -16,6 +16,8 @@ import jakarta.websocket.server.ServerEndpoint;
 
 import io.quarkus.runtime.Startup;
 
+import com.empresa.tomaturno.framework.adapters.config.EstadoOperadorAutomaticoOrquestador;
+
 @ServerEndpoint("/turnos")
 @ApplicationScoped
 @Startup
@@ -23,16 +25,35 @@ public class TurnoWebSocket {
 
     private static final Set<Session> sessions = new CopyOnWriteArraySet<>();
 
-    /** idUsuario -> sesiones abiertas de ese operador (puede tener más de una pestaña). */
-    private static final Map<Long, Set<Session>> sesionesPorUsuario = new ConcurrentHashMap<>();
+    /**
+     * (idUsuario, idSucursal) -> sesiones abiertas de ese operador (puede tener más de una
+     * pestaña). El id de usuario es correlativo POR sucursal (ver
+     * UsuarioJpaRepository.obtenerSiguienteId), no global: el mismo número puede
+     * pertenecer a personas distintas en sucursales distintas. Se necesitan ambos datos
+     * para identificar a un operador sin ambigüedad.
+     */
+    private static final Map<ClaveOperador, Set<Session>> sesionesPorUsuario = new ConcurrentHashMap<>();
+
+    private record ClaveOperador(Long idUsuario, Long idSucursal) {
+    }
+
+    private final EstadoOperadorAutomaticoOrquestador estadoOperadorAutomaticoOrquestador;
+
+    public TurnoWebSocket(EstadoOperadorAutomaticoOrquestador estadoOperadorAutomaticoOrquestador) {
+        this.estadoOperadorAutomaticoOrquestador = estadoOperadorAutomaticoOrquestador;
+    }
 
     @OnOpen
     public void onOpen(Session session) {
         sessions.add(session);
         Long idUsuario = extraerIdUsuario(session);
-        if (idUsuario != null) {
-            sesionesPorUsuario.computeIfAbsent(idUsuario, k -> new CopyOnWriteArraySet<>()).add(session);
+        Long idSucursal = extraerIdSucursal(session);
+        if (idUsuario != null && idSucursal != null) {
+            sesionesPorUsuario.computeIfAbsent(new ClaveOperador(idUsuario, idSucursal),
+                    k -> new CopyOnWriteArraySet<>()).add(session);
         }
+        // Si estaba en el descanso automático por desconexión, lo regresa a ACTIVA solo.
+        estadoOperadorAutomaticoOrquestador.operadorReconectado(idUsuario, idSucursal);
         System.out.println("Cliente conectado: " + session.getId());
     }
 
@@ -40,17 +61,33 @@ public class TurnoWebSocket {
     public void onClose(Session session) {
         sessions.remove(session);
         Long idUsuario = extraerIdUsuario(session);
-        if (idUsuario != null) {
-            sesionesPorUsuario.computeIfPresent(idUsuario, (k, sesiones) -> {
+        Long idSucursal = extraerIdSucursal(session);
+        if (idUsuario != null && idSucursal != null) {
+            sesionesPorUsuario.computeIfPresent(new ClaveOperador(idUsuario, idSucursal), (k, sesiones) -> {
                 sesiones.remove(session);
                 return sesiones.isEmpty() ? null : sesiones;
             });
+        }
+        // Si esta era su última pestaña abierta, programa la revisión de "sesión cerrada"
+        // (con margen de tolerancia, ver EstadoOperadorAutomaticoOrquestador).
+        if (!tieneSesionActiva(idUsuario, idSucursal)) {
+            estadoOperadorAutomaticoOrquestador.operadorDesconectado(idUsuario, idSucursal,
+                    () -> tieneSesionActiva(idUsuario, idSucursal));
         }
         System.out.println("Cliente desconectado: " + session.getId());
     }
 
     private Long extraerIdUsuario(Session session) {
-        List<String> valores = session.getRequestParameterMap().get("idUsuario");
+        return extraerParametroLong(session, "idUsuario");
+    }
+
+    /** Sucursal del operador, enviada por el front junto a idUsuario (ver TurnoWebSocketApi.connect). */
+    private Long extraerIdSucursal(Session session) {
+        return extraerParametroLong(session, "idSucursal");
+    }
+
+    private Long extraerParametroLong(Session session, String nombreParametro) {
+        List<String> valores = session.getRequestParameterMap().get(nombreParametro);
         if (valores == null || valores.isEmpty()) {
             return null;
         }
@@ -61,12 +98,16 @@ public class TurnoWebSocket {
         }
     }
 
-    /** true si el operador tiene al menos una pestaña/sesión de WebSocket abierta ahora mismo. */
-    public boolean tieneSesionActiva(Long idUsuario) {
-        if (idUsuario == null) {
+    /**
+     * true si el operador (idUsuario + idSucursal, no idUsuario solo — ver el comentario
+     * de sesionesPorUsuario) tiene al menos una pestaña/sesión de WebSocket abierta ahora
+     * mismo.
+     */
+    public boolean tieneSesionActiva(Long idUsuario, Long idSucursal) {
+        if (idUsuario == null || idSucursal == null) {
             return false;
         }
-        Set<Session> sesiones = sesionesPorUsuario.get(idUsuario);
+        Set<Session> sesiones = sesionesPorUsuario.get(new ClaveOperador(idUsuario, idSucursal));
         return sesiones != null && sesiones.stream().anyMatch(Session::isOpen);
     }
 

@@ -137,7 +137,7 @@ public class TurnoAutomaticoOrquestador {
             return;
         }
 
-        if (!turnoWebSocket.tieneSesionActiva(idUsuario)) {
+        if (!turnoWebSocket.tieneSesionActiva(idUsuario, idSucursal)) {
             LOG.log(Level.FINE,
                     "Operador ACTIVA pero sin sesión de WebSocket, se omite el llamado automático (idUsuario={0})",
                     idUsuario);
@@ -249,7 +249,11 @@ public class TurnoAutomaticoOrquestador {
                         continue;
                     }
 
-                    if (!turnoWebSocket.tieneSesionActiva(idUsuario)) {
+                    // La sesión de WebSocket se identifica por (idUsuario, idSucursal): el id de
+                    // usuario es correlativo por sucursal, no global (ver comentario en
+                    // TurnoWebSocket.sesionesPorUsuario). Se usa la sucursal propia del usuario,
+                    // no idSucursalPuesto, porque es la que el front manda al conectar.
+                    if (!turnoWebSocket.tieneSesionActiva(idUsuario, usuario.getIdSucursal())) {
                         continue;
                     }
 

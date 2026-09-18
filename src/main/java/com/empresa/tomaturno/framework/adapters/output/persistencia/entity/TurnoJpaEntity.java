@@ -68,6 +68,11 @@ public class TurnoJpaEntity {
     @Column(name = "tipocasoespecial")
     private Integer tipoCasoEspecial;
 
+    /** Solo se completa en el turno destino de un traslado (idturnorelacionado != null);
+     *  null en el resto. Uso exclusivo de reportes (vwturnoshoy/vwturnos3meses). */
+    @Column(name = "fechatraslado")
+    private LocalDateTime fechaTraslado;
+
     @Version
     @Column(name = "version")
     private Long version;

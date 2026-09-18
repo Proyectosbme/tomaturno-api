@@ -27,6 +27,10 @@ public class Turno {
     private final Long idPersona;
     private final Integer tipoCasoEspecial;
     private String nombreLlamada;
+    /** Fecha/hora real del traslado. Null salvo en el turno destino de una reasignación
+     *  (idTurnoRelacionado != null); ver reasignarA(). Solo para reportes (vwturnoshoy /
+     *  vwturnos3meses): no participa en el orden de atención, que sigue usando fechaCreacion. */
+    private final LocalDateTime fechaTraslado;
 
     private Turno(Builder builder) {
         this.id = builder.id;
@@ -45,6 +49,7 @@ public class Turno {
         this.idUsuario = builder.idUsuario;
         this.idPersona = builder.idPersona;
         this.tipoCasoEspecial = builder.tipoCasoEspecial;
+        this.fechaTraslado = builder.fechaTraslado;
     }
 
     /**
@@ -103,7 +108,13 @@ public class Turno {
                 .fechaCreacion(this.fechaCreacion.plusSeconds(1))
                 .estado(new CatalogoDetalle(CatalogoEstado.ESTADO_TURNO.getValor(), DetalleEstado.CREADO.getValor()))
                 .idTurnoRelacionado(this.id)
-                .tipoCasoEspecial(this.tipoCasoEspecial));
+                .tipoCasoEspecial(this.tipoCasoEspecial)
+                // fechaFinalizacion de este turno (el que se traslada) ya quedó fijada arriba en
+                // esta misma llamada, así que siempre está disponible acá: es la fecha real del
+                // traslado. Solo el turno destino la lleva; el resto de turnos queda en null.
+                // Uso exclusivo de reportes (vwturnoshoy/vwturnos3meses): el orden de atención
+                // sigue dependiendo de fechaCreacion+1s, no se toca.
+                .fechaTraslado(this.fechaFinalizacion));
     }
 
     public static String generarCodigoTurno(String base, Long numero) {
@@ -259,6 +270,10 @@ public class Turno {
         return nombreLlamada;
     }
 
+    public LocalDateTime getFechaTraslado() {
+        return fechaTraslado;
+    }
+
     /* ── Builder ─────────────────────────────────── */
 
     public static class Builder {
@@ -278,6 +293,7 @@ public class Turno {
         private Long idUsuario;
         private Long idPersona;
         private Integer tipoCasoEspecial;
+        private LocalDateTime fechaTraslado;
 
         public Builder id(Long id) {
             this.id = id;
@@ -356,6 +372,11 @@ public class Turno {
 
         public Builder tipoCasoEspecial(Integer tipoCasoEspecial) {
             this.tipoCasoEspecial = tipoCasoEspecial;
+            return this;
+        }
+
+        public Builder fechaTraslado(LocalDateTime fechaTraslado) {
+            this.fechaTraslado = fechaTraslado;
             return this;
         }
 

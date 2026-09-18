@@ -38,4 +38,8 @@ public interface TurnoGatewayPort {
     /** true si el operador está ACTIVA (dominio EstadoOperador) — false si está cerrado, en descanso,
      *  o nunca se ha activado. No se puede llamar un turno si el operador no está activo. */
     boolean operadorActivo(Long idUsuario, Long idSucursal);
+
+    /** true si el usuario tiene activada la bandera de atender casos especiales (dominio Usuario).
+     *  false si el usuario no existe, no tiene la bandera activa, o idUsuario es null. */
+    boolean atiendeCasosEspeciales(Long idUsuario, Long idSucursal);
 }

@@ -62,7 +62,12 @@ public class KeycloakAdminAdapter implements KeycloakAdminPort {
                 }
                 return existentes.get(0).getId();
             } else {
-                throw new InternalServerException("Error al crear usuario en Keycloak: " + response.getStatus());
+                // Antes solo se reportaba el código de estado (ej. "400"), sin explicar qué
+                // rechazó Keycloak (usuario duplicado, correo inválido, etc.) — se lee el
+                // cuerpo de la respuesta para que el mensaje sea accionable.
+                throw new InternalServerException(
+                        "Error al crear usuario en Keycloak (" + response.getStatus() + "): "
+                                + leerCuerpoError(response));
             }
         }
 
@@ -76,6 +81,20 @@ public class KeycloakAdminAdapter implements KeycloakAdminPort {
         keycloak.realm(realm).users().get(keycloakId).roles().realmLevel().add(List.of(role));
 
         return keycloakId;
+    }
+
+    /**
+     * Keycloak devuelve el motivo real del rechazo en el cuerpo (ej. {"errorMessage":
+     * "User exists with same username"}), no en el código de estado. Se lee tal cual,
+     * sin parsear el JSON, porque alcanza para que el mensaje sea entendible.
+     */
+    private String leerCuerpoError(Response response) {
+        try {
+            String cuerpo = response.readEntity(String.class);
+            return (cuerpo == null || cuerpo.isBlank()) ? "sin detalle adicional" : cuerpo;
+        } catch (Exception e) {
+            return "sin detalle adicional";
+        }
     }
 
     private RoleRepresentation obtenerOCrearRol(String perfil) {
